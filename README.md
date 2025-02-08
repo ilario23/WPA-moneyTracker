@@ -4,11 +4,9 @@
 
 <h1 align="center">vue3-vant-mobile</h1>
 
-English / [简体中文](./README.zh-CN.md)
-
 An mobile web apps template based on the Vue 3 ecosystem.
 
-一个基于 Vue 3 生态系统的移动 web 应用模板，帮助你快速完成业务开发。
+A mobile web app template based on the Vue 3 ecosystem to help you get your business development done quickly.
 
 <p>
 <img src="https://img.shields.io/github/license/easy-temps/vue3-vant-mobile" alt="license" />
@@ -18,7 +16,8 @@ An mobile web apps template based on the Vue 3 ecosystem.
 <img src="https://img.shields.io/github/issues-closed/easy-temps/vue3-vant-mobile" alt="issues" />
 </p>
 
-[文档](https://easy-temps.github.io/easy-docs/vue3-vant-mobile/) / [交流](https://github.com/easy-temps/vue3-vant-mobile/issues/56) / [反馈](https://github.com/easy-temps/vue3-vant-mobile/issues)
+[Documentation](https://easy-temps.github.io/easy-docs/vue3-vant-mobile/) / [Exchange]
+(https://github.com/easy-temps/vue3-vant-mobile/issues/56) / [Feedback](https://github.com/easy-temps/vue3-vant-mobile/issues)
 
 🖥 <a href="https://vue3-vant-mobile.netlify.app">Online Preview</a>
 
@@ -88,7 +87,7 @@ An mobile web apps template based on the Vue 3 ecosystem.
 - [Vue Router](https://github.com/vuejs/router)
   - [`unplugin-vue-router`](https://github.com/posva/unplugin-vue-router) - file system based routing
 - [Pinia](https://pinia.vuejs.org) - Intuitive, type safe, light and flexible Store for Vue using the composition api
-  - [`pinia-plugin-persistedstate`](https://github.com/prazdevs/pinia-plugin-persistedstate) -  Configurable persistence and rehydration of Pinia stores
+  - [`pinia-plugin-persistedstate`](https://github.com/prazdevs/pinia-plugin-persistedstate) - Configurable persistence and rehydration of Pinia stores
 - [Vue I18n](https://github.com/intlify/vue-i18n-next) - Internationalization
   - [`unplugin-vue-i18n`](https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n) - unplugin for Vue I18n
 - [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components) - components auto import

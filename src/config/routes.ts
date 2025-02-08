@@ -1,5 +1,5 @@
-// 定义导航栏和标签栏可见的路由白名单
+// Define a whitelist of routes visible to the navigation bar and tab bar
 export const routeWhiteList: readonly string[] = [
-  'home', // 首页
-  'profile', // 个人中心
-]
+  'home', // home
+  'profile', // profile
+];
