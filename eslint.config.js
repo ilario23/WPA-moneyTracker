@@ -1,4 +1,4 @@
-import antfu from '@antfu/eslint-config'
+import antfu from '@antfu/eslint-config';
 
 export default antfu(
   {
@@ -12,19 +12,17 @@ export default antfu(
     formatters: {
       css: true,
     },
-
   },
   {
     rules: {
       'perfectionist/sort-imports': 'off',
       'perfectionist/sort-exports': 'off',
       'perfectionist/sort-named-exports': 'off',
+      semi: 'off',
+      '@typescript-eslint/semi': ['error'],
     },
   },
   {
-    ignores: [
-      '.github/**',
-      'scripts/**',
-    ],
-  },
-)
+    ignores: ['.github/**', 'scripts/**'],
+  }
+);
