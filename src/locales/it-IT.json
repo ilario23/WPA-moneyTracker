@@ -1,0 +1,98 @@
+{
+  "menus": {
+    "home": "Home",
+    "profile": "Il Mio Centro",
+    "darkMode": "🌗 Modalità Scura",
+    "mockGuide": "💿 Guida Mock",
+    "language": "📚 Lingua",
+    "404Demo": "🙅 Pagina 404 Demo",
+    "test": "💿 Test Figo",
+    "echartsDemo": "📊 Demo Echarts",
+    "persistPiniaState": "🍍 Stato Pinia Persistente",
+    "unocssExample": "🎨 Esempio Unocss",
+    "keepAlive": "🧡 Demo KeepAlive",
+    "login": "🔒 Accedi",
+    "register": "Registrati",
+    "settings": "Impostazioni",
+    "basicSettings": "Impostazioni di Base",
+    "exampleComponents": "Componenti Esempio",
+    "forgot-password": "Password Dimenticata"
+  },
+  "mock": {
+    "fromAsyncData": "Dati da richieste asincrone",
+    "noData": "Nessun dato",
+    "pull": "Trascina",
+    "reset": "Reimposta"
+  },
+  "charts": {
+    "January": "Gen",
+    "February": "Feb",
+    "March": "Mar",
+    "April": "Apr",
+    "May": "Mag",
+    "June": "Giu"
+  },
+  "layouts": {
+    "home": "HOME",
+    "profile": "PROFILO"
+  },
+  "profile": {
+    "login": "Accedi",
+    "settings": "Impostazioni",
+    "docs": "Documenti"
+  },
+  "keepAlive": {
+    "label": "Il componente attuale sarà memorizzato nella cache"
+  },
+  "login": {
+    "login": "Accedi",
+    "logout": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "pleaseEnterEmail": "Inserisci l'email",
+    "pleaseEnterPassword": "Inserisci la password",
+    "sign-up": "Clicca per registrarti",
+    "forgot-password": "Password dimenticata?"
+  },
+  "forgot-password": {
+    "email": "Email",
+    "code": "Codice",
+    "password": "Password",
+    "comfirmPassword": "Conferma Password",
+    "pleaseEnterEmail": "Inserisci l'email",
+    "pleaseEnterCode": "Inserisci il codice",
+    "pleaseEnterPassword": "Inserisci la password",
+    "pleaseEnterConfirmPassword": "Inserisci di nuovo la password",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "confirm": "Conferma",
+    "backToLogin": "Torna al login",
+    "getCode": "Ottieni codice",
+    "gettingCode": "Ottenendo codice",
+    "sendCodeSuccess": "Codice inviato, il codice è",
+    "passwordResetSuccess": "Reset password avvenuto con successo"
+  },
+  "register": {
+    "email": "Email",
+    "code": "Codice",
+    "nickname": "Soprannome",
+    "password": "Password",
+    "comfirmPassword": "Conferma Password",
+    "pleaseEnterEmail": "Inserisci l'email",
+    "pleaseEnterCode": "Inserisci il codice",
+    "pleaseEnterNickname": "Inserisci il soprannome",
+    "pleaseEnterPassword": "Inserisci la password",
+    "pleaseEnterConfirmPassword": "Inserisci di nuovo la password",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "confirm": "Conferma",
+    "backToLogin": "Torna al login",
+    "getCode": "Ottieni codice",
+    "gettingCode": "Ottenendo codice",
+    "sendCodeSuccess": "Codice inviato, il codice è",
+    "registerSuccess": "Registrazione completata con successo"
+  },
+  "settings": {
+    "logout": "Esci",
+    "currentVersion": "Versione Attuale",
+    "comfirmTitle": "Confermi di voler uscire?"
+  }
+}
