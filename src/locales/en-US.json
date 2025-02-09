@@ -52,7 +52,9 @@
     "pleaseEnterEmail": "Please enter email",
     "pleaseEnterPassword": "Please enter password",
     "sign-up": "Click to sign up",
-    "forgot-password": "Forgot password?"
+    "forgot-password": "Forgot password?",
+    "invalidCredential": "Invalid credentials, please try again.",
+    "genericError": "An error occurred, please try again."
   },
   "forgot-password": {
     "email": "Email",

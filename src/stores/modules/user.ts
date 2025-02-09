@@ -1,97 +1,89 @@
-import { defineStore } from 'pinia'
-import type { LoginData, UserState } from '@/api/user'
-import { clearToken, setToken } from '@/utils/auth'
-
+import {defineStore} from 'pinia';
+import type {UserState, LoginData} from '@/api/user'; // Assicurati che i tipi siano importati correttamente
+import {clearToken, setToken} from '@/utils/auth';
 import {
-  getEmailCode,
-  getUserInfo,
-  resetPassword,
-  login as userLogin,
-  logout as userLogout,
-  register as userRegister,
-} from '@/api/user'
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
+import {AUTH} from '@/config/firebase'; // Importa AUTH da firebase.ts
 
 const InitUserInfo = {
-  uid: 0,
-  nickname: '',
-  avatar: '',
-}
+  uid: '',
+  email: '',
+  displayName: '',
+};
 
 export const useUserStore = defineStore('user', () => {
-  const userInfo = ref<UserState>({ ...InitUserInfo })
+  const userInfo = ref<UserState>({...InitUserInfo});
 
   // Set user's information
   const setInfo = (partial: Partial<UserState>) => {
-    userInfo.value = { ...partial }
-  }
+    userInfo.value = {...userInfo.value, ...partial};
+  };
+
+  const fetchUserInfo = async () => {
+    const user = AUTH.currentUser;
+    if (user) {
+      setInfo({
+        uid: user.uid,
+        email: user.email || '',
+        displayName: user.displayName || '',
+      });
+    } else {
+      throw new Error('User not logged in');
+    }
+  };
 
   const login = async (loginForm: LoginData) => {
     try {
-      const { data } = await userLogin(loginForm)
-      setToken(data.token)
-    }
-    catch (error) {
-      clearToken()
-      throw error
-    }
-  }
+      const userCredential = await signInWithEmailAndPassword(
+        AUTH,
+        loginForm.email,
+        loginForm.password
+      );
+      const user = userCredential.user;
 
-  const info = async () => {
-    try {
-      const { data } = await getUserInfo()
-      setInfo(data)
+      // Salva il token nel localStorage
+      setToken(await user.getIdToken());
+
+      // Aggiorna le informazioni dell'utente
+      setInfo({
+        uid: user.uid,
+        email: user.email || '',
+        displayName: user.displayName || '',
+      });
+    } catch (error) {
+      clearToken(); // Pulisci il token in caso di errore
+      throw error;
     }
-    catch (error) {
-      clearToken()
-      throw error
-    }
-  }
+  };
 
   const logout = async () => {
     try {
-      await userLogout()
+      await signOut(AUTH);
+    } finally {
+      clearToken(); // Pulisci il token durante il logout
+      setInfo({...InitUserInfo}); // Resetta le informazioni dell'utente
     }
-    finally {
-      clearToken()
-      setInfo({ ...InitUserInfo })
-    }
-  }
+  };
 
-  const getCode = async () => {
-    try {
-      const data = await getEmailCode()
-      return data
-    }
-    catch {}
-  }
+  const updateUserProfile = async (profileData: Partial<UserState>) => {
+    const user = AUTH.currentUser;
 
-  const reset = async () => {
-    try {
-      const data = await resetPassword()
-      return data
+    if (user) {
+      await updateProfile(user, {
+        displayName: profileData.displayName,
+      });
+      setInfo(profileData); // Aggiorna localmente le informazioni del profilo
     }
-    catch {}
-  }
-
-  const register = async () => {
-    try {
-      const data = await userRegister()
-      return data
-    }
-    catch {}
-  }
+  };
 
   return {
     userInfo,
-    info,
+    fetchUserInfo,
     login,
     logout,
-    getCode,
-    reset,
-    register,
-  }
-}, {
-  persist: true,
-})
-
-export default useUserStore
+    updateUserProfile,
+  };
+});

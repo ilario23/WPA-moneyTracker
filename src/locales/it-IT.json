@@ -52,7 +52,9 @@
     "pleaseEnterEmail": "Inserisci l'email",
     "pleaseEnterPassword": "Inserisci la password",
     "sign-up": "Clicca per registrarti",
-    "forgot-password": "Password dimenticata?"
+    "forgot-password": "Password dimenticata?",
+    "invalidCredential": "Credenziali non valide, riprova.",
+    "genericError": "Si è verificato un errore, riprova."
   },
   "forgot-password": {
     "email": "Email",

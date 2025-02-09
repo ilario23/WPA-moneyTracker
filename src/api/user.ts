@@ -1,40 +1,85 @@
-import request from '@/utils/request'
+import {AUTH} from '@/config/firebase';
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  onAuthStateChanged,
+} from 'firebase/auth';
 
+// Define interfaces
 export interface LoginData {
-  email: string
-  password: string
+  email: string;
+  password: string;
 }
 
 export interface LoginRes {
-  token: string
+  token: string;
 }
 
 export interface UserState {
-  uid?: number
-  name?: string
-  avatar?: string
+  uid?: string;
+  name?: string;
+  email?: string;
+  displayName?: string;
+  avatar?: string;
 }
 
-export function login(data: LoginData): Promise<any> {
-  return request.post<LoginRes>('/auth/login', data)
+// Login
+export async function login(data: LoginData): Promise<LoginRes> {
+  const userCredential = await signInWithEmailAndPassword(
+    AUTH,
+    data.email,
+    data.password
+  );
+  const user = userCredential.user;
+  const token = await user.getIdToken();
+  return {token};
 }
 
-export function logout() {
-  return request.post('/user/logout')
+// Logout
+export async function logout(): Promise<void> {
+  await signOut(AUTH);
 }
 
-export function getUserInfo() {
-  return request<UserState>('/user/me')
+// Register
+export async function register(data: LoginData): Promise<void> {
+  await createUserWithEmailAndPassword(AUTH, data.email, data.password);
 }
 
-export function getEmailCode(): Promise<any> {
-  return request.get('/user/email-code')
+// Get User Info
+export async function getUserInfo(): Promise<UserState> {
+  const user = AUTH.currentUser;
+  if (user) {
+    return {
+      uid: user.uid,
+      email: user.email || '',
+      name: user.displayName || '',
+      avatar: user.photoURL || '',
+    };
+  }
+  throw new Error('User not logged in');
 }
 
-export function resetPassword(): Promise<any> {
-  return request.post('/user/reset-password')
+// Reset Password
+export async function resetPassword(email: string): Promise<void> {
+  await sendPasswordResetEmail(AUTH, email);
 }
 
-export function register(): Promise<any> {
-  return request.post('/user/register')
+// Listen to Auth State Changes
+export function onAuthStateChange(
+  callback: (user: UserState | null) => void
+): void {
+  onAuthStateChanged(AUTH, (user) => {
+    if (user) {
+      callback({
+        uid: user.uid,
+        email: user.email || '',
+        name: user.displayName || '',
+        avatar: user.photoURL || '',
+      });
+    } else {
+      callback(null);
+    }
+  });
 }
