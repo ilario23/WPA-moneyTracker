@@ -41,6 +41,7 @@ const menuItems = computed(() => [
   {title: t('menus.404Demo'), route: 'unknown'},
   {title: t('menus.test'), route: 'test'},
   {title: t('menus.transaction'), route: 'add-transaction'},
+  {title: t('menus.categories'), route: 'categories'},
 ]);
 </script>
 

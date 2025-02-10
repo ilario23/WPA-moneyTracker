@@ -17,7 +17,8 @@
     "settings": "Settings",
     "basicSettings": "Basic Settings",
     "exampleComponents": "Example components",
-    "forgot-password": "Forgot Password"
+    "forgot-password": "Forgot Password",
+    "categories": "🫙 View Categories"
   },
   "mock": {
     "fromAsyncData": "Data from asynchronous requests",

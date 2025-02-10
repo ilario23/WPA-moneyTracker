@@ -17,7 +17,8 @@
     "settings": "Impostazioni",
     "basicSettings": "Impostazioni di Base",
     "exampleComponents": "Componenti Esempio",
-    "forgot-password": "Password Dimenticata"
+    "forgot-password": "Password Dimenticata",
+    "categories": "🫙 Elenco Categorie"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",

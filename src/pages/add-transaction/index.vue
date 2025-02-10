@@ -123,6 +123,7 @@
 import {ref, reactive} from 'vue';
 import {useUserStore} from '@/stores';
 import {showNotify} from 'vant';
+import {EMPTY_TRANSACTION} from '@/utils/transaction';
 
 const {t} = useI18n();
 const logo = 'path/to/logo.png';
@@ -141,13 +142,8 @@ const currentDate = ref([
 const minDate = new Date(new Date().getFullYear() - 4, 0, 1);
 const maxDate = new Date(new Date().getFullYear() + 1, 11, 31);
 
-const transactionData = reactive({
-  amount: '',
-  categoryId: '',
-  timestamp: '',
-  description: '',
-  userId: userStore.userInfo?.uid || '',
-});
+const transactionData = reactive({...EMPTY_TRANSACTION});
+
 const dateLabel = ref<string>(currentDate.value.join('/'));
 const dark = ref<boolean>(isDark.value);
 
@@ -185,14 +181,12 @@ async function addTransaction(values: any) {
 }
 
 const resetFields = () => {
-  transactionData.amount = '';
-  transactionData.categoryId = '';
+  Object.assign(transactionData, EMPTY_TRANSACTION);
   dateLabel.value = [
     new Date().getFullYear().toString(),
     (new Date().getMonth() + 1).toString().padStart(2, '0'),
     new Date().getDate().toString().padStart(2, '0'),
   ].join('/');
-  transactionData.description = '';
 };
 
 const onConfirmCalendar = ({selectedValues}) => {
