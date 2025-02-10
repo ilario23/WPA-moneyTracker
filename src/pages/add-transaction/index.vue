@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import {ref, reactive} from 'vue';
-import {useUserStore} from '@/stores';
+// import {useUserStore} from '@/stores';
 import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
 
@@ -129,7 +129,7 @@ const {t} = useI18n();
 const logo = 'path/to/logo.png';
 const logoDark = 'path/to/logo-dark.png';
 const transactionType = ref(0);
-const userStore = useUserStore();
+// const userStore = useUserStore();
 const loading = ref(false);
 const showBottomCalendar = ref<boolean>(false);
 const currentDate = ref([

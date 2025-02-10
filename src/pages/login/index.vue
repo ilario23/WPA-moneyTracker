@@ -5,7 +5,7 @@ import {useUserStore} from '@/stores';
 
 import logo from '~/images/logo.svg';
 import logoDark from '~/images/logo-dark.svg';
-import vw from '@/utils/inline-px-to-vw';
+// import vw from '@/utils/inline-px-to-vw';
 import {showNotify} from 'vant';
 
 const {t} = useI18n();
