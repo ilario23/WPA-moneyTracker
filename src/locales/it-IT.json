@@ -11,6 +11,7 @@
     "persistPiniaState": "🍍 Stato Pinia Persistente",
     "unocssExample": "🎨 Esempio Unocss",
     "keepAlive": "🧡 Demo KeepAlive",
+    "transaction": "➕ Aggiungi Transazione",
     "login": "🔒 Accedi",
     "register": "Registrati",
     "settings": "Impostazioni",
@@ -96,5 +97,21 @@
     "logout": "Esci",
     "currentVersion": "Versione Attuale",
     "comfirmTitle": "Confermi di voler uscire?"
+  },
+  "transaction": {
+    "expense": "Spesa",
+    "income": "Entrata",
+    "amount": "Importo",
+    "categoryId": "ID Categoria",
+    "timestamp": "Data",
+    "description": "Descrizione",
+    "add": "Aggiungi Transazione",
+    "pleaseEnterAmount": "Per favore inserisci l'importo",
+    "pleaseEnterCategoryId": "Per favore inserisci l'ID della categoria",
+    "pleaseEnterTimestamp": "Per favore inserisci la data e l'ora",
+    "pleaseEnterDescription": "Per favore inserisci la descrizione",
+    "success": "Transazione aggiunta con successo",
+    "error": "Errore nell'aggiunta della transazione",
+    "preview": "Anteprima"
   }
 }

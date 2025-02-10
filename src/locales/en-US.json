@@ -11,6 +11,7 @@
     "persistPiniaState": "🍍 Persistent Pinia state",
     "unocssExample": "🎨 Unocss example",
     "keepAlive": "🧡 KeepAlive Demo",
+    "transaction": "➕ Add Transaction",
     "login": "🔒 Login",
     "register": "Register",
     "settings": "Settings",
@@ -96,5 +97,21 @@
     "logout": "Sign Out",
     "currentVersion": "Current Version",
     "comfirmTitle": "Confirm Exit?"
+  },
+  "transaction": {
+    "expense": "Expense",
+    "income": "Income",
+    "amount": "Amount",
+    "categoryId": "Category ID",
+    "timestamp": "Timestamp",
+    "description": "Description",
+    "add": "Add Transaction",
+    "pleaseEnterAmount": "Please enter the amount",
+    "pleaseEnterCategoryId": "Please enter the category ID",
+    "pleaseEnterTimestamp": "Please enter the timestamp",
+    "pleaseEnterDescription": "Please enter the description",
+    "success": "Transaction added successfully",
+    "error": "Failed to add transaction",
+    "preview": "Preview"
   }
 }

@@ -104,14 +104,6 @@ async function login(values: any) {
         </van-button>
       </div>
     </van-form>
-
-    <GhostButton block to="register" :style="{'margin-top': vw(18)}">
-      {{ $t('login.sign-up') }}
-    </GhostButton>
-
-    <GhostButton block to="forgot-password">
-      {{ $t('login.forgot-password') }}
-    </GhostButton>
   </div>
 </template>
 

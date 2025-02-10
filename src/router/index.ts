@@ -33,19 +33,24 @@ router.beforeEach(async (to: EnhancedRouteLocation) => {
   // Set page title
   setPageTitle(to.meta.title);
 
-  if (isLogin()) {
-    if (!userStore.userInfo?.uid) {
+  // Check if user is authenticated
+  if (!userStore.userInfo?.uid) {
+    if (isLogin()) {
       try {
         await userStore.fetchUserInfo();
       } catch (error) {
         // Handle error (e.g., token expired, user not found)
         await userStore.logout();
-        router.push({name: 'login'});
+        if (to.name !== 'login') {
+          return {name: 'login'};
+        }
+      }
+    } else {
+      // Redirect to login if the user is not authenticated and not already on the login page
+      if (to.name !== 'login') {
+        return {name: 'login'};
       }
     }
-  } else if (to.meta.requiresAuth) {
-    // Redirect to login if the route requires authentication
-    router.push({name: 'login'});
   }
 });
 

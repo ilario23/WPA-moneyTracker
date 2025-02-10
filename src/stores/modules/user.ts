@@ -1,89 +1,67 @@
 import {defineStore} from 'pinia';
-import type {UserState, LoginData} from '@/api/user'; // Assicurati che i tipi siano importati correttamente
+import {signInWithEmailAndPassword, signOut} from 'firebase/auth';
+import {AUTH} from '@/config/firebase';
 import {clearToken, setToken} from '@/utils/auth';
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from 'firebase/auth';
-import {AUTH} from '@/config/firebase'; // Importa AUTH da firebase.ts
+import type {UserState, LoginData} from '@/api/user';
 
 const InitUserInfo = {
   uid: '',
   email: '',
   displayName: '',
+  avatar: '',
 };
 
-export const useUserStore = defineStore('user', () => {
-  const userInfo = ref<UserState>({...InitUserInfo});
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    userInfo: {...InitUserInfo},
+  }),
+  actions: {
+    setInfo(partial: Partial<UserState>) {
+      this.userInfo = {...this.userInfo, ...partial};
+    },
+    async fetchUserInfo() {
+      const user = AUTH.currentUser;
+      if (user) {
+        this.setInfo({
+          uid: user.uid,
+          email: user.email || '',
+          displayName: user.displayName || '',
+        });
+      } else {
+        throw new Error('User not logged in');
+      }
+    },
+    async login(loginForm: LoginData) {
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          AUTH,
+          loginForm.email,
+          loginForm.password
+        );
+        const user = userCredential.user;
 
-  // Set user's information
-  const setInfo = (partial: Partial<UserState>) => {
-    userInfo.value = {...userInfo.value, ...partial};
-  };
+        // Save the token in localStorage
+        setToken(await user.getIdToken());
 
-  const fetchUserInfo = async () => {
-    const user = AUTH.currentUser;
-    if (user) {
-      setInfo({
-        uid: user.uid,
-        email: user.email || '',
-        displayName: user.displayName || '',
-      });
-    } else {
-      throw new Error('User not logged in');
-    }
-  };
-
-  const login = async (loginForm: LoginData) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        AUTH,
-        loginForm.email,
-        loginForm.password
-      );
-      const user = userCredential.user;
-
-      // Salva il token nel localStorage
-      setToken(await user.getIdToken());
-
-      // Aggiorna le informazioni dell'utente
-      setInfo({
-        uid: user.uid,
-        email: user.email || '',
-        displayName: user.displayName || '',
-      });
-    } catch (error) {
-      clearToken(); // Pulisci il token in caso di errore
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await signOut(AUTH);
-    } finally {
-      clearToken(); // Pulisci il token durante il logout
-      setInfo({...InitUserInfo}); // Resetta le informazioni dell'utente
-    }
-  };
-
-  const updateUserProfile = async (profileData: Partial<UserState>) => {
-    const user = AUTH.currentUser;
-
-    if (user) {
-      await updateProfile(user, {
-        displayName: profileData.displayName,
-      });
-      setInfo(profileData); // Aggiorna localmente le informazioni del profilo
-    }
-  };
-
-  return {
-    userInfo,
-    fetchUserInfo,
-    login,
-    logout,
-    updateUserProfile,
-  };
+        // Update user information
+        this.setInfo({
+          uid: user.uid,
+          email: user.email || '',
+          displayName: user.displayName || '',
+        });
+      } catch (error) {
+        clearToken(); // Clear the token in case of error
+        throw error;
+      }
+    },
+    async logout() {
+      try {
+        await signOut(AUTH);
+      } finally {
+        clearToken(); // Clear the token during logout
+        this.setInfo({...InitUserInfo}); // Reset user information
+      }
+    },
+  },
+  persist: true, // Enable persistent state
 });
