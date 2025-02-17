@@ -1,5 +1,5 @@
-import request from '@/utils/request'
+import {Database} from './database';
 
-export async function queryProse(): Promise<any> {
-  return request('/prose')
-}
+export const API = {
+  Database,
+};

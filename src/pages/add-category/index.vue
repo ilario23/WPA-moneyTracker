@@ -1,18 +1,18 @@
 <template>
   <div class="m-x-a w-7xl text-center">
     <div class="mb-32 mt-20">
-      <van-icon :name="categoryData.icon" />
+      <van-icon :name="newCategory.icon" />
     </div>
 
     <van-form
-      :model="categoryData"
+      :model="newCategory"
       :rules="rules"
       validate-trigger="onSubmit"
-      @submit="addCategory"
+      @submit="save"
     >
       <div class="overflow-hidden rounded-3xl">
         <van-field
-          v-model="categoryData.title"
+          v-model="newCategory.title"
           :rules="rules.title"
           name="title"
           :placeholder="t('category.title')"
@@ -21,7 +21,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="categoryData.userId"
+          v-model="newCategory.userId"
           :rules="rules.userId"
           name="userId"
           :placeholder="t('category.userId')"
@@ -30,7 +30,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="categoryData.color"
+          v-model="newCategory.color"
           :rules="rules.color"
           name="color"
           :placeholder="t('category.color')"
@@ -39,7 +39,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="categoryData.icon"
+          v-model="newCategory.icon"
           :rules="rules.icon"
           name="icon"
           :placeholder="t('category.icon')"
@@ -48,7 +48,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="categoryData.budget"
+          v-model="newCategory.budget"
           :rules="rules.budget"
           name="budget"
           type="number"
@@ -58,7 +58,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="categoryData.parentCategoryId"
+          v-model="newCategory.parentCategoryId"
           :rules="rules.parentCategoryId"
           name="parentCategoryId"
           :placeholder="t('category.parentCategoryId')"
@@ -67,7 +67,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-switch
-          v-model="categoryData.excludeFromStat"
+          v-model="newCategory.excludeFromStat"
           :rules="rules.excludeFromStat"
           name="excludeFromStat"
           :title="t('category.excludeFromStat')"
@@ -76,7 +76,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-switch
-          v-model="categoryData.active"
+          v-model="newCategory.active"
           :rules="rules.active"
           name="active"
           :title="t('category.active')"
@@ -103,6 +103,12 @@ import {ref, reactive} from 'vue';
 import {useRouter} from 'vue-router';
 import {showNotify} from 'vant';
 import {EMPTY_CATEGORY} from '@/utils/category';
+import type {Category} from '@/types/category';
+import {useUserStore} from '@/stores';
+import {API} from '@/api';
+
+const userStore = useUserStore();
+const categories = ref<Category[]>([]);
 
 const {t} = useI18n();
 const router = useRouter();
@@ -117,16 +123,24 @@ watch(
   }
 );
 
-const categoryData = reactive({...EMPTY_CATEGORY});
+const newCategory = reactive({...EMPTY_CATEGORY});
+
+const getUserCategories = () => {
+  if (userStore.userInfo?.uid) {
+    API.Database.Users.Categories.getUserCategories(
+      userStore.userInfo?.uid
+    ).then((res) => (categories.value = res));
+  }
+};
 
 const rules = reactive({
   title: [{required: true, message: t('category.pleaseEnterTitle')}],
   userId: [{required: true, message: t('category.pleaseEnterUserId')}],
-  color: [{required: true, message: t('category.pleaseEnterColor')}],
+  color: [{required: false, message: t('category.pleaseEnterColor')}],
   icon: [{required: true, message: t('category.pleaseEnterIcon')}],
-  budget: [{required: true, message: t('category.pleaseEnterBudget')}],
+  budget: [{required: false, message: t('category.pleaseEnterBudget')}],
   parentCategoryId: [
-    {required: true, message: t('category.pleaseEnterParentCategoryId')},
+    {required: false, message: t('category.pleaseEnterParentCategoryId')},
   ],
   excludeFromStat: [
     {required: true, message: t('category.pleaseEnterExcludeFromStat')},
@@ -134,7 +148,22 @@ const rules = reactive({
   active: [{required: true, message: t('category.pleaseEnterActive')}],
 });
 
-async function addCategory(values: any) {
+const clearForm = () => {
+  Object.assign(newCategory, EMPTY_CATEGORY);
+};
+
+const save = () => {
+  if (userStore.userInfo?.uid)
+    API.Database.Users.Categories.createUserCategory(
+      userStore.userInfo.uid,
+      newCategory
+    )
+      .then(getUserCategories)
+      .catch((err) => console.error('failed creation category', err));
+  clearForm();
+};
+
+async function addCategory() {
   try {
     loading.value = true;
     // Simulate adding a category

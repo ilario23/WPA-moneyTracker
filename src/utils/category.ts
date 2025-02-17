@@ -1,13 +1,15 @@
 import type {Category} from '@/types/category';
+import {useUserStore} from '@/stores';
+const userStore = useUserStore();
 
 export const EMPTY_CATEGORY: Category = {
-  id: '',
+  id: crypto.randomUUID(),
   title: '',
-  userId: '',
+  userId: userStore.userInfo?.uid,
   color: '',
   icon: '',
-  budget: 0,
-  parentCategoryId: '',
+  budget: null,
+  parentCategoryId: null,
   excludeFromStat: false,
   active: true,
 };

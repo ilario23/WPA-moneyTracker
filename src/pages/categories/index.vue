@@ -114,92 +114,21 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {showNotify} from 'vant';
+import {useUserStore} from '@/stores';
+import type {Category} from '@/types/category';
+import {API} from '@/api';
+import {toRaw} from 'vue';
+
+const userStore = useUserStore();
+const categories = ref<Category[]>([]);
+const rootCategories = ref();
 
 const showDeleteDialog = ref(false);
 const showEditDialog = ref(false);
 
-// Example data (these could be fetched from a database, e.g., Firebase)
-const rawCategories = [
-  {
-    id: '11',
-    title: 'General Expenses',
-    color: '#FF5733',
-    parentCategoryId: null,
-    userId: 'user123',
-    active: true,
-    icon: 'fire-o',
-    budget: 1000,
-    excludeFromStat: false,
-  },
-  {
-    id: '2',
-    title: 'Savings',
-    color: '#33FF57',
-    parentCategoryId: null,
-    userId: 'user123',
-    active: true,
-    icon: 'chat-o',
-    budget: 2000,
-    excludeFromStat: false,
-  },
-  {
-    id: '3',
-    title: 'Food & Drinks',
-    color: '#FFBD33',
-    parentCategoryId: '11',
-    userId: 'user123',
-    active: true,
-    icon: 'cart-o',
-    budget: 500,
-    excludeFromStat: false,
-  },
-  {
-    id: '4',
-    title: 'Transport',
-    color: '#33BDFF',
-    parentCategoryId: '11',
-    userId: 'user123',
-    active: true,
-    icon: 'smile-o',
-    budget: 300,
-    excludeFromStat: false,
-  },
-  {
-    id: '5',
-    title: 'Supermarket',
-    color: '#FFC733',
-    parentCategoryId: '3',
-    userId: 'user123',
-    active: true,
-    icon: 'brush-o',
-    budget: 300,
-    excludeFromStat: false,
-  },
-  {
-    id: '6',
-    title: 'Restaurants',
-    color: '#FF5733',
-    parentCategoryId: '3',
-    userId: 'user123',
-    active: true,
-    icon: 'shop-o',
-    budget: 200,
-    excludeFromStat: false,
-  },
-];
-
-// Function to prune empty children
-const pruneEmptyChildren = (node: any) => {
-  if (node.children.length === 0) {
-    delete node.children;
-  } else {
-    node.children.forEach(pruneEmptyChildren); // Recursively prune children
-  }
-};
-
 // Function to build category tree
 const buildCategoryTree = (categories: any[]) => {
-  const categoryMap = new Map<number, any>();
+  const categoryMap = new Map<string, any>();
   const roots: any[] = [];
 
   // Create initial map without children
@@ -218,7 +147,7 @@ const buildCategoryTree = (categories: any[]) => {
   // Populate hierarchy
   categories.forEach((category) => {
     const node = categoryMap.get(category.id);
-    if (category.parentCategoryId === null) {
+    if (category.parentCategoryId == null || category.parentCategoryId == '') {
       roots.push(node);
     } else {
       const parent = categoryMap.get(category.parentCategoryId);
@@ -234,8 +163,29 @@ const buildCategoryTree = (categories: any[]) => {
   return roots;
 };
 
+// Function to prune empty children
+const pruneEmptyChildren = (node: any) => {
+  if (node.children.length === 0) {
+    delete node.children;
+  } else {
+    node.children.forEach(pruneEmptyChildren); // Recursively prune children
+  }
+};
+
+// Function to get user categories
+const getUserCategories = () => {
+  if (userStore.userInfo?.uid) {
+    API.Database.Users.Categories.getUserCategories(
+      userStore.userInfo?.uid
+    ).then((res) => {
+      categories.value = res;
+      rootCategories.value = buildCategoryTree(categories.value);
+    });
+  }
+};
+
 // Root categories
-const rootCategories = buildCategoryTree(rawCategories);
+getUserCategories();
 
 const fieldNames2 = ref({
   active: 'active',

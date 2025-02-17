@@ -18,6 +18,7 @@ export default ({mode}: ConfigEnv): UserConfig => {
     server: {
       host: true,
       port: 3000,
+      allowedHosts: ['.ngrok-free.app'],
       proxy: {
         '/api': {
           target: '',
