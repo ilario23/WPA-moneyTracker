@@ -3,3 +3,7 @@ node_modules
 .DS_Store
 
 src/config/firebase.ts
+
+/dist
+
+/pnpm-lock.yaml
