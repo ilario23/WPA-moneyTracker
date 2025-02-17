@@ -6,45 +6,26 @@ import viewport from 'postcss-mobile-forever';
 import autoprefixer from 'autoprefixer';
 import {createVitePlugins} from './build/vite';
 import {exclude, include} from './build/vite/optimize';
-import {VitePWA} from 'vite-plugin-pwa';
 
 export default ({mode}: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
 
-  server: {
-    https: true;
-  }
-
-  VitePWA({
-    registerType: 'autoUpdate', // Aggiorna automaticamente la PWA
-    includeAssets: ['./public/favicon.svg'], // Asset da includere
-    manifest: {
-      name: 'Money Tracker',
-      short_name: 'App',
-      description: 'A simple money tracker app',
-      theme_color: '#ffffff',
-      background_color: '#ffffff',
-      start_url: '/',
-      display: 'standalone', // App in modalità standalone
-      icons: [
-        {
-          src: '.public/pwa-192x192.png',
-          sizes: '192x192',
-          type: 'image/png',
-        },
-        {
-          src: './public/pwa-512x512.png.png',
-          sizes: '512x512',
-          type: 'image/png',
-        },
-      ],
-    },
-  });
-
   return {
     base: env.VITE_APP_PUBLIC_PATH,
     plugins: createVitePlugins(mode),
+
+    server: {
+      host: true,
+      port: 3000,
+      proxy: {
+        '/api': {
+          target: '',
+          ws: false,
+          changeOrigin: true,
+        },
+      },
+    },
 
     resolve: {
       alias: {
