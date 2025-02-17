@@ -18,7 +18,8 @@
     "basicSettings": "Basic Settings",
     "exampleComponents": "Example components",
     "forgot-password": "Forgot Password",
-    "categories": "🫙 View Categories"
+    "categories": "🫙 View Categories",
+    "add-category": "➕🫙 Add Category"
   },
   "mock": {
     "fromAsyncData": "Data from asynchronous requests",
@@ -114,5 +115,26 @@
     "success": "Transaction added successfully",
     "error": "Failed to add transaction",
     "preview": "Preview"
+  },
+  "category": {
+    "title": "Title",
+    "userId": "User ID",
+    "color": "Color",
+    "icon": "Icon",
+    "budget": "Budget",
+    "parentCategoryId": "Parent Category ID",
+    "excludeFromStat": "Exclude from Statistics",
+    "active": "Active",
+    "add": "Add Category",
+    "pleaseEnterTitle": "Please enter the title",
+    "pleaseEnterUserId": "Please enter the user ID",
+    "pleaseEnterColor": "Please enter the color",
+    "pleaseEnterIcon": "Please enter the icon",
+    "pleaseEnterBudget": "Please enter the budget",
+    "pleaseEnterParentCategoryId": "Please enter the parent category ID",
+    "pleaseEnterExcludeFromStat": "Please enter if it should be excluded from statistics",
+    "pleaseEnterActive": "Please enter if it is active",
+    "success": "Category added successfully",
+    "error": "Failed to add category"
   }
 }

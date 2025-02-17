@@ -18,7 +18,8 @@
     "basicSettings": "Impostazioni di Base",
     "exampleComponents": "Componenti Esempio",
     "forgot-password": "Password Dimenticata",
-    "categories": "🫙 Elenco Categorie"
+    "categories": "🫙 Elenco Categorie",
+    "add-category": "➕🫙 Aggiungi Categoria"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",
@@ -114,5 +115,26 @@
     "success": "Transazione aggiunta con successo",
     "error": "Errore nell'aggiunta della transazione",
     "preview": "Anteprima"
+  },
+  "category": {
+    "title": "Titolo",
+    "userId": "ID Utente",
+    "color": "Colore",
+    "icon": "Icona",
+    "budget": "Budget",
+    "parentCategoryId": "ID Categoria Padre",
+    "excludeFromStat": "Escludi dalle Statistiche",
+    "active": "Attivo",
+    "add": "Aggiungi Categoria",
+    "pleaseEnterTitle": "Per favore inserisci il titolo",
+    "pleaseEnterUserId": "Per favore inserisci l'ID utente",
+    "pleaseEnterColor": "Per favore inserisci il colore",
+    "pleaseEnterIcon": "Per favore inserisci l'icona",
+    "pleaseEnterBudget": "Per favore inserisci il budget",
+    "pleaseEnterParentCategoryId": "Per favore inserisci l'ID della categoria padre",
+    "pleaseEnterExcludeFromStat": "Per favore inserisci se deve essere escluso dalle statistiche",
+    "pleaseEnterActive": "Per favore inserisci se è attivo",
+    "success": "Categoria aggiunta con successo",
+    "error": "Errore nell'aggiunta della categoria"
   }
 }

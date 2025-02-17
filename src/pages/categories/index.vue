@@ -6,17 +6,19 @@
     :field-names="fieldNames2"
     placeholder="Seleziona una categoria"
   />
-
   <div>
     <div style="display: flex; width: 100%; gap: 12px; padding: 8px">
       <van-cell
         v-for="root in rootCategories"
         :key="root.value"
         :title="root.text"
-        :label="root.icon"
         @click="selectCategory(root)"
         style="flex: 1; text-align: center; padding: 12px; border-radius: 8px"
-      />
+      >
+        <template #right-icon>
+          <van-icon :name="root.icon" />
+        </template>
+      </van-cell>
     </div>
 
     <van-swipe-cell
@@ -32,117 +34,175 @@
         thumb="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
       />
       <template #right>
-        <van-button square icon="delete-o" type="danger" style="height: 100%" />
+        <van-button
+          square
+          icon="delete-o"
+          type="danger"
+          style="height: 100%"
+          @click="showDeleteDialog = true"
+        />
       </template>
       <template #left>
-        <van-button square icon="edit" type="primary" style="height: 100%" />
+        <van-button
+          square
+          icon="edit"
+          type="primary"
+          style="height: 100%"
+          @click="showEditDialog = true"
+        />
       </template>
     </van-swipe-cell>
 
-    <van-cell-group v-if="selectedCategory">
-      <van-cell
-        v-for="child in selectedCategory.children"
-        :key="child.value"
-        :title="child.text"
-        :label="child.icon"
-        @click="selectCategory(child)"
-      />
-    </van-cell-group>
+    <div v-if="selectedCategory.children">
+      <van-divider dashed>Children </van-divider>
+      <van-cell-group inset>
+        <van-cell
+          v-for="child in selectedCategory.children"
+          :key="child.value"
+          :title="child.text"
+          @click="selectCategory(child)"
+        >
+          <template #right-icon>
+            <van-icon :name="child.icon" />
+          </template>
+        </van-cell>
+      </van-cell-group>
+    </div>
   </div>
+
+  <van-dialog
+    v-model:show="showDeleteDialog"
+    title="Delete Category"
+    message="Are you sure you want to delete this category?"
+    show-cancel-button
+    show-confirm-button
+    @confirm="handleDeleteConfirm"
+    @cancel="handleCancel"
+  />
+
+  <van-dialog
+    v-model:show="showEditDialog"
+    title="Edit Category"
+    show-cancel-button
+    show-confirm-button
+    @confirm="handleEditConfirm"
+    @cancel="handleCancel"
+  >
+    <van-field
+      v-model="selectedCategory.text"
+      label="Category Name"
+      placeholder="Enter category name"
+    />
+  </van-dialog>
+
+  <van-button
+    type="primary"
+    icon="plus"
+    style="
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    "
+    to="/add-category"
+  />
 </template>
 
 <script lang="ts" setup>
 import {ref} from 'vue';
+import {showNotify} from 'vant';
 
-// Dati di esempio (questi potrebbero essere recuperati dal database, ad esempio Firebase)
+const showDeleteDialog = ref(false);
+const showEditDialog = ref(false);
+
+// Example data (these could be fetched from a database, e.g., Firebase)
 const rawCategories = [
   {
     id: '11',
-    title: 'Spese Generali',
+    title: 'General Expenses',
     color: '#FF5733',
     parentCategoryId: null,
     userId: 'user123',
     active: true,
-    icon: 'wallet',
+    icon: 'fire-o',
     budget: 1000,
     excludeFromStat: false,
   },
   {
     id: '2',
-    title: 'Risparmi',
+    title: 'Savings',
     color: '#33FF57',
     parentCategoryId: null,
     userId: 'user123',
     active: true,
-    icon: 'piggy-bank',
+    icon: 'chat-o',
     budget: 2000,
     excludeFromStat: false,
   },
-
-  // Categorie di primo livello
   {
     id: '3',
-    title: 'Cibo e Bevande',
+    title: 'Food & Drinks',
     color: '#FFBD33',
     parentCategoryId: '11',
     userId: 'user123',
     active: true,
-    icon: 'utensils',
+    icon: 'cart-o',
     budget: 500,
     excludeFromStat: false,
   },
   {
     id: '4',
-    title: 'Trasporti',
+    title: 'Transport',
     color: '#33BDFF',
     parentCategoryId: '11',
     userId: 'user123',
     active: true,
-    icon: 'bus',
+    icon: 'smile-o',
     budget: 300,
     excludeFromStat: false,
   },
-
-  // Categorie di secondo livello
   {
     id: '5',
-    title: 'Supermercato',
+    title: 'Supermarket',
     color: '#FFC733',
     parentCategoryId: '3',
     userId: 'user123',
     active: true,
-    icon: 'shopping-cart',
+    icon: 'brush-o',
     budget: 300,
     excludeFromStat: false,
   },
   {
     id: '6',
-    title: 'Ristoranti',
+    title: 'Restaurants',
     color: '#FF5733',
     parentCategoryId: '3',
     userId: 'user123',
     active: true,
-    icon: 'restaurant',
+    icon: 'shop-o',
     budget: 200,
     excludeFromStat: false,
   },
 ];
 
-// Funzione di pruning per rimuovere il campo 'children' se è vuoto
+// Function to prune empty children
 const pruneEmptyChildren = (node: any) => {
   if (node.children.length === 0) {
     delete node.children;
   } else {
-    node.children.forEach(pruneEmptyChildren); // Ricorsione sui figli
+    node.children.forEach(pruneEmptyChildren); // Recursively prune children
   }
 };
 
-// Creazione dell'albero delle categorie
+// Function to build category tree
 const buildCategoryTree = (categories: any[]) => {
   const categoryMap = new Map<number, any>();
   const roots: any[] = [];
 
-  // Creiamo la mappa iniziale senza children
+  // Create initial map without children
   categories.forEach((category) => {
     categoryMap.set(category.id, {
       text: category.title,
@@ -155,7 +215,7 @@ const buildCategoryTree = (categories: any[]) => {
     });
   });
 
-  // Popoliamo la gerarchia
+  // Populate hierarchy
   categories.forEach((category) => {
     const node = categoryMap.get(category.id);
     if (category.parentCategoryId === null) {
@@ -168,15 +228,14 @@ const buildCategoryTree = (categories: any[]) => {
     }
   });
 
-  // Rimuove i children vuoti
+  // Prune empty children
   roots.forEach(pruneEmptyChildren);
 
   return roots;
 };
 
-// Variabile che contiene le categorie di root
+// Root categories
 const rootCategories = buildCategoryTree(rawCategories);
-console.log(rootCategories);
 
 const fieldNames2 = ref({
   active: 'active',
@@ -191,10 +250,10 @@ const fieldNames2 = ref({
   userId: 'userId',
 });
 
-// Variabile per la categoria selezionata
+// Selected category ID
 const selectedCategoryId2 = ref<string>('');
 
-// Funzione per trovare una categoria per id
+// Function to find category by ID
 const findCategory = (categories: any[], id: string) => {
   for (const category of categories) {
     if (category.id === id) return category;
@@ -206,20 +265,49 @@ const findCategory = (categories: any[], id: string) => {
   return null;
 };
 
-// Variabile che contiene i dettagli della categoria selezionata
+// Selected category details
 const selectedCategory = ref({
+  value: null,
   text: '',
-  icon: '',
-  budget: 0,
-  color: '',
-  id: '',
-  excludeFromStat: false,
-  children: [],
+  children: null,
 });
 
-// Funzione per selezionare una categoria e mostrare i dettagli
+// Function to select a category and show details
 const selectCategory = (category) => {
   selectedCategory.value = category;
+};
+
+// Function to handle delete confirm action
+const handleDeleteConfirm = () => {
+  if (selectedCategory.value.children) {
+    console.log('Cannot delete category with children');
+    // Show an alert for that
+    showNotify({
+      type: 'danger',
+      message: 'You can only delete a category without children',
+    });
+    console.log('TODO: add translation');
+    return;
+  } else {
+    console.log('Delete category with id:', selectedCategory.value.value);
+    console.log('TODO: Delete category');
+  }
+
+  showDeleteDialog.value = false;
+};
+
+// Function to handle edit confirm action
+const handleEditConfirm = () => {
+  console.log('Edit category with id:', selectedCategory.value.value);
+  console.log('TODO: Edit category');
+  showEditDialog.value = false;
+};
+
+// Function to handle cancel action
+const handleCancel = () => {
+  console.log('cancel');
+  showDeleteDialog.value = false;
+  showEditDialog.value = false;
 };
 </script>
 
@@ -232,3 +320,5 @@ const selectCategory = (category) => {
   },
 }
 </route>
+
+<style scoped></style>
