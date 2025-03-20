@@ -56,12 +56,23 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="transactionData.categoryId"
-          :rules="rules.categoryId"
-          left-icon="photo-o"
-          name="categoryId"
+          v-model="fieldValue"
+          is-link
+          readonly
+          label="Category"
           :placeholder="t('transaction.categoryId')"
+          @click="showCascader = true"
         />
+        <van-popup v-model:show="showCascader" round position="bottom">
+          <van-cascader
+            v-model="cascaderValue"
+            title="Select Category"
+            :options="categoryOptions"
+            @close="showCascader = false"
+            @change="onChange"
+            @finish="onFinish"
+          />
+        </van-popup>
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
@@ -120,16 +131,129 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive} from 'vue';
-// import {useUserStore} from '@/stores';
-import {showNotify} from 'vant';
+import {ref, reactive, onBeforeMount} from 'vue';
+import {showNotify, closeToast, showLoadingToast} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
+import type {Category} from '@/types/category';
+import {useUserStore} from '@/stores/modules/user';
+import {API} from '@/api';
+import {useI18n} from 'vue-i18n';
+
+interface Option {
+  text: string;
+  value: string;
+  children?: Option[];
+}
+
+// Ottieni lo store dell'utente
+const userStore = useUserStore();
+
+// Ottieni l'uid dell'utente come stringa
+const userId: string = userStore.userInfo.uid;
+
+console.log('User ID:', userId);
+
+// Definisci una variabile per memorizzare i dati delle categorie
+const categories = ref<Category[]>([]);
+const categoryOptions = ref<Option[]>([]);
+const showCascader = ref(false);
+const fieldValue = ref('');
+const cascaderValue = ref('');
+
+// onBeforeMount, chiama getCategories per ottenere i dati delle categorie
+onBeforeMount(async () => {
+  // categories.value =
+  //   await API.Database.Users.Categories.getUserCategories(userId);
+  categories.value = [
+    // ROOT Categories
+    {id: 'a1b2c3d4', title: 'Entrate', userId: 'user123', active: true},
+    {id: 'e5f6g7h8', title: 'Spese', userId: 'user123', active: true},
+    {id: 'i9j0k1l2', title: 'Investimenti', userId: 'user123', active: true},
+
+    // Subcategories di Entrate
+    {
+      id: 'm3n4o5p6',
+      title: 'Stipendio',
+      userId: 'user123',
+      parentCategoryId: 'a1b2c3d4',
+      active: true,
+    },
+    {
+      id: 'q7r8s9t0',
+      title: 'Freelance',
+      userId: 'user123',
+      parentCategoryId: 'a1b2c3d4',
+      active: true,
+    },
+    {
+      id: 'u1v2w3x4',
+      title: 'Bonus e Premi',
+      userId: 'user123',
+      parentCategoryId: 'a1b2c3d4',
+      active: true,
+    },
+
+    // Subcategories di Spese
+    {
+      id: 'y5z6a7b8',
+      title: 'Casa',
+      userId: 'user123',
+      parentCategoryId: 'e5f6g7h8',
+      active: true,
+      budget: 1000,
+    },
+    {
+      id: 'c9d0e1f2',
+      title: 'Trasporti',
+      userId: 'user123',
+      parentCategoryId: 'e5f6g7h8',
+      active: true,
+      budget: 150,
+    },
+    {
+      id: 'g3h4i5j6',
+      title: 'Alimentari',
+      userId: 'user123',
+      parentCategoryId: 'e5f6g7h8',
+      active: true,
+      budget: 400,
+    },
+
+    // Sub-subcategories di Spese
+    {
+      id: 'k7l8m9n0',
+      title: 'Affitto',
+      userId: 'user123',
+      parentCategoryId: 'y5z6a7b8',
+      active: true,
+      budget: 800,
+    },
+    {
+      id: 'o1p2q3r4',
+      title: 'Manutenzione',
+      userId: 'user123',
+      parentCategoryId: 'y5z6a7b8',
+      active: true,
+      budget: 200,
+    },
+    {
+      id: 's5t6u7v8',
+      title: 'Carburante',
+      userId: 'user123',
+      parentCategoryId: 'c9d0e1f2',
+      active: true,
+      budget: 100,
+    },
+  ];
+
+  categoryOptions.value = buildCategoryOptions(categories.value);
+  console.log('categoryOptions:', categoryOptions.value);
+});
 
 const {t} = useI18n();
 const logo = 'path/to/logo.png';
 const logoDark = 'path/to/logo-dark.png';
 const transactionType = ref(0);
-// const userStore = useUserStore();
 const loading = ref(false);
 const showBottomCalendar = ref<boolean>(false);
 const currentDate = ref([
@@ -194,6 +318,58 @@ const onConfirmCalendar = ({selectedValues}) => {
   currentDate.value = selectedValues;
   showBottomCalendar.value = false;
   transactionData.timestamp = new Date(selectedValues.join('-')).toISOString();
+};
+
+const buildCategoryOptions = (categories: Category[]): Option[] => {
+  const categoryMap = new Map<string, Option>();
+
+  categories.forEach((category) => {
+    categoryMap.set(category.id, {
+      text: category.title,
+      value: category.id,
+      children: [],
+    });
+    console.log('categoryMap:', categoryMap);
+  });
+
+  categories.forEach((category) => {
+    const node = categoryMap.get(category.id);
+    if (
+      category.parentCategoryId === null ||
+      category.parentCategoryId === ''
+    ) {
+      console.log('Root category:', node);
+      categoryOptions.value.push(node);
+    } else {
+      const parent = categoryMap.get(category.parentCategoryId);
+      if (parent) {
+        console.log('Parent category:', parent);
+        parent.children.push(node);
+      }
+    }
+  });
+
+  console.log('categoryOptions:', categoryOptions);
+
+  return categoryOptions.value;
+};
+
+const onChange = ({value}: {value: string}) => {
+  // Logica per gestire il cambiamento della selezione
+  console.log('onChange:', value);
+  cascaderValue.value = value;
+};
+
+const onFinish = ({selectedOptions}: {selectedOptions: Option[]}) => {
+  showCascader.value = false;
+  fieldValue.value = selectedOptions.map((option) => option.text).join('/');
+  transactionData.categoryId =
+    selectedOptions[selectedOptions.length - 1].value;
+  //devo cambiare pure il nome di quello che viene mostrato nella selection, prendendo
+  // il nome della categoria selezionata e non il suo id.
+  // però nella transizione devo invece usare il suo id
+  // dovrò modificare il placeholder della selection in modo che mostri il nome della categoria selezionata
+  // TODO: Da implementare
 };
 </script>
 
