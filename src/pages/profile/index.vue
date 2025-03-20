@@ -44,7 +44,7 @@ function login() {
         :title="$t('profile.docs')"
         icon="flower-o"
         is-link
-        url="https://easy-temps.github.io/easy-docs/vue3-vant-mobile/"
+        url="https://tenor.com/view/zeb-zeb89-eh-volevi-unto-gif-10755033"
       />
     </VanCellGroup>
   </div>

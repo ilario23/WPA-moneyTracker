@@ -19,7 +19,8 @@
     "exampleComponents": "Componenti Esempio",
     "forgot-password": "Password Dimenticata",
     "categories": "🫙 Elenco Categorie",
-    "add-category": "➕🫙 Aggiungi Categoria"
+    "add-category": "➕🫙 Aggiungi Categoria",
+    "user": "Utente"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",

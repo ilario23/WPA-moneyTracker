@@ -19,7 +19,8 @@
     "exampleComponents": "Example components",
     "forgot-password": "Forgot Password",
     "categories": "🫙 View Categories",
-    "add-category": "➕🫙 Add Category"
+    "add-category": "➕🫙 Add Category",
+    "user": "User"
   },
   "mock": {
     "fromAsyncData": "Data from asynchronous requests",
