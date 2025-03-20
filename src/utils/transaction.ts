@@ -4,7 +4,7 @@ const userStore = useUserStore();
 
 export const EMPTY_TRANSACTION: Transaction = {
   id: '',
-  amount: 0,
+  amount: null,
   categoryId: '',
   timestamp: new Date().toISOString(),
   description: '',

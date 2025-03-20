@@ -63,7 +63,12 @@
           :placeholder="t('transaction.categoryId')"
           @click="showCascader = true"
         />
-        <van-popup v-model:show="showCascader" round position="bottom">
+        <van-popup
+          v-model:show="showCascader"
+          round
+          position="bottom"
+          :style="{height: '40%'}"
+        >
           <van-cascader
             v-model="cascaderValue"
             title="Select Category"
@@ -247,7 +252,6 @@ onBeforeMount(async () => {
   ];
 
   categoryOptions.value = buildCategoryOptions(categories.value);
-  console.log('categoryOptions:', categoryOptions.value);
 });
 
 const {t} = useI18n();
@@ -322,54 +326,63 @@ const onConfirmCalendar = ({selectedValues}) => {
 
 const buildCategoryOptions = (categories: Category[]): Option[] => {
   const categoryMap = new Map<string, Option>();
+  const categoryOptions: Option[] = []; // Inizializza la root categories
 
+  // Creazione dei nodi di base
   categories.forEach((category) => {
     categoryMap.set(category.id, {
       text: category.title,
       value: category.id,
-      children: [],
+      children: [], // Inizializziamo sempre children
     });
-    console.log('categoryMap:', categoryMap);
   });
 
+  // Costruzione della gerarchia
   categories.forEach((category) => {
     const node = categoryMap.get(category.id);
-    if (
-      category.parentCategoryId === null ||
-      category.parentCategoryId === ''
-    ) {
-      console.log('Root category:', node);
-      categoryOptions.value.push(node);
+    if (!node) return;
+
+    if (!category.parentCategoryId) {
+      categoryOptions.push(node);
     } else {
       const parent = categoryMap.get(category.parentCategoryId);
       if (parent) {
-        console.log('Parent category:', parent);
         parent.children.push(node);
       }
     }
   });
 
-  console.log('categoryOptions:', categoryOptions);
+  // **Rimuove `children` se è vuoto**
+  const cleanTree = (nodes: Option[]): Option[] => {
+    return nodes.map((node) => {
+      const cleanedNode = {...node}; // Copia l'oggetto
+      if (cleanedNode.children.length > 0) {
+        cleanedNode.children = cleanTree(cleanedNode.children); // Ricorsione sui figli
+      } else {
+        delete cleanedNode.children; // Rimuove `children` se è vuoto
+      }
+      return cleanedNode;
+    });
+  };
 
-  return categoryOptions.value;
+  return cleanTree(categoryOptions);
 };
 
-const onChange = ({value}: {value: string}) => {
+const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
+  // onChange e onFinish sono
+
   // Logica per gestire il cambiamento della selezione
-  console.log('onChange:', value);
-  cascaderValue.value = value;
-};
-
-const onFinish = ({selectedOptions}: {selectedOptions: Option[]}) => {
-  showCascader.value = false;
+  cascaderValue.value = selectedOptions[selectedOptions.length - 1].value;
+  //questi altri due invece servono per l'inserimento della spesa, uno l'id e l'altro il nome
+  // da mostrare nella pagina
   fieldValue.value = selectedOptions.map((option) => option.text).join('/');
   transactionData.categoryId =
     selectedOptions[selectedOptions.length - 1].value;
-  //devo cambiare pure il nome di quello che viene mostrato nella selection, prendendo
-  // il nome della categoria selezionata e non il suo id.
-  // però nella transizione devo invece usare il suo id
-  // dovrò modificare il placeholder della selection in modo che mostri il nome della categoria selezionata
-  // TODO: Da implementare
+};
+
+const onFinish = () => {
+  //chiudo il cascader perchè sono arrivato alla fine
+  showCascader.value = false;
 };
 </script>
 
@@ -385,12 +398,14 @@ const onFinish = ({selectedOptions}: {selectedOptions: Option[]}) => {
 
 <style scoped>
 .van-card-expense {
-  background-color: #ff000020; /* Light red background */
+  background-color: #ff000020;
+  /* Light red background */
   border-radius: 20px;
 }
 
 .van-card-income {
-  background-color: #00800020; /* Light green background */
+  background-color: #00800020;
+  /* Light green background */
   border-radius: 20px;
 }
 </style>
