@@ -122,6 +122,8 @@
     "color": "Color",
     "icon": "Icon",
     "budget": "Budget",
+    "id": "ID Category Name",
+    "parentCategoryName": "Parent Category Name",
     "parentCategoryId": "Parent Category ID",
     "excludeFromStat": "Exclude from Statistics",
     "active": "Active",

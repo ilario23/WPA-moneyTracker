@@ -12,9 +12,19 @@
     >
       <div class="overflow-hidden rounded-3xl">
         <van-field
+          v-model="newCategory.id"
+          name="userId"
+          :label="t('category.id')"
+          readonly
+        />
+      </div>
+
+      <div class="mt-16 overflow-hidden rounded-3xl">
+        <van-field
           v-model="newCategory.title"
           :rules="rules.title"
           name="title"
+          :label="t('category.title')"
           :placeholder="t('category.title')"
         />
       </div>
@@ -25,6 +35,8 @@
           :rules="rules.userId"
           name="userId"
           :placeholder="t('category.userId')"
+          :label="t('category.userId')"
+          readonly
         />
       </div>
 
@@ -34,6 +46,7 @@
           :rules="rules.color"
           name="color"
           :placeholder="t('category.color')"
+          :label="t('category.color')"
         />
       </div>
 
@@ -43,6 +56,7 @@
           :rules="rules.icon"
           name="icon"
           :placeholder="t('category.icon')"
+          :label="t('category.icon')"
         />
       </div>
 
@@ -53,6 +67,8 @@
           name="budget"
           type="number"
           :placeholder="t('category.budget')"
+          :label="t('category.budget')"
+          disabled
         />
       </div>
 
@@ -62,25 +78,34 @@
           :rules="rules.parentCategoryId"
           name="parentCategoryId"
           :placeholder="t('category.parentCategoryId')"
+          :label="t('category.parentCategoryId')"
         />
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
-        <van-switch
-          v-model="newCategory.excludeFromStat"
-          :rules="rules.excludeFromStat"
-          name="excludeFromStat"
-          :title="t('category.excludeFromStat')"
-        />
+        <van-field :label="t('category.excludeFromStat')" disabled>
+          <template #input>
+            <van-switch
+              v-model="newCategory.excludeFromStat"
+              :rules="rules.excludeFromStat"
+              name="excludeFromStat"
+              :title="t('category.excludeFromStat')"
+            />
+          </template>
+        </van-field>
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
-        <van-switch
-          v-model="newCategory.active"
-          :rules="rules.active"
-          name="active"
-          :title="t('category.active')"
-        />
+        <van-field :label="t('category.active')" disabled>
+          <template #input>
+            <van-switch
+              v-model="newCategory.active"
+              :rules="rules.active"
+              name="active"
+              :title="t('category.active')"
+            />
+          </template>
+        </van-field>
       </div>
 
       <div class="mt-16">
