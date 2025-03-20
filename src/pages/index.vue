@@ -33,7 +33,6 @@ function onLanguageConfirm(event: {selectedOptions: PickerColumn}) {
 }
 
 const menuItems = computed(() => [
-  {title: t('menus.mockGuide'), route: 'mock'},
   {title: t('menus.echartsDemo'), route: 'charts'},
   {title: t('menus.unocssExample'), route: 'unocss'},
   {title: t('menus.persistPiniaState'), route: 'counter'},
