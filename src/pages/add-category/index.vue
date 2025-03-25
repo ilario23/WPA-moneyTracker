@@ -125,8 +125,8 @@
 
 <script setup lang="ts">
 import {ref, reactive} from 'vue';
-import {useRouter} from 'vue-router';
-import {showNotify} from 'vant';
+// import {useRouter} from 'vue-router';
+// import {showNotify} from 'vant';
 import {EMPTY_CATEGORY} from '@/utils/category';
 import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores';
@@ -136,7 +136,7 @@ const userStore = useUserStore();
 const categories = ref<Category[]>([]);
 
 const {t} = useI18n();
-const router = useRouter();
+// const router = useRouter();
 const loading = ref(false);
 
 const dark = ref<boolean>(isDark.value);
@@ -188,19 +188,19 @@ const save = () => {
   clearForm();
 };
 
-async function addCategory() {
-  try {
-    loading.value = true;
-    // Simulate adding a category
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    showNotify({type: 'success', message: t('category.success')});
-    router.push({name: 'categories'});
-  } catch (error) {
-    showNotify({type: 'danger', message: t('category.error')});
-  } finally {
-    loading.value = false;
-  }
-}
+// async function addCategory() {
+//   try {
+//     loading.value = true;
+//     // Simulate adding a category
+//     await new Promise((resolve) => setTimeout(resolve, 1000));
+//     showNotify({type: 'success', message: t('category.success')});
+//     router.push({name: 'categories'});
+//   } catch (error) {
+//     showNotify({type: 'danger', message: t('category.error')});
+//   } finally {
+//     loading.value = false;
+//   }
+// }
 </script>
 
 <route lang="json5">

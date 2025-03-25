@@ -117,7 +117,6 @@ import {showNotify} from 'vant';
 import {useUserStore} from '@/stores';
 import type {Category} from '@/types/category';
 import {API} from '@/api';
-import {toRaw} from 'vue';
 
 const userStore = useUserStore();
 const categories = ref<Category[]>([]);

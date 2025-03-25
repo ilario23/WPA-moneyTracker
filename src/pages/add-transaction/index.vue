@@ -137,11 +137,10 @@
 
 <script setup lang="ts">
 import {ref, reactive, onBeforeMount} from 'vue';
-import {showNotify, closeToast, showLoadingToast} from 'vant';
+import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
 import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores/modules/user';
-import {API} from '@/api';
 import {useI18n} from 'vue-i18n';
 
 interface Option {
