@@ -2,11 +2,11 @@
   "name": "vue3-vant-mobile",
   "type": "module",
   "version": "3.5.1",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.6.5",
   "description": "An mobile web apps template based on the Vue 3 ecosystem",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env MOCK_SERVER_PORT=8086 vite",
+    "dev": "cross-env vite",
     "build": "vue-tsc --noEmit && vite build",
     "build:dev": "vue-tsc --noEmit && vite build --mode=development",
     "preview": "vite preview",
