@@ -139,7 +139,6 @@
 import {ref, reactive, onBeforeMount} from 'vue';
 import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
-import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores/modules/user';
 import {useI18n} from 'vue-i18n';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
