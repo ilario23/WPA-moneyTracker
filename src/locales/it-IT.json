@@ -113,6 +113,7 @@
     "excludeFromStat": "Escludi dalle Statistiche",
     "active": "Attivo",
     "add": "Aggiungi Categoria",
+    "update": "Aggiorna Categoria",
     "pleaseEnterTitle": "Per favore inserisci il titolo",
     "pleaseEnterUserId": "Per favore inserisci l'ID utente",
     "pleaseEnterColor": "Per favore inserisci il colore",

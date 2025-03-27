@@ -117,8 +117,10 @@ import {showNotify} from 'vant';
 import {useUserStore} from '@/stores';
 import type {Category} from '@/types/category';
 import {API} from '@/api';
+import {useRouter} from 'vue-router';
 
 const userStore = useUserStore();
+const router = useRouter();
 const categories = ref<Category[]>([]);
 const rootCategories = ref();
 
@@ -227,28 +229,75 @@ const selectCategory = (category) => {
 };
 
 // Function to handle delete confirm action
-const handleDeleteConfirm = () => {
+const handleDeleteConfirm = async () => {
   if (selectedCategory.value.children) {
     console.log('Cannot delete category with children');
     // Show an alert for that
     showNotify({
       type: 'danger',
+      // TODO: add i18n
       message: 'You can only delete a category without children',
     });
-    console.log('TODO: add translation');
     return;
-  } else {
-    console.log('Delete category with id:', selectedCategory.value.value);
-    console.log('TODO: Delete category');
   }
 
-  showDeleteDialog.value = false;
+  try {
+    // Ottieni l'ID della categoria selezionata
+    const categoryId = selectedCategory.value.value;
+
+    if (!categoryId) {
+      showNotify({
+        type: 'danger',
+        message: 'No category selected for deletion',
+      });
+      return;
+    }
+
+    // Chiama l'API per cancellare la categoria
+    await API.Database.Users.Categories.deleteUserCategory(
+      userStore.userInfo?.uid,
+      categoryId
+    );
+
+    // Aggiorna la lista delle categorie
+    getUserCategories();
+
+    // Mostra una notifica di successo
+    showNotify({
+      type: 'success',
+      message: 'Category deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    showNotify({
+      type: 'danger',
+      message: 'Failed to delete category',
+    });
+  } finally {
+    // Chiudi la dialog
+    showDeleteDialog.value = false;
+  }
 };
 
 // Function to handle edit confirm action
 const handleEditConfirm = () => {
-  console.log('Edit category with id:', selectedCategory.value.value);
-  console.log('TODO: Edit category');
+  if (!selectedCategory.value.value) {
+    showNotify({
+      type: 'danger',
+      message: 'No category selected for editing',
+    });
+    return;
+  }
+
+  // Reindirizza alla pagina add-category con i dati della categoria selezionata
+  router.push({
+    name: 'add-category',
+    query: {
+      id: selectedCategory.value.value,
+    },
+  });
+
+  // Chiudi la dialog
   showEditDialog.value = false;
 };
 

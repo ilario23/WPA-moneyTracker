@@ -113,6 +113,7 @@
     "excludeFromStat": "Exclude from Statistics",
     "active": "Active",
     "add": "Add Category",
+    "update": "Update Category",
     "pleaseEnterTitle": "Please enter the title",
     "pleaseEnterUserId": "Please enter the user ID",
     "pleaseEnterColor": "Please enter the color",

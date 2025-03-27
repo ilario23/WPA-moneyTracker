@@ -1,4 +1,11 @@
-import {collection, deleteDoc, doc, getDocs, setDoc} from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+} from 'firebase/firestore';
 import {DB} from '@/config/firebase';
 import type {Category} from '@/types/category';
 import {setLoading} from '@/services/utils';
@@ -116,16 +123,39 @@ export const UserCategories = {
 
   /**
    * @param userId id of the user
-   * @param category whole category object to be deleted
+   * @param categoryId id of the category to be deleted
    * @returns void
    */
   deleteUserCategory: async (
     userId: string,
-    category: Category
+    categoryId: string
   ): Promise<void> => {
     setLoading(true);
-    return deleteDoc(doc(DB, 'users', userId, COLLECTION, category.id)).finally(
+    return deleteDoc(doc(DB, 'users', userId, COLLECTION, categoryId)).finally(
       () => setLoading(false)
     );
+  },
+
+  /**
+   * @param userId id of the user
+   * @param categoryId id of the category to retrieve
+   * @returns the category object or null if not found
+   */
+  getUserCategoryById: async (
+    userId: string,
+    categoryId: string
+  ): Promise<Category | null> => {
+    setLoading(true);
+    try {
+      const categoryDoc = await getDoc(
+        doc(DB, 'users', userId, COLLECTION, categoryId)
+      );
+      return categoryDoc.exists() ? (categoryDoc.data() as Category) : null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
   },
 };

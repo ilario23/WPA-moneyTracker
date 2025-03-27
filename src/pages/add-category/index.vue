@@ -4,25 +4,10 @@
       <van-icon :name="newCategory.icon" />
     </div>
 
-    <van-form
-      :model="newCategory"
-      :rules="rules"
-      validate-trigger="onSubmit"
-      @submit="save"
-    >
+    <van-form :model="newCategory" validate-trigger="onSubmit" @submit="save">
       <div class="overflow-hidden rounded-3xl">
         <van-field
-          v-model="newCategory.id"
-          name="userId"
-          :label="t('category.id')"
-          readonly
-        />
-      </div>
-
-      <div class="mt-16 overflow-hidden rounded-3xl">
-        <van-field
           v-model="newCategory.title"
-          :rules="rules.title"
           name="title"
           :label="t('category.title')"
           :placeholder="t('category.title')"
@@ -31,58 +16,49 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="newCategory.userId"
-          :rules="rules.userId"
-          name="userId"
-          :placeholder="t('category.userId')"
-          :label="t('category.userId')"
-          readonly
+          v-model="newCategory.parentCategoryId"
+          name="parentCategoryId"
+          :label="t('category.parentCategoryId')"
+          :placeholder="t('category.parentCategoryId')"
         />
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
           v-model="newCategory.color"
-          :rules="rules.color"
           name="color"
-          :placeholder="t('category.color')"
           :label="t('category.color')"
+          :placeholder="t('category.color')"
         />
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
           v-model="newCategory.icon"
-          :rules="rules.icon"
           name="icon"
-          :placeholder="t('category.icon')"
           :label="t('category.icon')"
+          :placeholder="t('category.icon')"
         />
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
           v-model="newCategory.budget"
-          :rules="rules.budget"
           name="budget"
           type="number"
-          :placeholder="t('category.budget')"
           :label="t('category.budget')"
-          disabled
+          :placeholder="t('category.budget')"
         />
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
-        <van-field
-          v-model="newCategory.parentCategoryId"
-          :rules="rules.parentCategoryId"
-          name="parentCategoryId"
-          :placeholder="t('category.parentCategoryId')"
-          :label="t('category.parentCategoryId')"
+        <van-switch
+          v-model="newCategory.excludeFromStat"
+          :label="t('category.excludeFromStat')"
         />
       </div>
 
-      <div class="mt-16 overflow-hidden rounded-3xl">
+      <!-- <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field :label="t('category.excludeFromStat')" disabled>
           <template #input>
             <van-switch
@@ -106,7 +82,7 @@
             />
           </template>
         </van-field>
-      </div>
+      </div> -->
 
       <div class="mt-16">
         <van-button
@@ -116,7 +92,7 @@
           round
           block
         >
-          {{ $t('category.add') }}
+          {{ route.query.id ? t('category.update') : t('category.add') }}
         </van-button>
       </div>
     </van-form>
@@ -124,83 +100,69 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive} from 'vue';
-// import {useRouter} from 'vue-router';
-// import {showNotify} from 'vant';
+import {ref, reactive, onBeforeMount, toRaw} from 'vue';
+import {useRouter, useRoute} from 'vue-router';
+import {showNotify} from 'vant';
 import {EMPTY_CATEGORY} from '@/utils/category';
 import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores';
 import {API} from '@/api';
+import {useI18n} from 'vue-i18n';
+const {t} = useI18n();
 
 const userStore = useUserStore();
-const categories = ref<Category[]>([]);
-
-const {t} = useI18n();
-// const router = useRouter();
+const router = useRouter();
+const route = useRoute();
 const loading = ref(false);
 
-const dark = ref<boolean>(isDark.value);
+const newCategory = reactive<Category>({...EMPTY_CATEGORY});
 
-watch(
-  () => isDark.value,
-  (newMode) => {
-    dark.value = newMode;
+onBeforeMount(async () => {
+  if (route.query.id) {
+    const temp = await API.Database.Users.Categories.getUserCategoryById(
+      userStore.userInfo?.uid,
+      route.query.id as string
+    );
+
+    if (temp) {
+      // Assegna i valori alla reactive `newCategory`
+      Object.assign(newCategory, toRaw(temp));
+    }
+    // stampa il valore di newCategory
+    console.log('newCategory:', newCategory);
   }
-);
-
-const newCategory = reactive({...EMPTY_CATEGORY});
-
-const getUserCategories = () => {
-  if (userStore.userInfo?.uid) {
-    API.Database.Users.Categories.getUserCategories(
-      userStore.userInfo?.uid
-    ).then((res) => (categories.value = res));
-  }
-};
-
-const rules = reactive({
-  title: [{required: true, message: t('category.pleaseEnterTitle')}],
-  userId: [{required: true, message: t('category.pleaseEnterUserId')}],
-  color: [{required: false, message: t('category.pleaseEnterColor')}],
-  icon: [{required: true, message: t('category.pleaseEnterIcon')}],
-  budget: [{required: false, message: t('category.pleaseEnterBudget')}],
-  parentCategoryId: [
-    {required: false, message: t('category.pleaseEnterParentCategoryId')},
-  ],
-  excludeFromStat: [
-    {required: true, message: t('category.pleaseEnterExcludeFromStat')},
-  ],
-  active: [{required: true, message: t('category.pleaseEnterActive')}],
 });
 
-const clearForm = () => {
-  Object.assign(newCategory, EMPTY_CATEGORY);
-};
+const save = async () => {
+  try {
+    loading.value = true;
 
-const save = () => {
-  if (userStore.userInfo?.uid)
-    API.Database.Users.Categories.createUserCategory(
-      userStore.userInfo.uid,
-      newCategory
-    )
-      .then(getUserCategories)
-      .catch((err) => console.error('failed creation category', err));
-  clearForm();
-};
+    if (userStore.userInfo?.uid) {
+      if (route.query.id) {
+        // Modifica categoria esistente
+        await API.Database.Users.Categories.updateUserCategory(
+          userStore.userInfo.uid,
+          newCategory
+        );
+        showNotify({type: 'success', message: 'Category updated successfully'});
+      } else {
+        // Crea nuova categoria
+        await API.Database.Users.Categories.createUserCategory(
+          userStore.userInfo.uid,
+          newCategory
+        );
+        showNotify({type: 'success', message: 'Category added successfully'});
+      }
 
-// async function addCategory() {
-//   try {
-//     loading.value = true;
-//     // Simulate adding a category
-//     await new Promise((resolve) => setTimeout(resolve, 1000));
-//     showNotify({type: 'success', message: t('category.success')});
-//     router.push({name: 'categories'});
-//   } catch (error) {
-//     showNotify({type: 'danger', message: t('category.error')});
-//   } finally {
-//     loading.value = false;
-//   }
-// }
+      router.push({name: 'categories'});
+    }
+  } catch (error) {
+    console.error('Error saving category:', error);
+    showNotify({type: 'danger', message: 'Failed to save category'});
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <route lang="json5">
