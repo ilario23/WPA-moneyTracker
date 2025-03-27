@@ -13,7 +13,6 @@
     "keepAlive": "🧡 Demo KeepAlive",
     "transaction": "➕ Aggiungi Transazione",
     "login": "🔒 Accedi",
-    "register": "Registrati",
     "settings": "Impostazioni",
     "basicSettings": "Impostazioni di Base",
     "exampleComponents": "Componenti Esempio",
@@ -52,13 +51,10 @@
     "login": "Accedi",
     "logout": "Esci",
     "email": "Email",
-    "password": "Password",
-    "pleaseEnterEmail": "Inserisci l'email",
-    "pleaseEnterPassword": "Inserisci la password",
-    "sign-up": "Clicca per registrarti",
-    "forgot-password": "Password dimenticata?",
-    "invalidCredential": "Credenziali non valide, riprova.",
-    "genericError": "Si è verificato un errore, riprova."
+    "loginWithGoogle": "Accedi con Google",
+    "success": "Accesso effettuato con successo",
+    "error": "Accesso fallito",
+    "newUserCreated": "Benvenuto! Il tuo account è stato creato."
   },
   "forgot-password": {
     "email": "Email",
@@ -76,25 +72,6 @@
     "gettingCode": "Ottenendo codice",
     "sendCodeSuccess": "Codice inviato, il codice è",
     "passwordResetSuccess": "Reset password avvenuto con successo"
-  },
-  "register": {
-    "email": "Email",
-    "code": "Codice",
-    "nickname": "Soprannome",
-    "password": "Password",
-    "comfirmPassword": "Conferma Password",
-    "pleaseEnterEmail": "Inserisci l'email",
-    "pleaseEnterCode": "Inserisci il codice",
-    "pleaseEnterNickname": "Inserisci il soprannome",
-    "pleaseEnterPassword": "Inserisci la password",
-    "pleaseEnterConfirmPassword": "Inserisci di nuovo la password",
-    "passwordsDoNotMatch": "Le password non corrispondono",
-    "confirm": "Conferma",
-    "backToLogin": "Torna al login",
-    "getCode": "Ottieni codice",
-    "gettingCode": "Ottenendo codice",
-    "sendCodeSuccess": "Codice inviato, il codice è",
-    "registerSuccess": "Registrazione completata con successo"
   },
   "settings": {
     "logout": "Esci",

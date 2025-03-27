@@ -2,10 +2,13 @@ import {AUTH} from '@/config/firebase';
 import {
   signInWithEmailAndPassword,
   signOut,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
   onAuthStateChanged,
 } from 'firebase/auth';
+import type {Category} from '@/types/category';
+import {doc, getDoc, setDoc} from 'firebase/firestore';
+import {DB} from '@/config/firebase';
+// import base categories from '@/utils/category';
+import {BASE_CATEGORIES} from '@/utils/category';
 
 // Define interfaces
 export interface LoginData {
@@ -42,11 +45,6 @@ export async function logout(): Promise<void> {
   await signOut(AUTH);
 }
 
-// Register
-export async function register(data: LoginData): Promise<void> {
-  await createUserWithEmailAndPassword(AUTH, data.email, data.password);
-}
-
 // Get User Info
 export async function getUserInfo(): Promise<UserState> {
   const user = AUTH.currentUser;
@@ -59,11 +57,6 @@ export async function getUserInfo(): Promise<UserState> {
     };
   }
   throw new Error('User not logged in');
-}
-
-// Reset Password
-export async function resetPassword(email: string): Promise<void> {
-  await sendPasswordResetEmail(AUTH, email);
 }
 
 // Listen to Auth State Changes
@@ -82,4 +75,46 @@ export function onAuthStateChange(
       callback(null);
     }
   });
+}
+
+/**
+ * Controlla se l'utente è nuovo e, in caso affermativo, crea una collection base.
+ * @param user L'oggetto utente di Firebase
+ */
+export async function handleNewUser(user: UserState): Promise<boolean> {
+  try {
+    const userDocRef = doc(DB, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (!userDoc.exists()) {
+      // L'utente è nuovo, crea un documento utente
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        email: user.email || '',
+        displayName: user.displayName || '',
+        avatar: user.avatar || '',
+        createdAt: new Date().toISOString(),
+      });
+
+      // Crea una collection base con il costruttore di categorie
+      const defaultCategories: Category[] = BASE_CATEGORIES.map((category) => ({
+        ...category,
+        userId: user.uid,
+      }));
+
+      for (const category of defaultCategories) {
+        await setDoc(
+          doc(DB, 'users', user.uid, 'categories', category.id),
+          category
+        );
+      }
+
+      return true; // Indica che l'utente è nuovo
+    }
+
+    return false; // Indica che l'utente esiste già
+  } catch (error) {
+    console.error('Errore durante il controllo del nuovo utente:', error);
+    throw error;
+  }
 }

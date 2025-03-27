@@ -13,7 +13,6 @@
     "keepAlive": "🧡 KeepAlive Demo",
     "transaction": "➕ Add Transaction",
     "login": "🔒 Login",
-    "register": "Register",
     "settings": "Settings",
     "basicSettings": "Basic Settings",
     "exampleComponents": "Example components",
@@ -51,14 +50,10 @@
   "login": {
     "login": "Sign In",
     "logout": "Sign Out",
-    "email": "Email",
-    "password": "Password",
-    "pleaseEnterEmail": "Please enter email",
-    "pleaseEnterPassword": "Please enter password",
-    "sign-up": "Click to sign up",
-    "forgot-password": "Forgot password?",
-    "invalidCredential": "Invalid credentials, please try again.",
-    "genericError": "An error occurred, please try again."
+    "loginWithGoogle": "Login with Google",
+    "success": "Login successful",
+    "error": "Login failed",
+    "newUserCreated": "Welcome! Your account has been created."
   },
   "forgot-password": {
     "email": "Email",
@@ -76,25 +71,6 @@
     "gettingCode": "Getting code",
     "sendCodeSuccess": "Sent, the code is",
     "passwordResetSuccess": "Password reset succeeded"
-  },
-  "register": {
-    "email": "Email",
-    "code": "Code",
-    "nickname": "Nickname",
-    "password": "Password",
-    "comfirmPassword": "Password again",
-    "pleaseEnterEmail": "Please enter email",
-    "pleaseEnterCode": "Please enter code",
-    "pleaseEnterNickname": "Please enter nickname",
-    "pleaseEnterPassword": "Please enter password",
-    "pleaseEnterConfirmPassword": "Please enter password again",
-    "passwordsDoNotMatch": "Passwords do not match",
-    "confirm": "Confirm",
-    "backToLogin": "Back to login",
-    "getCode": "Get code",
-    "gettingCode": "Getting code",
-    "sendCodeSuccess": "Sent, the code is",
-    "registerSuccess": "Register succeeded"
   },
   "settings": {
     "logout": "Sign Out",

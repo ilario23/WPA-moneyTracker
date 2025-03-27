@@ -33,24 +33,30 @@ router.beforeEach(async (to: EnhancedRouteLocation) => {
   // Set page title
   setPageTitle(to.meta.title);
 
-  // Check if user is authenticated
-  if (!userStore.userInfo?.uid) {
-    if (isLogin()) {
+  // Pagine accessibili senza autenticazione
+  const publicPages: Array<EnhancedRouteLocation['name']> = ['login', '404'];
+
+  // Controlla se l'utente sta accedendo a una pagina pubblica o se è autenticato
+  const isAuthenticated = !!userStore.userInfo?.uid;
+
+  if (!isAuthenticated) {
+    if (publicPages.includes(to.name)) {
+      // Consenti l'accesso alle pagine pubbliche
+      return true;
+    }
+
+    if (isLogin() && !publicPages.includes(to.name)) {
       try {
         await userStore.fetchUserInfo();
       } catch (error) {
-        // Handle error (e.g., token expired, user not found)
+        // Gestisci errori (es. token scaduto, utente non trovato)
         await userStore.logout();
-        if (to.name !== 'login') {
-          return {name: 'login'};
-        }
-      }
-    } else {
-      // Redirect to login if the user is not authenticated and not already on the login page
-      if (to.name !== 'login') {
         return {name: 'login'};
       }
     }
+
+    // Reindirizza alla pagina di login se non autenticato
+    return {name: 'login'};
   }
 });
 
