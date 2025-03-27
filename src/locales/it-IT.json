@@ -42,7 +42,16 @@
   "profile": {
     "login": "Accedi",
     "settings": "Impostazioni",
-    "docs": "Documenti"
+    "docs": "Documenti",
+    "userUid": "ID Utente",
+    "userEmail": "Email Utente",
+    "userAvatar": "Avatar Utente",
+    "userDisplayName": "Nome Utente",
+    "userInfo": "Info Utente",
+    "succesfulLogout": "Logout effettuato con successo",
+    "errorLogout": "Errore durante il logout",
+    "comfirmTitle": "Confermi di voler uscire?",
+    "logout": "Esci"
   },
   "keepAlive": {
     "label": "Il componente attuale sarà memorizzato nella cache"
@@ -74,9 +83,7 @@
     "passwordResetSuccess": "Reset password avvenuto con successo"
   },
   "settings": {
-    "logout": "Esci",
-    "currentVersion": "Versione Attuale",
-    "comfirmTitle": "Confermi di voler uscire?"
+    "currentVersion": "Versione Attuale"
   },
   "transaction": {
     "expense": "Spesa",
