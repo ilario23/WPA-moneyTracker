@@ -23,10 +23,36 @@
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
           v-model="newCategory.parentCategoryId"
+          is-link
+          readonly
           name="parentCategoryId"
-          :label="t('category.parentCategoryId')"
-          :placeholder="t('category.parentCategoryId')"
-        />
+          :label="t('category.parentCategory')"
+          :placeholder="t('category.parentCategory')"
+          @click="showCascader = true"
+        >
+          <template #right-icon>
+            <van-icon
+              name="clear"
+              @click.stop="clearParentCategory"
+              class="text-gray-500"
+            />
+          </template>
+        </van-field>
+        <van-popup
+          v-model:show="showCascader"
+          round
+          position="bottom"
+          :style="{height: '40%'}"
+        >
+          <van-cascader
+            v-model="cascaderValue"
+            title="Select Parent Category"
+            :options="categoryOptions"
+            @close="showCascader = false"
+            @change="onChange"
+            @finish="onFinish"
+          />
+        </van-popup>
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
@@ -109,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, onBeforeMount, toRaw} from 'vue';
+import {ref, reactive, onBeforeMount} from 'vue';
 import {useRouter, useRoute} from 'vue-router';
 import {showNotify} from 'vant';
 import {EMPTY_CATEGORY} from '@/utils/category';
@@ -117,8 +143,8 @@ import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores';
 import {API} from '@/api';
 import {useI18n} from 'vue-i18n';
-const {t} = useI18n();
 
+const {t} = useI18n();
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
@@ -126,37 +152,64 @@ const loading = ref(false);
 
 const newCategory = reactive<Category>({...EMPTY_CATEGORY});
 
+// Stato per il cascader
+const categoryOptions = ref([]);
+const showCascader = ref(false);
+const cascaderValue = ref('');
+
+// Regole di validazione
 const rules = reactive({
   title: [{required: true, message: t('category.pleaseEnterTitle')}],
   color: [{required: false, message: t('category.pleaseEnterColor')}],
   icon: [{required: true, message: t('category.pleaseEnterIcon')}],
-  budget: [{required: false, message: t('category.pleaseEnterBudget')}],
-  parentCategoryId: [
-    {required: false, message: t('category.pleaseEnterParentCategoryId')},
-  ],
   excludeFromStat: [
     {required: true, message: t('category.pleaseEnterExcludeFromStat')},
   ],
   active: [{required: true, message: t('category.pleaseEnterActive')}],
 });
 
+// Carica le categorie per il cascader
 onBeforeMount(async () => {
   newCategory.id = crypto.randomUUID();
+
+  // Ottieni le categorie per il cascader
+  categoryOptions.value =
+    await API.Database.Users.Categories.getCascaderCategoryOptions(
+      userStore.userInfo?.uid
+    );
+
   if (route.query.id) {
-    console.log('route.query.id', route.query.id);
     const temp = await API.Database.Users.Categories.getUserCategoryById(
       userStore.userInfo?.uid,
       route.query.id as string
     );
 
     if (temp) {
-      // Assegna i valori alla reactive `newCategory`
-      Object.assign(newCategory, toRaw(temp));
+      Object.assign(newCategory, temp);
     }
   }
-  console.log('newCategory.id:', newCategory.id);
 });
 
+// Gestione del cascader
+const onChange = ({selectedOptions}: {selectedOptions: any[]}) => {
+  cascaderValue.value = selectedOptions[selectedOptions.length - 1].value;
+  newCategory.parentCategoryId = selectedOptions
+    .map((option) => option.text)
+    .join(' / ');
+};
+
+// Clear the parent category
+const clearParentCategory = () => {
+  cascaderValue.value = '';
+  newCategory.parentCategoryId = null;
+};
+
+const onFinish = () => {
+  newCategory.parentCategoryId = cascaderValue.value;
+  showCascader.value = false;
+};
+
+// Salvataggio della categoria
 const save = async () => {
   try {
     loading.value = true;
@@ -177,7 +230,6 @@ const save = async () => {
         );
         showNotify({type: 'success', message: 'Category added successfully'});
       }
-      Object.assign(newCategory, EMPTY_CATEGORY);
       router.push({name: 'categories'});
     }
   } catch (error) {
