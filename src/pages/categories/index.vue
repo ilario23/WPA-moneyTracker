@@ -1,11 +1,4 @@
 <template>
-  <van-cascader
-    v-if="false"
-    v-model="selectedCategoryId2"
-    :options="rootCategories"
-    :field-names="fieldNames2"
-    placeholder="Seleziona una categoria"
-  />
   <div>
     <div style="display: flex; width: 100%; gap: 12px; padding: 8px">
       <van-cell
@@ -187,22 +180,6 @@ const getUserCategories = () => {
 
 // Root categories
 getUserCategories();
-
-const fieldNames2 = ref({
-  active: 'active',
-  budget: 'budget',
-  children: 'children',
-  color: 'color',
-  excludeFromStat: 'excludeFromStat',
-  icon: 'icon',
-  id: 'id',
-  parentCategoryId: 'parentCategoryId',
-  title: 'title',
-  userId: 'userId',
-});
-
-// Selected category ID
-const selectedCategoryId2 = ref<string>('');
 
 // Function to find category by ID
 const findCategory = (categories: any[], id: string) => {
