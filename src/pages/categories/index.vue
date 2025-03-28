@@ -288,7 +288,6 @@ const handleEditConfirm = () => {
     });
     return;
   }
-
   // Reindirizza alla pagina add-category con i dati della categoria selezionata
   router.push({
     name: 'add-category',

@@ -4,10 +4,16 @@
       <van-icon :name="newCategory.icon" />
     </div>
 
-    <van-form :model="newCategory" validate-trigger="onSubmit" @submit="save">
+    <van-form
+      :model="newCategory"
+      validate-trigger="onSubmit"
+      @submit="save"
+      :rules="rules"
+    >
       <div class="overflow-hidden rounded-3xl">
         <van-field
           v-model="newCategory.title"
+          :rules="rules.title"
           name="title"
           :label="t('category.title')"
           :placeholder="t('category.title')"
@@ -29,6 +35,12 @@
           name="color"
           :label="t('category.color')"
           :placeholder="t('category.color')"
+          type="color"
+          @change="
+            () => {
+              console.log('Selected color:', newCategory.color);
+            }
+          "
         />
       </div>
 
@@ -36,6 +48,7 @@
         <van-field
           v-model="newCategory.icon"
           name="icon"
+          :rules="rules.icon"
           :label="t('category.icon')"
           :placeholder="t('category.icon')"
         />
@@ -48,17 +61,11 @@
           type="number"
           :label="t('category.budget')"
           :placeholder="t('category.budget')"
+          disabled
         />
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
-        <van-switch
-          v-model="newCategory.excludeFromStat"
-          :label="t('category.excludeFromStat')"
-        />
-      </div>
-
-      <!-- <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field :label="t('category.excludeFromStat')" disabled>
           <template #input>
             <van-switch
@@ -66,6 +73,7 @@
               :rules="rules.excludeFromStat"
               name="excludeFromStat"
               :title="t('category.excludeFromStat')"
+              disabled
             />
           </template>
         </van-field>
@@ -79,10 +87,11 @@
               :rules="rules.active"
               name="active"
               :title="t('category.active')"
+              disabled
             />
           </template>
         </van-field>
-      </div> -->
+      </div>
 
       <div class="mt-16">
         <van-button
@@ -117,8 +126,24 @@ const loading = ref(false);
 
 const newCategory = reactive<Category>({...EMPTY_CATEGORY});
 
+const rules = reactive({
+  title: [{required: true, message: t('category.pleaseEnterTitle')}],
+  color: [{required: false, message: t('category.pleaseEnterColor')}],
+  icon: [{required: true, message: t('category.pleaseEnterIcon')}],
+  budget: [{required: false, message: t('category.pleaseEnterBudget')}],
+  parentCategoryId: [
+    {required: false, message: t('category.pleaseEnterParentCategoryId')},
+  ],
+  excludeFromStat: [
+    {required: true, message: t('category.pleaseEnterExcludeFromStat')},
+  ],
+  active: [{required: true, message: t('category.pleaseEnterActive')}],
+});
+
 onBeforeMount(async () => {
+  newCategory.id = crypto.randomUUID();
   if (route.query.id) {
+    console.log('route.query.id', route.query.id);
     const temp = await API.Database.Users.Categories.getUserCategoryById(
       userStore.userInfo?.uid,
       route.query.id as string
@@ -128,9 +153,8 @@ onBeforeMount(async () => {
       // Assegna i valori alla reactive `newCategory`
       Object.assign(newCategory, toRaw(temp));
     }
-    // stampa il valore di newCategory
-    console.log('newCategory:', newCategory);
   }
+  console.log('newCategory.id:', newCategory.id);
 });
 
 const save = async () => {
@@ -153,7 +177,7 @@ const save = async () => {
         );
         showNotify({type: 'success', message: 'Category added successfully'});
       }
-
+      Object.assign(newCategory, EMPTY_CATEGORY);
       router.push({name: 'categories'});
     }
   } catch (error) {
