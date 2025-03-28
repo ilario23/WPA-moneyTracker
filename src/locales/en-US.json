@@ -114,6 +114,10 @@
     "active": "Active",
     "add": "Add Category",
     "update": "Update Category",
+    "edit": "Edit Category",
+    "delete": "Delete Category",
+    "deleteConfirm": "Are you sure you want to delete this category?",
+    "deleteSuccess": "Category deleted successfully",
     "pleaseEnterTitle": "Please enter the title",
     "pleaseEnterUserId": "Please enter the user ID",
     "pleaseEnterColor": "Please enter the color",
@@ -123,6 +127,13 @@
     "pleaseEnterExcludeFromStat": "Please enter if it should be excluded from statistics",
     "pleaseEnterActive": "Please enter if it is active",
     "success": "Category added successfully",
-    "error": "Failed to add category"
+    "error": "Failed to add category",
+    "noDeletionIfChildren": "You can only delete a category without children",
+    "noCategorySelectedForDeletion": "No category selected for deletion",
+    "deleteError": "Failed to delete category",
+    "noCategorySelectedForEditing": "No category selected for editing",
+    "updateSuccess": "Category updated successfully",
+    "addSuccess": "Category added successfully",
+    "saveError": "Failed to save category"
   }
 }

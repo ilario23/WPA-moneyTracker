@@ -114,6 +114,10 @@
     "active": "Attivo",
     "add": "Aggiungi Categoria",
     "update": "Aggiorna Categoria",
+    "edit": "Modifica Categoria",
+    "delete": "Elimina Categoria",
+    "deleteConfirm": "Sei sicuro di voler eliminare questa categoria?",
+    "deleteSuccess": "Categoria eliminata con successo",
     "pleaseEnterTitle": "Per favore inserisci il titolo",
     "pleaseEnterUserId": "Per favore inserisci l'ID utente",
     "pleaseEnterColor": "Per favore inserisci il colore",
@@ -123,6 +127,13 @@
     "pleaseEnterExcludeFromStat": "Per favore inserisci se deve essere escluso dalle statistiche",
     "pleaseEnterActive": "Per favore inserisci se è attivo",
     "success": "Categoria aggiunta con successo",
-    "error": "Errore nell'aggiunta della categoria"
+    "error": "Errore nell'aggiunta della categoria",
+    "noDeletionIfChildren": "Puoi eliminare solo una categoria senza figli",
+    "noCategorySelectedForDeletion": "Nessuna categoria selezionata per l'eliminazione",
+    "deleteError": "Eliminazione della categoria fallita",
+    "noCategorySelectedForEditing": "Nessuna categoria selezionata per la modifica",
+    "updateSuccess": "Categoria aggiornata con successo",
+    "addSuccess": "Categoria aggiunta con successo",
+    "saveError": "Salvataggio della categoria fallito"
   }
 }

@@ -234,7 +234,7 @@ async function addTransaction(values: any) {
     if (createdTransaction) {
       showNotify({type: 'success', message: t('transaction.success')});
     } else {
-      throw new Error('Transaction creation failed');
+      throw new Error(t('transaction.error'));
     }
   } catch (error) {
     console.error(error);

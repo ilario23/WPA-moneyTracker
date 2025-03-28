@@ -65,8 +65,8 @@
 
   <van-dialog
     v-model:show="showDeleteDialog"
-    title="Delete Category"
-    message="Are you sure you want to delete this category?"
+    :title="$t('category.delete')"
+    :message="$t('category.deleteConfirm')"
     show-cancel-button
     show-confirm-button
     @confirm="handleDeleteConfirm"
@@ -75,17 +75,13 @@
 
   <van-dialog
     v-model:show="showEditDialog"
-    title="Edit Category"
+    :title="$t('category.edit')"
     show-cancel-button
     show-confirm-button
     @confirm="handleEditConfirm"
     @cancel="handleCancel"
   >
-    <van-field
-      v-model="selectedCategory.text"
-      label="Category Name"
-      placeholder="Enter category name"
-    />
+    <van-field v-model="selectedCategory.text" :label="$t('category.title')" />
   </van-dialog>
 
   <van-button
@@ -106,11 +102,13 @@
 
 <script lang="ts" setup>
 import {ref} from 'vue';
+import {useI18n} from 'vue-i18n';
 import {showNotify} from 'vant';
 import {useUserStore} from '@/stores';
 import type {Category} from '@/types/category';
 import {API} from '@/api';
 import {useRouter} from 'vue-router';
+const {t: $t} = useI18n();
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -212,8 +210,7 @@ const handleDeleteConfirm = async () => {
     // Show an alert for that
     showNotify({
       type: 'danger',
-      // TODO: add i18n
-      message: 'You can only delete a category without children',
+      message: $t('category.noDeletionIfChildren'),
     });
     return;
   }
@@ -225,7 +222,7 @@ const handleDeleteConfirm = async () => {
     if (!categoryId) {
       showNotify({
         type: 'danger',
-        message: 'No category selected for deletion',
+        message: $t('category.noCategorySelectedForDeletion'),
       });
       return;
     }
@@ -242,13 +239,13 @@ const handleDeleteConfirm = async () => {
     // Mostra una notifica di successo
     showNotify({
       type: 'success',
-      message: 'Category deleted successfully',
+      message: $t('category.deleteSuccess'),
     });
   } catch (error) {
     console.error('Error deleting category:', error);
     showNotify({
       type: 'danger',
-      message: 'Failed to delete category',
+      message: $t('category.deleteError'),
     });
   } finally {
     // Chiudi la dialog
@@ -261,7 +258,7 @@ const handleEditConfirm = () => {
   if (!selectedCategory.value.value) {
     showNotify({
       type: 'danger',
-      message: 'No category selected for editing',
+      message: $t('category.noCategorySelectedForEditing'),
     });
     return;
   }

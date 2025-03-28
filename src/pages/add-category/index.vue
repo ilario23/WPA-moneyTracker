@@ -221,20 +221,20 @@ const save = async () => {
           userStore.userInfo.uid,
           newCategory
         );
-        showNotify({type: 'success', message: 'Category updated successfully'});
+        showNotify({type: 'success', message: t('category.updateSuccess')});
       } else {
         // Crea nuova categoria
         await API.Database.Users.Categories.createUserCategory(
           userStore.userInfo.uid,
           newCategory
         );
-        showNotify({type: 'success', message: 'Category added successfully'});
+        showNotify({type: 'success', message: t('category.addSuccess')});
       }
       router.push({name: 'categories'});
     }
   } catch (error) {
     console.error('Error saving category:', error);
-    showNotify({type: 'danger', message: 'Failed to save category'});
+    showNotify({type: 'danger', message: t('category.saveError')});
   } finally {
     loading.value = false;
   }
