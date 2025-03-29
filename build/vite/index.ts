@@ -97,6 +97,7 @@ export function createVitePlugins(mode: string) {
       manifest: {
         name: 'vue3-vant-mobile',
         short_name: 'vue3-vant-mobile',
+        orientation: 'portrait-primary',
         theme_color: '#ffffff',
         icons: [
           {
