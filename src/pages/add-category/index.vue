@@ -22,10 +22,9 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="newCategory.parentCategoryId"
+          v-model="fieldValueParent"
           is-link
           readonly
-          name="parentCategoryId"
           :label="t('category.parentCategory')"
           :placeholder="t('category.parentCategory')"
           @click="showCascader = true"
@@ -62,11 +61,10 @@
           :label="t('category.color')"
           :placeholder="t('category.color')"
           type="color"
-          @change="
-            () => {
-              console.log('Selected color:', newCategory.color);
-            }
-          "
+          :style="{
+            '--van-field-label-color':
+              newCategory.color === '' ? '#B0B0B0' : 'inherit',
+          }"
         />
       </div>
 
@@ -149,6 +147,7 @@ const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
+const fieldValueParent = ref('');
 
 const newCategory = reactive<Category>({...EMPTY_CATEGORY});
 
@@ -193,20 +192,20 @@ onBeforeMount(async () => {
 // Gestione del cascader
 const onChange = ({selectedOptions}: {selectedOptions: any[]}) => {
   cascaderValue.value = selectedOptions[selectedOptions.length - 1].value;
-  newCategory.parentCategoryId = selectedOptions
+  fieldValueParent.value = selectedOptions
     .map((option) => option.text)
-    .join(' / ');
+    .join('/');
+  newCategory.parentCategoryId =
+    selectedOptions[selectedOptions.length - 1].value;
 };
-
+const onFinish = () => {
+  showCascader.value = false;
+};
 // Clear the parent category
 const clearParentCategory = () => {
   cascaderValue.value = '';
   newCategory.parentCategoryId = null;
-};
-
-const onFinish = () => {
-  newCategory.parentCategoryId = cascaderValue.value;
-  showCascader.value = false;
+  fieldValueParent.value = '';
 };
 
 // Salvataggio della categoria
