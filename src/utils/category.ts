@@ -19,6 +19,8 @@ export const BASE_CATEGORIES: Category[] = [
   {
     id: '533d4482-df54-47e5-b8d8-000000000001',
     title: 'Expenses',
+    color: '#f99595',
+    icon: 'mdi:shopping',
     parentCategoryId: null,
     userId: userStore.userInfo?.uid,
     active: true,
@@ -26,6 +28,8 @@ export const BASE_CATEGORIES: Category[] = [
   {
     id: '533d4482-df54-47e5-b8d8-000000000002',
     title: 'Incomes',
+    color: '#168d3a',
+    icon: 'mdi:bank',
     parentCategoryId: null,
     userId: userStore.userInfo?.uid,
     active: true,
@@ -33,6 +37,8 @@ export const BASE_CATEGORIES: Category[] = [
   {
     id: '533d4482-df54-47e5-b8d8-000000000003',
     title: 'Investments',
+    color: '#0906a7',
+    icon: 'mdi:piggy-bank',
     parentCategoryId: null,
     userId: userStore.userInfo?.uid,
     active: true,
