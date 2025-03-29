@@ -68,7 +68,10 @@ async function loginWithGoogle() {
 
 <template>
   <div class="m-x-a w-7xl text-center">
-    <h1 class="text-9xl color-#050e20 font-bold">
+    <h1
+      class="text-9xl font-bold"
+      :class="dark ? 'text-theme-dark' : 'text-theme-light'"
+    >
       {{ $t('login.welcome') }}
     </h1>
     <div class="mb-32 mt-20">
@@ -105,6 +108,16 @@ async function loginWithGoogle() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.text-theme-light {
+  color: #050e20;
+}
+
+.text-theme-dark {
+  color: #ffffff;
+}
+</style>
 
 <route lang="json5">
 {
