@@ -62,7 +62,8 @@
     "loginWithGoogle": "Login with Google",
     "success": "Login successful",
     "error": "Login failed",
-    "newUserCreated": "Welcome! Your account has been created."
+    "newUserCreated": "Welcome! Your account has been created.",
+    "welcome": "Welcome"
   },
   "forgot-password": {
     "email": "Email",

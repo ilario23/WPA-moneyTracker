@@ -63,7 +63,8 @@
     "loginWithGoogle": "Accedi con Google",
     "success": "Accesso effettuato con successo",
     "error": "Accesso fallito",
-    "newUserCreated": "Benvenuto! Il tuo account è stato creato."
+    "newUserCreated": "Benvenuto! Il tuo account è stato creato.",
+    "welcome": "Benvenuto"
   },
   "forgot-password": {
     "email": "Email",

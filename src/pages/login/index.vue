@@ -6,9 +6,6 @@ import {signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
 import {AUTH} from '@/config/firebase';
 import {handleNewUser} from '@/api/user';
 
-import logo from '~/images/logo.svg';
-import logoDark from '~/images/logo-dark.svg';
-
 const {t} = useI18n();
 const router = useRouter();
 const userStore = useUserStore();
@@ -71,23 +68,39 @@ async function loginWithGoogle() {
 
 <template>
   <div class="m-x-a w-7xl text-center">
+    <h1 class="text-9xl color-#050e20 font-bold">
+      {{ $t('login.welcome') }}
+    </h1>
     <div class="mb-32 mt-20">
-      <van-image
-        :src="dark ? logoDark : logo"
-        class="h-120 w-120"
-        alt="brand logo"
+      <img
+        src="@/assets/images/log-in-girl.svg"
+        class="h-300 w-300 mt-8"
+        alt="login illustration"
       />
     </div>
 
     <div class="mt-16">
       <van-button
         :loading="loading"
-        type="primary"
         round
-        block
         @click="loginWithGoogle"
+        ButtonIconPosition="right"
+        type="primary"
       >
-        {{ $t('login.loginWithGoogle') }}
+        <template #icon>
+          <div
+            class="h-38 w-38 rounded-full mr-10 bg-gray-100 flex items-center justify-center"
+          >
+            <img
+              src="@/assets/images/google-icon.svg"
+              class="h-30 w-30 rounded-full"
+              alt="Google logo"
+            />
+          </div>
+        </template>
+        <span class="flex-1 text-center">
+          {{ $t('login.loginWithGoogle') }}
+        </span>
       </van-button>
     </div>
   </div>
