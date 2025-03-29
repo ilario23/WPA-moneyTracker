@@ -8,7 +8,7 @@ const InitUserInfo = {
   uid: '',
   email: '',
   displayName: '',
-  avatar: '',
+  avatar: '', // Aggiunto avatar come parte delle informazioni iniziali
 };
 
 export const useUserStore = defineStore('user', {
@@ -26,6 +26,7 @@ export const useUserStore = defineStore('user', {
           uid: user.uid,
           email: user.email || '',
           displayName: user.displayName || '',
+          avatar: user.photoURL || '', // Aggiunto avatar
         });
       } else {
         throw new Error('User not logged in');
@@ -48,6 +49,7 @@ export const useUserStore = defineStore('user', {
           uid: user.uid,
           email: user.email || '',
           displayName: user.displayName || '',
+          avatar: user.photoURL || '', // Aggiunto avatar
         });
       } catch (error) {
         clearToken(); // Clear the token in case of error
@@ -59,7 +61,7 @@ export const useUserStore = defineStore('user', {
         await signOut(AUTH);
       } finally {
         clearToken(); // Clear the token during logout
-        this.setInfo({...InitUserInfo}); // Reset user information
+        this.setInfo({...InitUserInfo}); // Reset user information, incluso avatar
       }
     },
   },
