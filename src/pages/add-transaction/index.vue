@@ -3,14 +3,15 @@
     v-model:active="transactionType"
     animated
     swipeable
-    :color="transactionType === 0 ? 'red' : 'green'"
-    :title-active-color="transactionType === 0 ? '#ff000090' : '#00800090'"
+    :color="vanTabColor"
+    :title-active-color="vanTabTitleActiveColor"
+    @change="swipingTabs($event)"
     line-width="60"
   >
     <van-tab
-      v-for="type in ['expense', 'income']"
-      :key="type"
-      :title="t(`transaction.${type}`)"
+      v-for="category in rootCategories"
+      :key="category.value"
+      :title="category.text"
     >
       <div class="m-x-a w-7xl">
         <div class="mb-32 mt-20">
@@ -20,12 +21,16 @@
             :price="transactionData.amount"
             :thumb="dark ? logoDark : logo"
             currency="€"
-            :class="type === 'expense' ? 'van-card-expense' : 'van-card-income'"
+            :style="{backgroundColor: `${pippo[transactionType]?.color}70`}"
+            class="van-card-style"
           >
             <template #tags>
-              <van-tag :type="type === 'expense' ? 'warning' : 'success'">{{
-                t(`transaction.${type}`)
-              }}</van-tag>
+              <van-tag
+                :style="{
+                  backgroundColor: `${pippo[transactionType]?.color}`,
+                }"
+                >{{ category.text }}</van-tag
+              >
             </template>
             <template #footer>
               <div>{{ dateLabel }}</div>
@@ -56,7 +61,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="fieldValue"
+          v-model="fieldCategotyValue"
           is-link
           readonly
           label="Category"
@@ -72,7 +77,7 @@
           <van-cascader
             v-model="cascaderValue"
             title="Select Category"
-            :options="categoryOptions"
+            :options="filteredCategoriesOptions"
             @close="showCascader = false"
             @change="onChange"
             @finish="onFinish"
@@ -136,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, onBeforeMount} from 'vue';
+import {ref, reactive, onBeforeMount, onMounted} from 'vue';
 import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
 import {useUserStore} from '@/stores/modules/user';
@@ -160,14 +165,31 @@ console.log('User ID:', userId);
 
 // Definisci una variabile per memorizzare i dati delle categorie
 const categoryOptions = ref<Option[]>([]);
+const filteredCategoriesOptions = ref<Option[]>([]);
+const rootCategories = ref();
 const showCascader = ref(false);
-const fieldValue = ref('');
+const fieldCategotyValue = ref('');
 const cascaderValue = ref('');
+const pippo = ref([]);
+const vanTabColor = ref('');
+const vanTabTitleActiveColor = ref('');
 
 // onBeforeMount, chiama getCategories per ottenere i dati delle categorie
 onBeforeMount(async () => {
+  // Ottieni tutte le categorie
+  const allCategories = await UserCategories.getUserCategories(userId);
+  pippo.value = allCategories.filter(
+    (category) =>
+      category.parentCategoryId === '' || category.parentCategoryId === null
+  );
+});
+
+onMounted(async () => {
+  // Assegna le categorie al cascader
   categoryOptions.value =
     await UserCategories.getCascaderCategoryOptions(userId);
+  rootCategories.value = categoryOptions.value;
+  swipingTabs(0); // Imposta il colore della tab attiva
 });
 
 const {t} = useI18n();
@@ -268,7 +290,9 @@ const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
   cascaderValue.value = selectedOptions[selectedOptions.length - 1].value;
   //questi altri due invece servono per l'inserimento della spesa, uno l'id e l'altro il nome
   // da mostrare nella pagina
-  fieldValue.value = selectedOptions.map((option) => option.text).join('/');
+  fieldCategotyValue.value = selectedOptions
+    .map((option) => option.text)
+    .join('/');
   transactionData.categoryId =
     selectedOptions[selectedOptions.length - 1].value;
 };
@@ -276,6 +300,26 @@ const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
 const onFinish = () => {
   //chiudo il cascader perchè sono arrivato alla fine
   showCascader.value = false;
+};
+
+const swipingTabs = (index: number) => {
+  // colori delle tab
+  vanTabColor.value = pippo.value[index]?.color;
+  vanTabTitleActiveColor.value = pippo.value[index]?.color;
+
+  // imposta la categoria selezionata, pronta per essere inserita
+  transactionData.categoryId = pippo.value[index]?.value;
+
+  //correggo il cascader e quello che si vede nel campo di testo
+  cascaderValue.value = pippo.value[index]?.title;
+  fieldCategotyValue.value = pippo.value[index]?.title;
+
+  // aggiorno le opzioni del cascader per mostrare solo sub categorie figlie della macro
+  //categoryOptions deve mantenere solo categoryOptions[index] e semplicemente cancellare
+  // le altre root che sono diverse da index
+  filteredCategoriesOptions.value = categoryOptions.value.filter(
+    (category) => category.value === pippo.value[index]?.id
+  );
 };
 </script>
 
@@ -290,15 +334,7 @@ const onFinish = () => {
 </route>
 
 <style scoped>
-.van-card-expense {
-  background-color: #ff000020;
-  /* Light red background */
-  border-radius: 20px;
-}
-
-.van-card-income {
-  background-color: #00800020;
-  /* Light green background */
+.van-card-style {
   border-radius: 20px;
 }
 </style>
