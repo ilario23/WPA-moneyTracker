@@ -134,6 +134,7 @@
     "noCategorySelectedForEditing": "Nessuna categoria selezionata per la modifica",
     "updateSuccess": "Categoria aggiornata con successo",
     "addSuccess": "Categoria aggiunta con successo",
-    "saveError": "Salvataggio della categoria fallito"
+    "saveError": "Salvataggio della categoria fallito",
+    "noDeletionOfDefaultCategory": "Non puoi cancellare le categorie di default"
   }
 }

@@ -108,6 +108,8 @@ import {useUserStore} from '@/stores';
 import type {Category} from '@/types/category';
 import {API} from '@/api';
 import {useRouter} from 'vue-router';
+import {BASE_CATEGORIES_ID} from '@/utils/category';
+
 const {t: $t} = useI18n();
 
 const userStore = useUserStore();
@@ -223,6 +225,15 @@ const handleDeleteConfirm = async () => {
       showNotify({
         type: 'danger',
         message: $t('category.noCategorySelectedForDeletion'),
+      });
+      return;
+    }
+
+    // Verifica se la categoria è una delle categorie originali
+    if (BASE_CATEGORIES_ID.includes(categoryId)) {
+      showNotify({
+        type: 'danger',
+        message: $t('category.noDeletionOfDefaultCategory'),
       });
       return;
     }
