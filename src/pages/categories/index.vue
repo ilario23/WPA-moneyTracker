@@ -15,53 +15,60 @@
       </van-cell>
     </div>
 
-    <van-swipe-cell
-      v-if="selectedCategory && selectedCategory.text"
-      :title="selectedCategory.text"
-    >
-      <van-card
-        num="1"
-        price="2.00"
-        desc="Description"
+    <!-- Animazione per la categoria selezionata -->
+    <transition name="slide-horizontal" mode="out-in">
+      <van-swipe-cell
+        v-if="selectedCategory && selectedCategory.text"
+        :key="selectedCategory.value"
         :title="selectedCategory.text"
-        class="goods-card"
-        thumb="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-      />
-      <template #right>
-        <van-button
-          square
-          icon="delete-o"
-          type="danger"
-          style="height: 100%"
-          @click="showDeleteDialog = true"
+      >
+        <van-card
+          num="1"
+          price="2.00"
+          desc="Description"
+          :title="selectedCategory.text"
+          class="goods-card"
+          thumb="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
         />
-      </template>
-      <template #left>
-        <van-button
-          square
-          icon="edit"
-          type="primary"
-          style="height: 100%"
-          @click="showEditDialog = true"
-        />
-      </template>
-    </van-swipe-cell>
+        <template #right>
+          <van-button
+            square
+            icon="delete-o"
+            type="danger"
+            style="height: 100%"
+            @click="showDeleteDialog = true"
+          />
+        </template>
+        <template #left>
+          <van-button
+            square
+            icon="edit"
+            type="primary"
+            style="height: 100%"
+            @click="showEditDialog = true"
+          />
+        </template>
+      </van-swipe-cell>
+    </transition>
 
-    <div v-if="selectedCategory.children">
-      <van-divider dashed>{{ $t('category.children') }}</van-divider>
-      <van-cell-group inset>
-        <van-cell
-          v-for="child in selectedCategory.children"
-          :key="child.value"
-          :title="child.text"
-          @click="selectCategory(child)"
-        >
-          <template #right-icon>
-            <van-icon :name="child.icon" />
-          </template>
-        </van-cell>
-      </van-cell-group>
-    </div>
+    <!-- Transizione di fade-in con ritardo -->
+    <transition name="fade-delayed">
+      <div v-if="selectedCategory.children">
+        <van-divider dashed>{{ $t('category.children') }}</van-divider>
+        <van-cell-group inset>
+          <van-cell
+            v-for="child in selectedCategory.children"
+            :key="child.value"
+            :title="child.text"
+            @click="selectCategory(child)"
+          >
+            <template #right-icon>
+              <van-icon :name="child.icon" />
+            </template>
+          </van-cell>
+        </van-cell-group>
+      </div>
+    </transition>
   </div>
 
   <van-dialog
@@ -304,4 +311,54 @@ const handleCancel = () => {
 }
 </route>
 
-<style scoped></style>
+<style scoped>
+/* Transizione slide-horizontal esistente */
+.slide-horizontal-enter-active,
+.slide-horizontal-leave-active {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+  position: absolute; /* Permette la sovrapposizione */
+  width: 100%; /* Assicura che gli elementi occupino lo stesso spazio */
+}
+
+.slide-horizontal-enter-from {
+  transform: translateX(100%); /* L'elemento entra da destra */
+  opacity: 0;
+}
+
+.slide-horizontal-enter-to {
+  transform: translateX(0); /* L'elemento si posiziona al centro */
+  opacity: 1;
+}
+
+.slide-horizontal-leave-from {
+  transform: translateX(0); /* L'elemento parte dal centro */
+  opacity: 1;
+}
+
+.slide-horizontal-leave-to {
+  transform: translateX(-100%); /* L'elemento esce verso sinistra */
+  opacity: 0;
+}
+
+/* Nuova transizione fade-delayed */
+.fade-delayed-enter-active {
+  transition: opacity 0.5s ease;
+  transition-delay: 0.5s; /* Ritardo solo per l'ingresso */
+}
+
+.fade-delayed-leave-active {
+  transition: opacity 0.1s ease; /* Nessun ritardo per l'uscita */
+}
+
+.fade-delayed-enter-from,
+.fade-delayed-leave-to {
+  opacity: 0; /* Elemento parte trasparente */
+}
+
+.fade-delayed-enter-to,
+.fade-delayed-leave-from {
+  opacity: 1; /* Elemento diventa visibile */
+}
+</style>
