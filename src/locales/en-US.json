@@ -136,6 +136,8 @@
     "updateSuccess": "Category updated successfully",
     "addSuccess": "Category added successfully",
     "saveError": "Failed to save category",
-    "noDeletionOfDefaultCategory": "You can not delete default categories"
+    "noDeletionOfDefaultCategory": "You can not delete default categories",
+    "rootCategories": "Root Categories",
+    "children": "Sub-categories"
   }
 }

@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <div style="display: flex; width: 100%; gap: 12px; padding: 8px">
+  <div style="align-items: center">
+    <van-divider>{{ $t('category.rootCategories') }}</van-divider>
+    <div style="display: flex; width: 100%; gap: 12px; padding-right: 8px">
       <van-cell
         v-for="root in rootCategories"
         :key="root.value"
@@ -47,7 +48,7 @@
     </van-swipe-cell>
 
     <div v-if="selectedCategory.children">
-      <van-divider dashed>Children </van-divider>
+      <van-divider dashed>{{ $t('category.children') }}</van-divider>
       <van-cell-group inset>
         <van-cell
           v-for="child in selectedCategory.children"

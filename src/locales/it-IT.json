@@ -136,6 +136,8 @@
     "updateSuccess": "Categoria aggiornata con successo",
     "addSuccess": "Categoria aggiunta con successo",
     "saveError": "Salvataggio della categoria fallito",
-    "noDeletionOfDefaultCategory": "Non puoi cancellare le categorie di default"
+    "noDeletionOfDefaultCategory": "Non puoi cancellare le categorie di default",
+    "children": "Sotto Categorie",
+    "rootCategories": "Categorie Base"
   }
 }
