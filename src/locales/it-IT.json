@@ -138,6 +138,9 @@
     "saveError": "Salvataggio della categoria fallito",
     "noDeletionOfDefaultCategory": "Non puoi cancellare le categorie di default",
     "children": "Sotto Categorie",
-    "rootCategories": "Categorie Base"
+    "rootCategories": "Categorie Base",
+    "selectIcon": "Seleziona un'icona",
+    "addNewCategory": "Aggiungi una nuova categoria",
+    "selectParentCategory": "Selezione la categoria padre"
   }
 }

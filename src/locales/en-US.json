@@ -138,6 +138,9 @@
     "saveError": "Failed to save category",
     "noDeletionOfDefaultCategory": "You can not delete default categories",
     "rootCategories": "Root Categories",
-    "children": "Sub-categories"
+    "children": "Sub-categories",
+    "selectIcon": "Select an icon",
+    "addNewCategory": "Add a new category",
+    "selectParentCategory": "Select the parent category"
   }
 }
