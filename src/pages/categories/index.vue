@@ -1,16 +1,26 @@
 <template>
   <div style="align-items: center">
-    <van-divider>{{ $t('category.rootCategories') }}</van-divider>
-    <div style="display: flex; width: 100%; gap: 12px; padding-right: 8px">
+    <van-divider style="margin: auto">{{
+      $t('category.rootCategories')
+    }}</van-divider>
+    <div style="display: flex; width: 100%; gap: 12px">
       <van-cell
         v-for="root in rootCategories"
         :key="root.value"
         :title="root.text"
         @click="selectCategory(root)"
-        style="flex: 1; text-align: center; padding: 12px; border-radius: 8px"
+        style="
+          padding: 12px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+        "
       >
         <template #right-icon>
-          <van-icon :name="root.icon" />
+          <van-icon
+            :name="root.icon"
+            style="font-size: 20px; align-self: center; padding-right: 5px"
+          />
         </template>
       </van-cell>
     </div>
@@ -28,8 +38,13 @@
           desc="Description"
           :title="selectedCategory.text"
           class="goods-card"
-          thumb="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-        />
+        >
+          <template #thumb>
+            <div style="display: flex; align-items: center; height: 100%">
+              <van-icon :name="selectedIcon" style="font-size: 64px" />
+            </div>
+          </template>
+        </van-card>
         <template #right>
           <van-button
             square
@@ -128,6 +143,8 @@ const rootCategories = ref();
 const showDeleteDialog = ref(false);
 const showEditDialog = ref(false);
 
+const selectedIcon = ref(''); // Variabile per memorizzare l'icona della categoria selezionata
+
 // Function to build category tree
 const buildCategoryTree = (categories: any[]) => {
   const categoryMap = new Map<string, any>();
@@ -210,7 +227,34 @@ const selectedCategory = ref({
 
 // Function to select a category and show details
 const selectCategory = (category) => {
-  selectedCategory.value = category;
+  selectedCategory.value = category; // Aggiorna la categoria selezionata
+  fetchCategoryIcon(); // Recupera i dettagli della categoria e aggiorna l'icona
+};
+
+// Function to fetch category icon
+const fetchCategoryIcon = async () => {
+  try {
+    const categoryId = selectedCategory.value.value; // Ottieni l'ID della categoria selezionata
+    if (!categoryId) {
+      console.error('Nessuna categoria selezionata');
+      return;
+    }
+
+    // Recupera i dettagli della categoria tramite API
+    const category = await API.Database.Users.Categories.getUserCategoryById(
+      userStore.userInfo?.uid,
+      categoryId
+    );
+
+    if (category && category.icon) {
+      selectedIcon.value = category.icon; // Assegna l'icona alla variabile ref
+    } else {
+      console.warn('Categoria non trovata o nessuna icona disponibile');
+      selectedIcon.value = ''; // Resetta l'icona se non trovata
+    }
+  } catch (error) {
+    console.error('Errore durante il recupero della categoria:', error);
+  }
 };
 
 // Function to handle delete confirm action
