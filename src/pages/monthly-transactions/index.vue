@@ -61,24 +61,31 @@
       :description="$t('transaction.noTransactions')"
     />
 
-    <div v-else>
+    <div v-else class="transaction-list">
       <div v-for="(group, date) in groupedTransactions" :key="date">
-        <van-divider>{{ formatDate(date) }}</van-divider>
-
         <van-swipe-cell v-for="transaction in group" :key="transaction.id">
           <van-card
             :price="transaction.amount"
             :desc="transaction.description || ''"
-            :title="getCategoryName(transaction.categoryId)"
             currency="€"
             :style="{
               backgroundColor: `${getCategoryColor(transaction.categoryId)}30`,
             }"
           >
+            <template #title>
+              <div class="transaction-title">
+                <span>{{ getCategoryName(transaction.categoryId) }}</span>
+                <van-tag plain>{{ formatDate(date) }}</van-tag>
+              </div>
+            </template>
             <template #thumb>
               <van-icon
                 :name="getCategoryIcon(transaction.categoryId)"
-                style="font-size: 24px"
+                class="category-icon"
+                :style="{
+                  color: getCategoryColor(transaction.categoryId),
+                }"
+                size="36px"
               />
             </template>
           </van-card>
@@ -416,19 +423,45 @@ function handleYearChange(index: number) {
   font-size: 16px;
 }
 
-:deep(.van-tabs) {
-  margin-bottom: 8px;
-}
-
-:deep(.van-tabs:first-child) {
-  margin-bottom: 0;
-}
-
 :deep(.van-tabs:first-child .van-tabs__wrap) {
   height: 36px;
 }
 
-:deep(.van-tabs:first-child .van-tab) {
-  font-size: 14px;
+:deep(.van-tag--plain) {
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.transaction-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Add spacing and rounded corners for transactions */
+:deep(.van-swipe-cell) {
+  margin-bottom: 8px;
+}
+
+:deep(.van-card) {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Optional: Add some side padding to the list container */
+.transaction-list {
+  padding: 0 8px;
+}
+
+:deep(.van-card__thumb) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+}
+
+.category-icon {
+  font-size: 24px;
 }
 </style>
