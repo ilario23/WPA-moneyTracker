@@ -1,9 +1,5 @@
 <script setup lang="ts">
-
-
 const {t} = useI18n();
-
-
 
 const menuExampleItems = computed(() => [
   {title: t('menus.echartsDemo'), route: 'charts'},
@@ -13,17 +9,15 @@ const menuExampleItems = computed(() => [
   {title: t('menus.404Demo'), route: 'unknown'},
 ]);
 
-
 const menuUsedItems = computed(() => [
   {title: t('menus.test'), route: 'test'},
   {title: t('menus.transaction'), route: 'add-transaction'},
   {title: t('menus.categories'), route: 'categories'},
+  {title: t('menus.monthlyTransactions'), route: 'monthly-transactions'},
 ]);
 </script>
 
 <template>
-
-
   <VanCellGroup
     :title="t('menus.exampleComponents')"
     :border="false"
@@ -43,8 +37,6 @@ const menuUsedItems = computed(() => [
       <VanCell :title="item.title" :to="item.route" is-link />
     </template>
   </VanCellGroup>
-
-
 </template>
 
 <route lang="json5">

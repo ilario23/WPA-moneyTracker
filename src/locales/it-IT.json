@@ -19,7 +19,8 @@
     "forgot-password": "Password Dimenticata",
     "categories": "🫙 Elenco Categorie",
     "add-category": "➕🫙 Aggiungi Categoria",
-    "user": "Utente"
+    "user": "Utente",
+    "monthlyTransactions": "Spese Mensili"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",
@@ -84,7 +85,8 @@
     "passwordResetSuccess": "Reset password avvenuto con successo"
   },
   "settings": {
-    "currentVersion": "Versione Attuale"
+    "currentVersion": "Versione Attuale",
+    "comfirmTitle": "Conferma l'uscita?"
   },
   "transaction": {
     "expense": "Spesa",
@@ -100,7 +102,16 @@
     "pleaseEnterDescription": "Per favore inserisci la descrizione",
     "success": "Transazione aggiunta con successo",
     "error": "Errore nell'aggiunta della transazione",
-    "preview": "Anteprima"
+    "preview": "Anteprima",
+    "monthlySummary": "Riepilogo Mensile",
+    "investment": "Investimento",
+    "savingRate": "Tasso di Risparmio",
+    "savingRateWithInvestments": "Tasso di Risparmio (con Investimenti)",
+    "transactions": "Transazioni",
+    "noTransactions": "Nessuna transazione in questo periodo",
+    "unknownCategory": "Categoria Sconosciuta",
+    "selectMonth": "Seleziona Mese",
+    "fetchError": "Errore nel caricamento delle transazioni"
   },
   "category": {
     "title": "Titolo",

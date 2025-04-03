@@ -19,7 +19,8 @@
     "forgot-password": "Forgot Password",
     "categories": "🫙 View Categories",
     "add-category": "➕🫙 Add Category",
-    "user": "User"
+    "user": "User",
+    "monthlyTransactions": "Monthly Transactions"
   },
   "mock": {
     "fromAsyncData": "Data from asynchronous requests",
@@ -100,7 +101,16 @@
     "pleaseEnterDescription": "Please enter the description",
     "success": "Transaction added successfully",
     "error": "Failed to add transaction",
-    "preview": "Preview"
+    "preview": "Preview",
+    "monthlySummary": "Monthly Summary",
+    "investment": "Investment",
+    "savingRate": "Saving Rate",
+    "savingRateWithInvestments": "Saving Rate (with Investments)",
+    "transactions": "Transactions",
+    "noTransactions": "No transactions for this period",
+    "unknownCategory": "Unknown Category",
+    "selectMonth": "Select Month",
+    "fetchError": "Error loading transactions"
   },
   "category": {
     "title": "Title",

@@ -4,7 +4,6 @@
     <van-tabs
       v-model:active="currentYearIndex"
       swipeable
-      sticky
       @change="handleYearChange"
     >
       <van-tab v-for="year in years" :key="year.value" :title="year.text" />
@@ -32,8 +31,23 @@
           <div class="expense">
             {{ $t('transaction.expense') }}: €{{ totalExpense }}
           </div>
-          <div class="balance">
-            {{ $t('transaction.balance') }}: €{{ totalBalance }}
+          <div v-if="Number(totalInvestment) > 0" class="investment">
+            {{ $t('transaction.investment') }}: €{{ totalInvestment }}
+          </div>
+          <div class="saving-rate basic">
+            {{ $t('transaction.savingRate') }}: €{{
+              savingRate.basic.absolute
+            }}
+            ({{ savingRate.basic.percentage }}%)
+          </div>
+          <div
+            v-if="Number(totalInvestment) > 0"
+            class="saving-rate with-investments"
+          >
+            {{ $t('transaction.savingRateWithInvestments') }}: €{{
+              savingRate.withInvestments.absolute
+            }}
+            ({{ savingRate.withInvestments.percentage }}%)
           </div>
         </div>
       </template>
@@ -95,7 +109,7 @@ import {UserCategories} from '@/api/database/modules/subcollections/user.categor
 import {showNotify} from 'vant';
 import {useI18n} from 'vue-i18n';
 import type {Transaction} from '@/types/transaction';
-import type {Category} from '@/types/category';
+import type {CategoryWithType} from '@/types/category';
 
 const {t} = useI18n();
 const userStore = useUserStore();
@@ -103,7 +117,7 @@ const userId = userStore.userInfo.uid;
 
 // State variables
 const transactions = ref<Transaction[]>([]);
-const categories = ref<Category[]>([]);
+const categories = ref<CategoryWithType[]>([]); // Change the type
 const loading = ref(false);
 const showMonthPicker = ref(false);
 
@@ -122,7 +136,6 @@ const selectedMonth = ref<[string, string]>([
 const selectedMonthLabel = ref(formatMonthLabel(selectedMonth.value));
 
 // Computed properties
-const currentYear = new Date().getFullYear();
 const months = computed(() => {
   const currentDate = new Date();
   const selectedYear = years.value[currentYearIndex.value].value;
@@ -182,8 +195,8 @@ async function fetchData() {
     // Fetch transactions
     transactions.value = await UserTransactions.getUsertransactions(userId);
 
-    // Fetch categories
-    categories.value = await UserCategories.getUserCategories(userId);
+    // Fetch categories with type
+    categories.value = await UserCategories.getCategoriesWithType(userId);
   } catch (error) {
     console.error('Error fetching data:', error);
     showNotify({type: 'danger', message: t('transaction.fetchError')});
@@ -229,30 +242,64 @@ const groupedTransactions = computed(() => {
 
 // Calculate totals
 const totalIncome = computed(() => {
-  console.log('Filtered Transactions:', filteredTransactions.value);
+  const incomeCategoryIds = categories.value
+    .filter((cat) => cat.type === 2)
+    .map((cat) => cat.id);
+
   const total = filteredTransactions.value
-    .filter((t) => t.amount > 0)
-    .reduce((sum, t) => {
-      console.log('Transaction Amount:', t.amount, 'Sum:', sum);
-      return sum + (Number(t.amount) || 0);
-    }, 0);
-  console.log('Total Income:', total);
+    .filter((t) => incomeCategoryIds.includes(t.categoryId))
+    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
   return total.toFixed(2);
 });
 
 const totalExpense = computed(() => {
+  const expenseCategoryIds = categories.value
+    .filter((cat) => cat.type === 1)
+    .map((cat) => cat.id);
+
   const total = filteredTransactions.value
-    .filter((t) => t.amount < 0)
-    .reduce((sum, t) => sum + Math.abs(Number(t.amount) || 0), 0); // Converti `amount` in numero
+    .filter((t) => expenseCategoryIds.includes(t.categoryId))
+    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
   return total.toFixed(2);
 });
 
-const totalBalance = computed(() => {
-  const total = filteredTransactions.value.reduce(
-    (sum, t) => sum + (Number(t.amount) || 0), // Converti `amount` in numero
-    0
-  );
+const totalInvestment = computed(() => {
+  const investmentCategoryIds = categories.value
+    .filter((cat) => cat.type === 3)
+    .map((cat) => cat.id);
+
+  const total = filteredTransactions.value
+    .filter((t) => investmentCategoryIds.includes(t.categoryId))
+    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
   return total.toFixed(2);
+});
+
+const savingRate = computed(() => {
+  const income = Number(totalIncome.value);
+  const expenses = Number(totalExpense.value);
+  const investments = Number(totalInvestment.value);
+
+  // Calculate savings without investments
+  const basicSavings = income - expenses;
+  const basicPercentage = income > 0 ? (basicSavings / income) * 100 : 0;
+
+  // Calculate savings including investments
+  const totalSavings = basicSavings + investments;
+  const totalPercentage = income > 0 ? (totalSavings / income) * 100 : 0;
+
+  return {
+    basic: {
+      absolute: basicSavings.toFixed(2),
+      percentage: basicPercentage.toFixed(1),
+    },
+    withInvestments: {
+      absolute: totalSavings.toFixed(2),
+      percentage: totalPercentage.toFixed(1),
+    },
+  };
 });
 
 // Helper functions
@@ -338,9 +385,27 @@ function handleYearChange(index: number) {
   color: #ee0a24;
 }
 
+.investment {
+  color: #1989fa;
+}
+
 .balance {
   font-weight: bold;
   margin-top: 4px;
+}
+
+.saving-rate {
+  font-weight: bold;
+  margin-top: 4px;
+  color: var(--van-primary-color);
+}
+
+.saving-rate.basic {
+  color: #07c160;
+}
+
+.saving-rate.with-investments {
+  color: #1989fa;
 }
 
 :deep(.van-card__price) {
