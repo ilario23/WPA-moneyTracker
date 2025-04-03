@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, watch} from 'vue';
+import {ref, computed, onMounted, watch, nextTick} from 'vue';
 import {useUserStore} from '@/stores';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
@@ -166,7 +166,7 @@ const months = computed(() => {
   const selectedYear = years.value[currentYearIndex.value].value;
   const isCurrentYear = selectedYear === currentDate.getFullYear();
 
-  // If it's current year, only show months up to current month
+  // For past years, always show all months
   const monthsCount = isCurrentYear ? currentDate.getMonth() + 1 : 12;
 
   return Array.from({length: monthsCount}, (_, i) => {
@@ -186,19 +186,6 @@ const years = computed(() => {
     text: String(currentYear - (4 - i)),
     value: currentYear - (4 - i),
   }));
-});
-
-// Add a watcher to reset month if needed when year changes
-watch(currentYearIndex, () => {
-  const currentDate = new Date();
-  const selectedYear = years.value[currentYearIndex.value].value;
-  const isCurrentYear = selectedYear === currentDate.getFullYear();
-
-  // If we switched to current year and selected month is in the future,
-  // reset to current month
-  if (isCurrentYear && currentMonthIndex.value > currentDate.getMonth()) {
-    currentMonthIndex.value = currentDate.getMonth();
-  }
 });
 
 // Verify the current year is selected on mount
@@ -365,7 +352,21 @@ function handleMonthChange(index: number) {
 }
 
 function handleYearChange(index: number) {
+  const currentDate = new Date();
+  const selectedYear = years.value[index].value;
+  const isCurrentYear = selectedYear === currentDate.getFullYear();
+
+  // First update the year
   currentYearIndex.value = index;
+
+  // Use nextTick to ensure the month is set after the year change
+  nextTick(() => {
+    if (isCurrentYear) {
+      currentMonthIndex.value = currentDate.getMonth();
+    } else {
+      currentMonthIndex.value = 11; // December
+    }
+  });
 }
 
 const handleEdit = async (transactionId: string) => {
