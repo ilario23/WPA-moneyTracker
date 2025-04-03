@@ -21,13 +21,15 @@
             :price="transactionData.amount"
             :thumb="dark ? logoDark : logo"
             currency="€"
-            :style="{backgroundColor: `${pippo[transactionType]?.color}70`}"
+            :style="{
+              backgroundColor: `${parentlessCategories[transactionType]?.color}70`,
+            }"
             class="van-card-style"
           >
             <template #tags>
               <van-tag
                 :style="{
-                  backgroundColor: `${pippo[transactionType]?.color}`,
+                  backgroundColor: `${parentlessCategories[transactionType]?.color}`,
                 }"
                 >{{ category.text }}</van-tag
               >
@@ -170,7 +172,7 @@ const rootCategories = ref();
 const showCascader = ref(false);
 const fieldCategotyValue = ref('');
 const cascaderValue = ref('');
-const pippo = ref([]);
+const parentlessCategories = ref([]);
 const vanTabColor = ref('');
 const vanTabTitleActiveColor = ref('');
 
@@ -178,7 +180,7 @@ const vanTabTitleActiveColor = ref('');
 onBeforeMount(async () => {
   // Ottieni tutte le categorie
   const allCategories = await UserCategories.getUserCategories(userId);
-  pippo.value = allCategories.filter(
+  parentlessCategories.value = allCategories.filter(
     (category) =>
       category.parentCategoryId === '' || category.parentCategoryId === null
   );
@@ -231,11 +233,8 @@ const rules = reactive({
   ],
 });
 
-async function addTransaction(values: any) {
-  console.log('values', values);
+async function addTransaction() {
   try {
-    loading.value = true;
-
     // Genera un ID unico per la transazione
     const transactionId = crypto.randomUUID();
 
@@ -245,7 +244,10 @@ async function addTransaction(values: any) {
       id: transactionId, // Aggiungi l'ID generato
       timestamp: new Date(transactionData.timestamp).toISOString(),
       userId: userId, // Associa la transazione all'utente corrente
+      categoryId: transactionData.categoryId,
     };
+
+    console.log('Transaction Data:', transaction);
 
     // Effettua la chiamata per creare la transazione
     const createdTransaction = await UserTransactions.createUserTransaction(
@@ -293,6 +295,7 @@ const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
   fieldCategotyValue.value = selectedOptions
     .map((option) => option.text)
     .join('/');
+
   transactionData.categoryId =
     selectedOptions[selectedOptions.length - 1].value;
 };
@@ -304,21 +307,19 @@ const onFinish = () => {
 
 const swipingTabs = (index: number) => {
   // colori delle tab
-  vanTabColor.value = pippo.value[index]?.color;
-  vanTabTitleActiveColor.value = pippo.value[index]?.color;
+  vanTabColor.value = parentlessCategories.value[index]?.color;
+  vanTabTitleActiveColor.value = parentlessCategories.value[index]?.color;
 
-  // imposta la categoria selezionata, pronta per essere inserita
-  transactionData.categoryId = pippo.value[index]?.value;
+  // imposta la categoria selezionata
+  transactionData.categoryId = parentlessCategories.value[index]?.id;
 
-  //correggo il cascader e quello che si vede nel campo di testo
-  cascaderValue.value = pippo.value[index]?.title;
-  fieldCategotyValue.value = pippo.value[index]?.title;
+  // correggo il cascader e quello che si vede nel campo di testo
+  cascaderValue.value = parentlessCategories.value[index]?.title;
+  fieldCategotyValue.value = parentlessCategories.value[index]?.title;
 
-  // aggiorno le opzioni del cascader per mostrare solo sub categorie figlie della macro
-  //categoryOptions deve mantenere solo categoryOptions[index] e semplicemente cancellare
-  // le altre root che sono diverse da index
+  // aggiorno le opzioni del cascader
   filteredCategoriesOptions.value = categoryOptions.value.filter(
-    (category) => category.value === pippo.value[index]?.id
+    (category) => category.value === parentlessCategories.value[index]?.id
   );
 };
 </script>
