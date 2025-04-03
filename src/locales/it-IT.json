@@ -20,7 +20,7 @@
     "categories": "🫙 Elenco Categorie",
     "add-category": "➕🫙 Aggiungi Categoria",
     "user": "Utente",
-    "monthlyTransactions": "Spese Mensili"
+    "monthlyTransactions": "📗 Spese Mensili"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",

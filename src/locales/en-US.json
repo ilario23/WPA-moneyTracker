@@ -20,7 +20,7 @@
     "categories": "🫙 View Categories",
     "add-category": "➕🫙 Add Category",
     "user": "User",
-    "monthlyTransactions": "Monthly Transactions"
+    "monthlyTransactions": "📗 Monthly Transactions"
   },
   "mock": {
     "fromAsyncData": "Data from asynchronous requests",

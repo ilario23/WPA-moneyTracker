@@ -136,7 +136,7 @@ import {useI18n} from 'vue-i18n';
 import type {Transaction} from '@/types/transaction';
 import type {CategoryWithType} from '@/types/category';
 
-const {t} = useI18n();
+const {t, locale} = useI18n();
 const userStore = useUserStore();
 const userId = userStore.userInfo.uid;
 
@@ -172,7 +172,7 @@ const months = computed(() => {
   return Array.from({length: monthsCount}, (_, i) => {
     const date = new Date(selectedYear, i);
     return {
-      text: date.toLocaleString('default', {month: 'long'}),
+      text: date.toLocaleString(locale.value, {month: 'long'}),
       value: i,
     };
   });
