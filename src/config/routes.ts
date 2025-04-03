@@ -2,4 +2,5 @@
 export const routeWhiteList: readonly string[] = [
   'home', // home
   'profile', // profile
+  'login', // login
 ];

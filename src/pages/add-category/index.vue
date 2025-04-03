@@ -266,7 +266,16 @@ const save = async () => {
         );
         showNotify({type: 'success', message: t('category.addSuccess')});
       }
-      router.push({name: 'categories'});
+
+      // Check if we came from categories page
+      if (
+        typeof router.options.history.state.back === 'string' &&
+        router.options.history.state.back.includes('categories')
+      ) {
+        router.back();
+      } else {
+        router.replace({name: 'categories'});
+      }
     }
   } catch (error) {
     console.error('Error saving category:', error);
