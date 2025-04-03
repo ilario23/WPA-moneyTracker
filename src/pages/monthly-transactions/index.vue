@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, watch, nextTick} from 'vue';
+import {ref, computed, onMounted, nextTick} from 'vue';
 import {useUserStore} from '@/stores';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
