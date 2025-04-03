@@ -64,6 +64,24 @@
     <div v-else class="transaction-list">
       <div v-for="(group, date) in groupedTransactions" :key="date">
         <van-swipe-cell v-for="transaction in group" :key="transaction.id">
+          <template #left>
+            <van-button
+              square
+              type="primary"
+              text="Edit"
+              class="edit-button"
+              @click="handleEdit(transaction.id)"
+            />
+          </template>
+          <template #right>
+            <van-button
+              square
+              type="danger"
+              text="Delete"
+              class="delete-button"
+              @click="handleDelete(transaction.id)"
+            />
+          </template>
           <van-card
             :price="transaction.amount"
             :desc="transaction.description || ''"
@@ -349,6 +367,18 @@ function handleMonthChange(index: number) {
 function handleYearChange(index: number) {
   currentYearIndex.value = index;
 }
+
+const handleEdit = async (transactionId: string) => {
+  console.log('Edit transaction:', transactionId);
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  showNotify({type: 'warning', message: 'Edit function not implemented yet'});
+};
+
+const handleDelete = async (transactionId: string) => {
+  console.log('Delete transaction:', transactionId);
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  showNotify({type: 'warning', message: 'Delete function not implemented yet'});
+};
 </script>
 
 <route lang="json5">
@@ -367,6 +397,7 @@ function handleYearChange(index: number) {
 }
 
 .summary-card {
+  text-align: center;
   border-radius: 8px;
   margin-bottom: 16px;
   background-color: #f8f8f8;
@@ -376,6 +407,7 @@ function handleYearChange(index: number) {
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .summary-amount {
@@ -463,5 +495,15 @@ function handleYearChange(index: number) {
 
 .category-icon {
   font-size: 24px;
+}
+
+.edit-button {
+  height: 100%;
+  width: 64px;
+}
+
+.delete-button {
+  height: 100%;
+  width: 64px;
 }
 </style>
