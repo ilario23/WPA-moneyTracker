@@ -1,17 +1,23 @@
 <template>
   <div>
-    <!-- Intestazione con filtri -->
-    <van-nav-bar :title="$t('transaction.monthlyTransactions')" />
+    <!-- Year Selector Tabs -->
+    <van-tabs
+      v-model:active="currentYearIndex"
+      swipeable
+      sticky
+      @change="handleYearChange"
+    >
+      <van-tab v-for="year in years" :key="year.value" :title="year.text" />
+    </van-tabs>
 
-    <van-cell-group inset class="month-selector mt-16">
-      <van-field
-        v-model="selectedMonthLabel"
-        readonly
-        :label="$t('transaction.month')"
-        right-icon="arrow-down"
-        @click="showMonthPicker = true"
-      />
-    </van-cell-group>
+    <!-- Month Selector Tabs -->
+    <van-tabs
+      v-model:active="currentMonthIndex"
+      swipeable
+      @change="handleMonthChange"
+    >
+      <van-tab v-for="month in months" :key="month.value" :title="month.text" />
+    </van-tabs>
 
     <!-- Riepilogo -->
     <van-card class="summary-card mt-16">
@@ -82,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, reactive} from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import {useUserStore} from '@/stores';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
@@ -107,14 +113,65 @@ const maxDate = new Date();
 
 // Default to current month
 const currentDate = new Date();
+const currentYearIndex = ref(4); // Since we have 5 years and current year is last
+const currentMonthIndex = ref(currentDate.getMonth());
 const selectedMonth = ref<[string, string]>([
   currentDate.getFullYear().toString(),
   (currentDate.getMonth() + 1).toString().padStart(2, '0'),
 ]);
 const selectedMonthLabel = ref(formatMonthLabel(selectedMonth.value));
 
-// Fetch data on component mount
+// Computed properties
+const currentYear = new Date().getFullYear();
+const months = computed(() => {
+  const currentDate = new Date();
+  const selectedYear = years.value[currentYearIndex.value].value;
+  const isCurrentYear = selectedYear === currentDate.getFullYear();
+
+  // If it's current year, only show months up to current month
+  const monthsCount = isCurrentYear ? currentDate.getMonth() + 1 : 12;
+
+  return Array.from({length: monthsCount}, (_, i) => {
+    const date = new Date(selectedYear, i);
+    return {
+      text: date.toLocaleString('default', {month: 'long'}),
+      value: i,
+    };
+  });
+});
+
+// Aggiungi queste computed properties e refs
+const years = computed(() => {
+  const currentYear = new Date().getFullYear();
+  // Create array in reverse order (newest first)
+  return Array.from({length: 5}, (_, i) => ({
+    text: String(currentYear - (4 - i)),
+    value: currentYear - (4 - i),
+  }));
+});
+
+// Add a watcher to reset month if needed when year changes
+watch(currentYearIndex, () => {
+  const currentDate = new Date();
+  const selectedYear = years.value[currentYearIndex.value].value;
+  const isCurrentYear = selectedYear === currentDate.getFullYear();
+
+  // If we switched to current year and selected month is in the future,
+  // reset to current month
+  if (isCurrentYear && currentMonthIndex.value > currentDate.getMonth()) {
+    currentMonthIndex.value = currentDate.getMonth();
+  }
+});
+
+// Verify the current year is selected on mount
 onMounted(async () => {
+  // Ensure we're on the current year
+  const currentYear = new Date().getFullYear();
+  const yearIndex = years.value.findIndex((y) => y.value === currentYear);
+  if (yearIndex !== -1) {
+    currentYearIndex.value = yearIndex;
+  }
+
   await fetchData();
 });
 
@@ -139,9 +196,9 @@ async function fetchData() {
 const filteredTransactions = computed(() => {
   if (!transactions.value.length) return [];
 
-  const [year, month] = selectedMonth.value;
-  const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-  const endDate = new Date(parseInt(year), parseInt(month), 0); // Last day of month
+  const selectedYear = years.value[currentYearIndex.value].value;
+  const startDate = new Date(selectedYear, currentMonthIndex.value, 1);
+  const endDate = new Date(selectedYear, currentMonthIndex.value + 1, 0);
 
   return transactions.value.filter((transaction) => {
     const transactionDate = new Date(transaction.timestamp);
@@ -172,23 +229,30 @@ const groupedTransactions = computed(() => {
 
 // Calculate totals
 const totalIncome = computed(() => {
-  return filteredTransactions.value
+  console.log('Filtered Transactions:', filteredTransactions.value);
+  const total = filteredTransactions.value
     .filter((t) => t.amount > 0)
-    .reduce((sum, t) => sum + (t.amount || 0), 0)
-    .toFixed(2);
+    .reduce((sum, t) => {
+      console.log('Transaction Amount:', t.amount, 'Sum:', sum);
+      return sum + (Number(t.amount) || 0);
+    }, 0);
+  console.log('Total Income:', total);
+  return total.toFixed(2);
 });
 
 const totalExpense = computed(() => {
-  return filteredTransactions.value
+  const total = filteredTransactions.value
     .filter((t) => t.amount < 0)
-    .reduce((sum, t) => sum + Math.abs(t.amount || 0), 0)
-    .toFixed(2);
+    .reduce((sum, t) => sum + Math.abs(Number(t.amount) || 0), 0); // Converti `amount` in numero
+  return total.toFixed(2);
 });
 
 const totalBalance = computed(() => {
-  return filteredTransactions.value
-    .reduce((sum, t) => sum + (t.amount || 0), 0)
-    .toFixed(2);
+  const total = filteredTransactions.value.reduce(
+    (sum, t) => sum + (Number(t.amount) || 0), // Converti `amount` in numero
+    0
+  );
+  return total.toFixed(2);
 });
 
 // Helper functions
@@ -222,6 +286,14 @@ function getCategoryColor(categoryId: string) {
 function getCategoryIcon(categoryId: string) {
   const category = categories.value.find((c) => c.id === categoryId);
   return category?.icon || 'question-o';
+}
+
+function handleMonthChange(index: number) {
+  currentMonthIndex.value = index;
+}
+
+function handleYearChange(index: number) {
+  currentYearIndex.value = index;
 }
 </script>
 
@@ -277,5 +349,21 @@ function getCategoryIcon(categoryId: string) {
 
 :deep(.van-card__price--integer) {
   font-size: 16px;
+}
+
+:deep(.van-tabs) {
+  margin-bottom: 8px;
+}
+
+:deep(.van-tabs:first-child) {
+  margin-bottom: 0;
+}
+
+:deep(.van-tabs:first-child .van-tabs__wrap) {
+  height: 36px;
+}
+
+:deep(.van-tabs:first-child .van-tab) {
+  font-size: 14px;
 }
 </style>
