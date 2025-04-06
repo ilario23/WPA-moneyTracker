@@ -19,7 +19,7 @@
     </van-tabs>
 
     <!-- Riepilogo -->
-    <van-card class="summary-card mt-16">
+    <van-card class="summary-card">
       <template #title>
         <div class="summary-title">{{ $t('transaction.monthlySummary') }}</div>
       </template>
@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, nextTick} from 'vue';
+import {ref, computed, onMounted, nextTick, watch} from 'vue';
 import {useUserStore} from '@/stores';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
@@ -165,17 +165,23 @@ const months = computed(() => {
   const currentDate = new Date();
   const selectedYear = years.value[currentYearIndex.value].value;
   const isCurrentYear = selectedYear === currentDate.getFullYear();
-
-  // For past years, always show all months
   const monthsCount = isCurrentYear ? currentDate.getMonth() + 1 : 12;
 
-  return Array.from({length: monthsCount}, (_, i) => {
+  const monthsTabs = Array.from({length: monthsCount}, (_, i) => {
     const date = new Date(selectedYear, i);
     return {
       text: date.toLocaleString(locale.value, {month: 'long'}),
       value: i,
     };
   });
+
+  // Aggiungi il tab "All" alla fine
+  monthsTabs.push({
+    text: t('common.all'),
+    value: -1,
+  });
+
+  return monthsTabs;
 });
 
 // Aggiungi queste computed properties e refs
@@ -204,8 +210,13 @@ onMounted(async () => {
 async function fetchData() {
   loading.value = true;
   try {
-    // Fetch transactions
-    transactions.value = await UserTransactions.getUsertransactions(userId);
+    const selectedYear = years.value[currentYearIndex.value].value.toString();
+
+    // Get transactions only for the selected year
+    transactions.value = await UserTransactions.getUserTransactionsByYear(
+      userId,
+      selectedYear
+    );
 
     // Fetch categories with type
     categories.value = await UserCategories.getCategoriesWithType(userId);
@@ -217,19 +228,37 @@ async function fetchData() {
   }
 }
 
-// Filter transactions by selected month
+// Add watch for year changes to reload transactions
+watch(currentYearIndex, () => {
+  fetchData();
+});
+
 const filteredTransactions = computed(() => {
   if (!transactions.value.length) return [];
 
   const selectedYear = years.value[currentYearIndex.value].value;
-  const startDate = new Date(selectedYear, currentMonthIndex.value, 1);
-  const endDate = new Date(selectedYear, currentMonthIndex.value + 1, 0);
+  const isAllTab = currentMonthIndex.value === months.value.length - 1;
 
-  return transactions.value.filter((transaction) => {
-    const transactionDate = new Date(transaction.timestamp);
-    return transactionDate >= startDate && transactionDate <= endDate;
-  });
+  return transactions.value
+    .filter((transaction) => {
+      const transDate = new Date(transaction.timestamp);
+      if (isAllTab) {
+        return transDate.getFullYear() === selectedYear;
+      }
+      return (
+        transDate.getFullYear() === selectedYear &&
+        transDate.getMonth() === currentMonthIndex.value
+      );
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
 });
+
+function handleMonthChange(index: number) {
+  currentMonthIndex.value = index;
+}
 
 // Group transactions by date
 const groupedTransactions = computed(() => {
@@ -339,16 +368,12 @@ function getCategoryName(categoryId: string) {
 
 function getCategoryColor(categoryId: string) {
   const category = categories.value.find((c) => c.id === categoryId);
-  return category?.color || '#cccccc';
+  return category?.color || '#00000000';
 }
 
 function getCategoryIcon(categoryId: string) {
   const category = categories.value.find((c) => c.id === categoryId);
   return category?.icon || 'question-o';
-}
-
-function handleMonthChange(index: number) {
-  currentMonthIndex.value = index;
 }
 
 function handleYearChange(index: number) {
@@ -401,7 +426,8 @@ const handleDelete = async (transactionId: string) => {
   text-align: center;
   border-radius: 8px;
   margin-bottom: 16px;
-  background-color: #f8f8f8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ebedf0;
 }
 
 .summary-title {
@@ -472,14 +498,38 @@ const handleDelete = async (transactionId: string) => {
   width: 100%;
 }
 
-/* Add spacing and rounded corners for transactions */
+/* Stili per il contenitore e i bottoni */
 :deep(.van-swipe-cell) {
-  margin-bottom: 8px;
+  margin: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+:deep(.van-swipe-cell__left),
+:deep(.van-swipe-cell__right) {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.edit-button,
+.delete-button {
+  height: 100%;
+  width: 64px;
+  border-radius: 0;
 }
 
 :deep(.van-card) {
-  border-radius: 8px;
-  overflow: hidden;
+  background-color: transparent;
+  border-radius: 0;
+  padding-top: 0;
+}
+
+:deep(.van-card__header) {
+  padding-top: 8px;
 }
 
 /* Optional: Add some side padding to the list container */

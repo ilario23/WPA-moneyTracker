@@ -22,6 +22,9 @@
     "user": "Utente",
     "monthlyTransactions": "📗 Spese Mensili"
   },
+  "common": {
+    "all": "Tutti"
+  },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",
     "noData": "Nessun dato",
@@ -111,7 +114,25 @@
     "noTransactions": "Nessuna transazione in questo periodo",
     "unknownCategory": "Categoria Sconosciuta",
     "selectMonth": "Seleziona Mese",
-    "fetchError": "Errore nel caricamento delle transazioni"
+    "fetchError": "Errore nel caricamento delle transazioni",
+    "newest": "Più Recenti",
+    "oldest": "Più Vecchi",
+    "allCategories": "Tutte le Categorie",
+    "loadError": "Errore nel caricamento dei dati",
+    "months": {
+      "january": "Gennaio",
+      "february": "Febbraio",
+      "march": "Marzo",
+      "april": "Aprile",
+      "may": "Maggio",
+      "june": "Giugno",
+      "july": "Luglio",
+      "august": "Agosto",
+      "september": "Settembre",
+      "october": "Ottobre",
+      "november": "Novembre",
+      "december": "Dicembre"
+    }
   },
   "category": {
     "title": "Titolo",

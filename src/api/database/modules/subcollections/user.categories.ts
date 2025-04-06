@@ -12,6 +12,7 @@ import type {Category, CategoryWithType} from '@/types/category';
 import {setLoading} from '@/services/utils';
 
 const COLLECTION = 'categories';
+const TOKENS_COLLECTION = 'tokens';
 
 interface Option {
   text: string;
@@ -153,7 +154,15 @@ export const UserCategories = {
   createUserCategory: async (userId: string, category: Category) => {
     setLoading(true);
     try {
+      // Save category
       await setDoc(doc(DB, 'users', userId, COLLECTION, category.id), category);
+
+      // Update categories token
+      const newToken = new Date().toISOString();
+      await setDoc(doc(DB, 'users', userId, TOKENS_COLLECTION, 'categories'), {
+        token: newToken,
+      });
+
       return category;
     } catch (err) {
       console.error(err);
@@ -170,13 +179,19 @@ export const UserCategories = {
   updateUserCategory: async (userId: string, category: Category) => {
     setLoading(true);
     try {
+      // Update category
       await setDoc(
         doc(DB, 'users', userId, COLLECTION, category.id),
         category,
-        {
-          merge: true,
-        }
+        {merge: true}
       );
+
+      // Update categories token
+      const newToken = new Date().toISOString();
+      await setDoc(doc(DB, 'users', userId, TOKENS_COLLECTION, 'categories'), {
+        token: newToken,
+      });
+
       return category;
     } catch (err) {
       console.error(err);
@@ -195,9 +210,17 @@ export const UserCategories = {
     categoryId: string
   ): Promise<void> => {
     setLoading(true);
-    return deleteDoc(doc(DB, 'users', userId, COLLECTION, categoryId)).finally(
-      () => setLoading(false)
-    );
+    try {
+      await deleteDoc(doc(DB, 'users', userId, COLLECTION, categoryId));
+
+      // Update categories token after deletion
+      const newToken = new Date().toISOString();
+      await setDoc(doc(DB, 'users', userId, TOKENS_COLLECTION, 'categories'), {
+        token: newToken,
+      });
+    } finally {
+      setLoading(false);
+    }
   },
 
   /**
@@ -221,5 +244,16 @@ export const UserCategories = {
     } finally {
       setLoading(false);
     }
+  },
+
+  /**
+   * @param userId id of the user
+   * @returns the categories token or null if not found
+   */
+  getCategoryToken: async (userId: string): Promise<string | null> => {
+    const tokenDoc = await getDoc(
+      doc(DB, 'users', userId, TOKENS_COLLECTION, 'categories')
+    );
+    return tokenDoc.data()?.token || null;
   },
 };

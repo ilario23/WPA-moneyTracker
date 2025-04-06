@@ -1,80 +1,156 @@
-import {collection, deleteDoc, doc, getDocs, setDoc} from 'firebase/firestore';
-import {DB} from '../../../../config/firebase';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  setDoc,
+  getDoc,
+} from 'firebase/firestore';
+import {DB} from '@/config/firebase';
 import type {Transaction} from '@/types/transaction';
-import {setLoading} from '../../../../services/utils';
+import {setLoading} from '@/services/utils';
 
 const COLLECTION = 'transactions';
+const TOKENS_COLLECTION = 'tokens';
+
 export const UserTransactions = {
   /**
-   *
-   * @param userId
-   * @returns the transactions for the specified user
+   * Get transactions for a specific year
    */
-  getUsertransactions: async (userId: string) => {
+  getUserTransactionsByYear: async (userId: string, year: string) => {
     setLoading(true);
-    const snaps = await getDocs(
-      collection(DB, 'users', userId, COLLECTION)
-    ).finally(() => setLoading(false));
-    return snaps.docs.map((snap) => snap.data() as Transaction);
+    try {
+      const snaps = await getDocs(
+        collection(DB, 'users', userId, COLLECTION, year, 'transactions')
+      );
+      return snaps.docs.map((snap) => snap.data() as Transaction);
+    } finally {
+      setLoading(false);
+    }
   },
+
   /**
-   *
-   * @param userId id of the user
-   * @param transaction whole transaction object to be created
-   * @returns the created transaction
+   * Create a new transaction
    */
   createUserTransaction: async (userId: string, transaction: Transaction) => {
     setLoading(true);
     try {
-      setLoading(true);
+      const year = new Date(transaction.timestamp).getFullYear().toString();
+
+      // Save transaction
       await setDoc(
-        doc(DB, 'users', userId, COLLECTION, transaction.id),
+        doc(
+          DB,
+          'users',
+          userId,
+          COLLECTION,
+          year,
+          'transactions',
+          transaction.id
+        ),
         transaction
       );
+
+      // Update year's token
+      const newToken = new Date().toISOString();
+      await setDoc(
+        doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
+        {token: newToken}
+      );
+
       return transaction;
     } catch (err) {
-      console.error(err);
-      setLoading(false);
+      console.error('Error creating transaction:', err);
       return null;
+    } finally {
+      setLoading(false);
     }
   },
+
   /**
-   *
-   * @param userId id of the user
-   * @param transaction whole transaction object to be updated
-   * @returns the updated transaction
+   * Update an existing transaction
    */
   updateUserTransaction: async (userId: string, transaction: Transaction) => {
     setLoading(true);
     try {
-      setLoading(true);
+      const year = new Date(transaction.timestamp).getFullYear().toString();
+
+      // Update transaction
       await setDoc(
-        doc(DB, 'users', userId, COLLECTION, transaction.id),
+        doc(
+          DB,
+          'users',
+          userId,
+          COLLECTION,
+          year,
+          'transactions',
+          transaction.id
+        ),
         transaction,
-        {
-          merge: true,
-        }
+        {merge: true}
       );
+
+      // Update year's token
+      const newToken = new Date().toISOString();
+      await setDoc(
+        doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
+        {token: newToken}
+      );
+
       return transaction;
     } catch (err) {
-      console.error(err);
-      setLoading(false);
+      console.error('Error updating transaction:', err);
       return null;
+    } finally {
+      setLoading(false);
     }
   },
+
   /**
-   *
-   * @param userId id of the user
-   * @param transaction whole transaction object to be deleted
-   * @returns void
+   * Delete a transaction
    */
   deleteUserTransaction: async (
     userId: string,
     transaction: Transaction
   ): Promise<void> => {
     setLoading(true);
-    return deleteDoc(
-      doc(DB, 'users', userId, COLLECTION, transaction.id)
-    ).finally(() => setLoading(false));
+    try {
+      const year = new Date(transaction.timestamp).getFullYear().toString();
+
+      // Delete transaction
+      await deleteDoc(
+        doc(
+          DB,
+          'users',
+          userId,
+          COLLECTION,
+          year,
+          'transactions',
+          transaction.id
+        )
+      );
+
+      // Update year's token
+      const newToken = new Date().toISOString();
+      await setDoc(
+        doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
+        {token: newToken}
+      );
+    } finally {
+      setLoading(false);
+    }
+  },
+
+  /**
+   * Get the transaction token for a specific year
+   */
+  getYearToken: async (
+    userId: string,
+    year: string
+  ): Promise<string | null> => {
+    const tokenDoc = await getDoc(
+      doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`)
+    );
+    return tokenDoc.data()?.token || null;
   },
 };

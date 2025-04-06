@@ -28,6 +28,9 @@
     "pull": "Pull",
     "reset": "Reset"
   },
+  "common": {
+    "all": "All"
+  },
   "charts": {
     "January": "Jan",
     "February": "Feb",
@@ -110,7 +113,25 @@
     "noTransactions": "No transactions for this period",
     "unknownCategory": "Unknown Category",
     "selectMonth": "Select Month",
-    "fetchError": "Error loading transactions"
+    "fetchError": "Error loading transactions",
+    "newest": "Newest First",
+    "oldest": "Oldest First",
+    "allCategories": "All Categories",
+    "loadError": "Error loading data",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
   },
   "category": {
     "title": "Title",

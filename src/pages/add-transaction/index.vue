@@ -150,6 +150,7 @@ import {useUserStore} from '@/stores/modules/user';
 import {useI18n} from 'vue-i18n';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
+import {createSyncService} from '@/services/sync';
 
 interface Option {
   text: string;
@@ -233,33 +234,23 @@ const rules = reactive({
   ],
 });
 
+const sync = createSyncService(userId);
+
 async function addTransaction() {
   try {
-    // Genera un ID unico per la transazione
+    loading.value = true;
     const transactionId = crypto.randomUUID();
 
-    // Prepara i dati della transazione
     const transaction = {
       ...transactionData,
-      id: transactionId, // Aggiungi l'ID generato
+      id: transactionId,
       timestamp: new Date(transactionData.timestamp).toISOString(),
-      userId: userId, // Associa la transazione all'utente corrente
+      userId: userId,
       categoryId: transactionData.categoryId,
     };
 
-    console.log('Transaction Data:', transaction);
-
-    // Effettua la chiamata per creare la transazione
-    const createdTransaction = await UserTransactions.createUserTransaction(
-      userId,
-      transaction
-    );
-
-    if (createdTransaction) {
-      showNotify({type: 'success', message: t('transaction.success')});
-    } else {
-      throw new Error(t('transaction.error'));
-    }
+    await sync.updateTransactionAndCache(transaction);
+    showNotify({type: 'success', message: t('transaction.success')});
   } catch (error) {
     console.error(error);
     showNotify({type: 'danger', message: t('transaction.error')});
