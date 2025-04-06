@@ -134,7 +134,6 @@ import {UserCategories} from '@/api/database/modules/subcollections/user.categor
 import {showNotify} from 'vant';
 import {useI18n} from 'vue-i18n';
 import {useRouter} from 'vue-router';
-import {createSyncService} from '@/services/sync';
 import type {Transaction} from '@/types/transaction';
 import type {CategoryWithType} from '@/types/category';
 
@@ -142,7 +141,6 @@ const {t, locale} = useI18n();
 const userStore = useUserStore();
 const userId = userStore.userInfo.uid;
 const router = useRouter();
-const sync = createSyncService(userId);
 
 // State variables
 const transactions = ref<Transaction[]>([]);
@@ -454,7 +452,6 @@ const handleDelete = async (transactionId: string) => {
   border-radius: 8px;
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ebedf0;
 }
 
 .summary-title {

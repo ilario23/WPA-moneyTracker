@@ -116,7 +116,7 @@ export const UserTransactions = {
   ): Promise<void> => {
     setLoading(true);
     try {
-      // Elimina direttamente la transazione usando il percorso corretto con l'anno fornito
+      // Delete transaction using correct path with year
       const transactionRef = doc(
         DB,
         'users',
@@ -128,7 +128,7 @@ export const UserTransactions = {
       );
       await deleteDoc(transactionRef);
 
-      // Aggiorna il token dell'anno
+      // Update year's token
       const newToken = new Date().toISOString();
       await setDoc(
         doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
