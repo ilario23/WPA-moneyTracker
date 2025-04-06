@@ -32,8 +32,18 @@ class CacheService {
     return await this.db.get('cache', 'store');
   }
 
+  private async setStoreData(key: string, value: any): Promise<void> {
+    try {
+      const serializedValue = JSON.parse(JSON.stringify(value));
+      await this.db.put('cache', serializedValue, key);
+    } catch (error) {
+      console.error('Error setting store:', error);
+      throw error;
+    }
+  }
+
   async setStore(store: CacheStore): Promise<void> {
-    await this.db.put('cache', store, 'store');
+    await this.setStoreData('store', store);
   }
 
   async updateCategories(categories: CategoryWithType[], token: string) {
@@ -49,18 +59,26 @@ class CacheService {
   }
 
   async updateTransactions(
-    year: string,
     transactions: Transaction[],
-    token: string
-  ) {
+    token?: string
+  ): Promise<void> {
     const store = (await this.getStore()) || {
       categories: [],
       transactions: {},
       tokens: {categoriesToken: '', transactionTokens: {}},
     };
 
-    store.transactions[year] = transactions;
-    store.tokens.transactionTokens[year] = token;
+    const year = new Date().getFullYear().toString();
+    store.transactions[year] = transactions.map((t) => ({
+      ...t,
+      timestamp:
+        t.timestamp instanceof Date ? t.timestamp.toISOString() : t.timestamp,
+    }));
+
+    if (token) {
+      store.tokens.transactionTokens[year] = token;
+    }
+
     await this.setStore(store);
   }
 }

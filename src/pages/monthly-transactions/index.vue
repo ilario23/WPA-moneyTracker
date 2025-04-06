@@ -133,12 +133,16 @@ import {UserTransactions} from '@/api/database/modules/subcollections/user.trans
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {showNotify} from 'vant';
 import {useI18n} from 'vue-i18n';
+import {useRouter} from 'vue-router';
+import {createSyncService} from '@/services/sync';
 import type {Transaction} from '@/types/transaction';
 import type {CategoryWithType} from '@/types/category';
 
 const {t, locale} = useI18n();
 const userStore = useUserStore();
 const userId = userStore.userInfo.uid;
+const router = useRouter();
+const sync = createSyncService(userId);
 
 // State variables
 const transactions = ref<Transaction[]>([]);
@@ -395,15 +399,38 @@ function handleYearChange(index: number) {
 }
 
 const handleEdit = async (transactionId: string) => {
-  console.log('Edit transaction:', transactionId);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  showNotify({type: 'warning', message: 'Edit function not implemented yet'});
+  const transaction = transactions.value.find((t) => t.id === transactionId);
+  if (!transaction) {
+    showNotify({type: 'danger', message: t('transaction.notFound')});
+    return;
+  }
+
+  // Redirect to add-transaction page with transaction data
+  router.push({
+    name: 'transaction',
+    query: {
+      id: transaction.id,
+    },
+  });
 };
 
 const handleDelete = async (transactionId: string) => {
-  console.log('Delete transaction:', transactionId);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  showNotify({type: 'warning', message: 'Delete function not implemented yet'});
+  try {
+    const selectedYear = years.value[currentYearIndex.value].value.toString();
+    await UserTransactions.deleteTransaction(
+      userId,
+      transactionId,
+      selectedYear
+    );
+
+    // Refresh data
+    await fetchData();
+
+    showNotify({type: 'success', message: t('transaction.deleteSuccess')});
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    showNotify({type: 'danger', message: t('transaction.deleteError')});
+  }
 };
 </script>
 

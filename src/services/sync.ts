@@ -54,7 +54,7 @@ export class SyncService {
         this.userId,
         year
       );
-      await this.cache.updateTransactions(year, transactions, remoteToken);
+      await this.cache.updateTransactions(transactions, remoteToken);
       return transactions;
     }
 
@@ -65,36 +65,39 @@ export class SyncService {
   async updateTransactionAndCache(transaction: Transaction): Promise<void> {
     const year = new Date(transaction.timestamp).getFullYear().toString();
 
-    // Get current token before operation
+    // Update transaction in Firestore
+    await UserTransactions.createUserTransaction(this.userId, transaction);
+
+    // Get all transactions for the year and update cache
+    const transactions = await UserTransactions.getUserTransactionsByYear(
+      this.userId,
+      year
+    );
     const tokenDoc = await getDoc(
       doc(DB, 'users', this.userId, TOKENS_COLLECTION, `transactions_${year}`)
     );
-    const remoteToken = tokenDoc.data()?.token;
-    const store = await this.cache.getStore();
-    const localToken = store?.tokens.transactionTokens[year];
+    const token = tokenDoc.data()?.token;
 
-    // If tokens match
-    if (remoteToken === localToken) {
-      // Update transaction in Firestore
-      await UserTransactions.createUserTransaction(this.userId, transaction);
+    await this.cache.updateTransactions(transactions, token);
+  }
 
-      // Get new token after update
-      const updatedTokenDoc = await getDoc(
-        doc(DB, 'users', this.userId, TOKENS_COLLECTION, `transactions_${year}`)
-      );
-      const newToken = updatedTokenDoc.data()?.token;
+  async deleteTransactionAndCache(transaction: Transaction): Promise<void> {
+    const year = new Date(transaction.timestamp).getFullYear().toString();
 
-      // Update local cache directly
-      if (store) {
-        const yearTransactions = [...(store.transactions[year] || [])];
-        yearTransactions.push(transaction);
-        await this.cache.updateTransactions(year, yearTransactions, newToken);
-      }
-    } else {
-      // Tokens don't match, do full sync
-      await UserTransactions.createUserTransaction(this.userId, transaction);
-      await this.syncTransactionsYear(year);
-    }
+    // Delete from Firebase
+    await UserTransactions.deleteTransaction(this.userId, transaction.id);
+
+    // Update cache with new transaction list
+    const transactions = await UserTransactions.getUserTransactionsByYear(
+      this.userId,
+      year
+    );
+    const tokenDoc = await getDoc(
+      doc(DB, 'users', this.userId, TOKENS_COLLECTION, `transactions_${year}`)
+    );
+    const token = tokenDoc.data()?.token;
+
+    await this.cache.updateTransactions(transactions, token);
   }
 }
 

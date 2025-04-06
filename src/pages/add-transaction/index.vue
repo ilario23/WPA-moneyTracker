@@ -148,9 +148,10 @@ import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
 import {useUserStore} from '@/stores/modules/user';
 import {useI18n} from 'vue-i18n';
-import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {createSyncService} from '@/services/sync';
+import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
+import {useRoute, useRouter} from 'vue-router';
 
 interface Option {
   text: string;
@@ -159,6 +160,7 @@ interface Option {
 }
 
 // Ottieni lo store dell'utente
+const router = useRouter();
 const userStore = useUserStore();
 
 // Ottieni l'uid dell'utente come stringa
@@ -177,6 +179,9 @@ const parentlessCategories = ref([]);
 const vanTabColor = ref('');
 const vanTabTitleActiveColor = ref('');
 
+const route = useRoute();
+const transactionId = route.query.id as string;
+
 // onBeforeMount, chiama getCategories per ottenere i dati delle categorie
 onBeforeMount(async () => {
   // Ottieni tutte le categorie
@@ -185,6 +190,48 @@ onBeforeMount(async () => {
     (category) =>
       category.parentCategoryId === '' || category.parentCategoryId === null
   );
+
+  // Se c'è un ID nella query, carica i dati della transazione
+  if (transactionId) {
+    const year = new Date().getFullYear().toString();
+    const yearTransactions = await UserTransactions.getUserTransactionsByYear(
+      userId,
+      year
+    );
+    const transaction = yearTransactions.find((t) => t.id === transactionId);
+
+    if (transaction) {
+      // Precompila i dati del form
+      Object.assign(transactionData, transaction);
+
+      // Imposta la data
+      const date = new Date(transaction.timestamp);
+      currentDate.value = [
+        date.getFullYear().toString(),
+        (date.getMonth() + 1).toString().padStart(2, '0'),
+        date.getDate().toString().padStart(2, '0'),
+      ];
+      dateLabel.value = currentDate.value.join('/');
+
+      // Imposta la categoria
+      const category = allCategories.find(
+        (c) => c.id === transaction.categoryId
+      );
+      if (category) {
+        fieldCategotyValue.value = category.title;
+        cascaderValue.value = category.id;
+
+        // Trova l'indice della categoria padre per impostare il tab corretto
+        const parentIndex = parentlessCategories.value.findIndex(
+          (c) => c.id === (category.parentCategoryId || category.id)
+        );
+        if (parentIndex !== -1) {
+          transactionType.value = parentIndex;
+          swipingTabs(parentIndex);
+        }
+      }
+    }
+  }
 });
 
 onMounted(async () => {
@@ -239,23 +286,36 @@ const sync = createSyncService(userId);
 async function addTransaction() {
   try {
     loading.value = true;
-    const transactionId = crypto.randomUUID();
-
     const transaction = {
       ...transactionData,
-      id: transactionId,
+      id: transactionId || crypto.randomUUID(),
       timestamp: new Date(transactionData.timestamp).toISOString(),
       userId: userId,
       categoryId: transactionData.categoryId,
     };
 
+    // Usa il servizio sync per gestire sia l'aggiunta che la modifica
     await sync.updateTransactionAndCache(transaction);
-    showNotify({type: 'success', message: t('transaction.success')});
+
+    showNotify({
+      type: 'success',
+      message: t(
+        transactionId ? 'transaction.updateSuccess' : 'transaction.success'
+      ),
+    });
+
+    // Reimposta il form e torna alla pagina precedente
+    resetFields();
+    router.back();
   } catch (error) {
     console.error(error);
-    showNotify({type: 'danger', message: t('transaction.error')});
+    showNotify({
+      type: 'danger',
+      message: t(
+        transactionId ? 'transaction.updateError' : 'transaction.error'
+      ),
+    });
   } finally {
-    resetFields();
     loading.value = false;
   }
 }

@@ -109,33 +109,34 @@ export const UserTransactions = {
   /**
    * Delete a transaction
    */
-  deleteUserTransaction: async (
+  deleteTransaction: async (
     userId: string,
-    transaction: Transaction
+    transactionId: string,
+    year: string
   ): Promise<void> => {
     setLoading(true);
     try {
-      const year = new Date(transaction.timestamp).getFullYear().toString();
-
-      // Delete transaction
-      await deleteDoc(
-        doc(
-          DB,
-          'users',
-          userId,
-          COLLECTION,
-          year,
-          'transactions',
-          transaction.id
-        )
+      // Elimina direttamente la transazione usando il percorso corretto con l'anno fornito
+      const transactionRef = doc(
+        DB,
+        'users',
+        userId,
+        COLLECTION,
+        year,
+        'transactions',
+        transactionId
       );
+      await deleteDoc(transactionRef);
 
-      // Update year's token
+      // Aggiorna il token dell'anno
       const newToken = new Date().toISOString();
       await setDoc(
         doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
         {token: newToken}
       );
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
