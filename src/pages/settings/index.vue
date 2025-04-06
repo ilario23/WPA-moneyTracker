@@ -22,6 +22,13 @@
     <VanCell center :title="$t('settings.currentVersion')">
       <div class="text-gray">v{{ version }}</div>
     </VanCell>
+
+    <VanCell
+      center
+      is-link
+      :title="t('settings.clearCache')"
+      @click="clearCache"
+    />
   </VanCellGroup>
 
   <van-popup v-model:show="showLanguagePicker" position="bottom">
@@ -39,10 +46,13 @@ import type {PickerColumn} from 'vant';
 import {version} from '~root/package.json';
 import useAppStore from '@/stores/modules/app';
 import {languageColumns, locale} from '@/utils/i18n';
+import {createCacheService} from '@/services/cache';
+import {showNotify, showConfirmDialog} from 'vant';
 
 const {t} = useI18n();
 const appStore = useAppStore();
 const checked = ref<boolean>(isDark.value);
+const cacheService = createCacheService();
 
 watch(
   () => isDark.value,
@@ -66,6 +76,22 @@ const language = computed(
 function onLanguageConfirm(event: {selectedOptions: PickerColumn}) {
   locale.value = event.selectedOptions[0].value as string;
   showLanguagePicker.value = false;
+}
+
+async function clearCache() {
+  try {
+    await showConfirmDialog({
+      title: t('settings.clearCache'),
+      message: t('settings.clearCacheConfirm'),
+    });
+
+    await cacheService.clearStore();
+    showNotify({type: 'success', message: t('settings.cacheClearedSuccess')});
+  } catch (error) {
+    if (error?.toString().includes('cancel')) return;
+    console.error('Error clearing cache:', error);
+    showNotify({type: 'danger', message: t('settings.cacheClearError')});
+  }
 }
 </script>
 

@@ -88,7 +88,11 @@
   },
   "settings": {
     "currentVersion": "Versione Attuale",
-    "comfirmTitle": "Conferma l'uscita?"
+    "comfirmTitle": "Conferma l'uscita?",
+    "clearCache": "Svuota Cache",
+    "clearCacheConfirm": "Sei sicuro di voler svuotare la cache dell'applicazione?",
+    "cacheClearedSuccess": "Cache svuotata con successo",
+    "cacheClearError": "Errore durante la pulizia della cache"
   },
   "transaction": {
     "expense": "Spesa",

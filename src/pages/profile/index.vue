@@ -4,6 +4,7 @@ import {useUserStore} from '@/stores';
 import {showNotify} from 'vant';
 import defaultAvatar from '@/assets/images/default-avatar.svg';
 import {showConfirmDialog} from 'vant';
+import {createCacheService} from '@/services/cache';
 
 const {t} = useI18n();
 const router = useRouter();
@@ -19,19 +20,25 @@ function clickProfile() {
 }
 
 async function logout() {
-  showConfirmDialog({
-    title: t('profile.comfirmTitle'),
-  })
-    .then(() => {
-      showDialog.value = false; // Chiudi la dialog
-      showNotify({type: 'success', message: t('profile.succesfulLogout')});
-      userStore.logout();
-      router.push({name: 'login'});
-    })
-    .catch((error) => {
-      console.error('Errore durante il logout:', error);
-      showNotify({type: 'danger', message: t('profile.errorLogout')});
+  try {
+    await showConfirmDialog({
+      title: t('profile.comfirmTitle'),
     });
+
+    showDialog.value = false;
+
+    // Clear the cache before logout
+    const cache = createCacheService();
+    await cache.clearStore();
+
+    await userStore.logout();
+    showNotify({type: 'success', message: t('profile.succesfulLogout')});
+    router.push({name: 'login'});
+  } catch (error) {
+    if (error?.toString().includes('cancel')) return;
+    console.error('Errore durante il logout:', error);
+    showNotify({type: 'danger', message: t('profile.errorLogout')});
+  }
 }
 </script>
 

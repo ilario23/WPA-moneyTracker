@@ -87,7 +87,11 @@
   },
   "settings": {
     "currentVersion": "Current Version",
-    "comfirmTitle": "Confirm Exit?"
+    "comfirmTitle": "Confirm Exit?",
+    "clearCache": "Clear Cache",
+    "clearCacheConfirm": "Are you sure you want to clear the application cache?",
+    "cacheClearedSuccess": "Cache cleared successfully",
+    "cacheClearError": "Error clearing cache"
   },
   "transaction": {
     "expense": "Expense",

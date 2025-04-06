@@ -47,6 +47,16 @@ class CacheService {
     }
   }
 
+  async clearStore(): Promise<void> {
+    try {
+      const db = await this.db;
+      await db.delete('cache', this.STORE_KEY);
+    } catch (error) {
+      console.error('Error clearing store:', error);
+      throw error;
+    }
+  }
+
   async updateTransactions(
     transactions: Transaction[],
     year: string,
