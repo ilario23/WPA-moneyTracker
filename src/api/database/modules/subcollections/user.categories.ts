@@ -1,5 +1,12 @@
 import {BASE_CATEGORIES_ID} from '@/utils/category';
-import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore';
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc,
+  getDocs,
+  collection,
+} from 'firebase/firestore';
 import {DB} from '@/config/firebase';
 import type {Category, CategoryWithType} from '@/types/category';
 import {setLoading} from '@/services/utils';
@@ -87,58 +94,47 @@ export const UserCategories = {
   getCategoriesWithType: async (
     userId: string
   ): Promise<CategoryWithType[]> => {
-    setLoading(true);
     try {
-      const categories = await UserCategories.getUserCategories(userId);
+      // Get categories directly from Firebase without using sync service to avoid recursion
+      const snaps = await getDocs(collection(DB, 'users', userId, COLLECTION));
+      const categories = snaps.docs.map((snap) => snap.data() as Category);
+
       const categoriesMap = new Map(categories.map((cat) => [cat.id, cat]));
 
       const determineType = (category: Category): 1 | 2 | 3 => {
-        // BASE_CATEGORIES_ID is an array containing the three IDs in order
-        // [EXPENSES_ID, INCOMES_ID, INVESTMENTS_ID]
-        if (category.id === BASE_CATEGORIES_ID[0]) return 1; // Expenses
-        if (category.id === BASE_CATEGORIES_ID[1]) return 2; // Incomes
-        if (category.id === BASE_CATEGORIES_ID[2]) return 3; // Investments
+        if (category.id === BASE_CATEGORIES_ID[0]) return 1;
+        if (category.id === BASE_CATEGORIES_ID[1]) return 2;
+        if (category.id === BASE_CATEGORIES_ID[2]) return 3;
 
-        // If it has a parent, recursively check the parent's type
         if (category.parentCategoryId) {
           const parent = categoriesMap.get(category.parentCategoryId);
           if (parent) {
-            return determineType(parent as Category);
+            return determineType(parent);
           }
         }
-
-        // Default to expenses (1) if something goes wrong
         return 1;
       };
 
       const determineColor = (category: Category): string => {
-        // If category has its own color, use it
         if (category.color) return category.color;
 
-        // If it has a parent, recursively check the parent's color
         if (category.parentCategoryId) {
           const parent = categoriesMap.get(category.parentCategoryId);
           if (parent) {
-            return determineColor(parent as Category);
+            return determineColor(parent);
           }
         }
-
-        // Default color if no color is found in hierarchy
         return '#cccccc';
       };
 
-      const categoriesWithType = categories.map((category) => ({
+      return categories.map((category) => ({
         ...category,
         type: determineType(category),
-        color: determineColor(category), // Add the determined color
+        color: determineColor(category),
       }));
-
-      return categoriesWithType;
     } catch (error) {
       console.error('Error getting categories with type:', error);
       return [];
-    } finally {
-      setLoading(false);
     }
   },
 

@@ -18,27 +18,50 @@ export class SyncService {
   }
 
   async syncCategories() {
-    // Get remote token
+    try {
+      // 1. Prima controllo la cache locale
+      const store = await this.cache.getStore();
+      const localToken = store?.tokens.categoriesToken;
+
+      // Se non ho dati in cache, sincronizza da Firebase
+      if (!store?.categories || !localToken) {
+        return await this.syncCategoriesFromFirebase();
+      }
+
+      // 2. Controllo il token remoto solo se ho un token locale
+      const tokenDoc = await getDoc(
+        doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories')
+      );
+      const remoteToken = tokenDoc.data()?.token;
+
+      // 3. Se i token corrispondono, usa la cache
+      if (remoteToken === localToken) {
+        console.log('Using cached categories');
+        return store.categories;
+      }
+
+      // 4. Se i token sono diversi, sincronizza da Firebase
+      return await this.syncCategoriesFromFirebase();
+    } catch (error) {
+      console.error('Error syncing categories:', error);
+      throw error;
+    }
+  }
+
+  private async syncCategoriesFromFirebase() {
+    console.log('Syncing categories from Firebase');
+    // Ottieni il token prima delle categorie per evitare race conditions
     const tokenDoc = await getDoc(
       doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories')
     );
     const remoteToken = tokenDoc.data()?.token;
 
-    // Get local store
-    const store = await this.cache.getStore();
-    const localToken = store?.tokens.categoriesToken;
-
-    if (!remoteToken || remoteToken !== localToken) {
-      // Need to sync
-      const categories = await UserCategories.getCategoriesWithType(
-        this.userId
-      );
-      await this.cache.updateCategories(categories, remoteToken);
-      return categories;
-    }
-
-    // Use cached data
-    return store.categories;
+    const categories = await UserCategories.getCategoriesWithType(this.userId);
+    await this.cache.updateCategories(
+      categories,
+      remoteToken || new Date().toISOString()
+    );
+    return categories;
   }
 
   async syncTransactionsYear(year: string) {

@@ -12,15 +12,15 @@ interface MyDB extends DBSchema {
 }
 
 class CacheService {
-  private db: IDBPDatabase<MyDB>;
+  private db: Promise<IDBPDatabase<MyDB>>;
   private STORE_KEY = 'store';
 
   constructor() {
-    this.initDB();
+    this.db = this.initDB();
   }
 
-  private async initDB() {
-    this.db = await openDB<MyDB>('finance-app', 1, {
+  private initDB(): Promise<IDBPDatabase<MyDB>> {
+    return openDB<MyDB>('finance-app', 1, {
       upgrade(db) {
         db.createObjectStore('cache');
       },
@@ -29,7 +29,8 @@ class CacheService {
 
   async getStore(): Promise<CacheStore | null> {
     try {
-      return await this.db.get('cache', this.STORE_KEY);
+      const db = await this.db;
+      return await db.get('cache', this.STORE_KEY);
     } catch (error) {
       console.error('Error getting store:', error);
       return null;
@@ -38,7 +39,8 @@ class CacheService {
 
   async setStore(store: CacheStore): Promise<void> {
     try {
-      await this.db.put('cache', store, this.STORE_KEY);
+      const db = await this.db;
+      await db.put('cache', store, this.STORE_KEY);
     } catch (error) {
       console.error('Error setting store:', error);
       throw error;
