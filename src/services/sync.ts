@@ -91,9 +91,11 @@ export class SyncService {
 
   // Metodo helper per la sincronizzazione con Firebase
   private async syncFromFirebase(year: string) {
+    console.log('Syncing from Firebase for year:', year);
     const transactions = await UserTransactions.getUserTransactionsByYear(
       this.userId,
-      year
+      year,
+      true // skipSync = true per evitare il loop
     );
 
     const tokenDoc = await getDoc(
@@ -150,6 +152,7 @@ export class SyncService {
     transaction: Transaction
   ): Promise<Transaction | null> {
     const year = new Date(transaction.timestamp).getFullYear().toString();
+    console.log('Creating transaction for year:', year, transaction);
 
     try {
       // Save to Firebase
@@ -165,6 +168,7 @@ export class SyncService {
         ),
         transaction
       );
+      console.log('Transaction saved to Firebase');
 
       // Update token
       const newToken = new Date().toISOString();
@@ -178,6 +182,7 @@ export class SyncService {
         ),
         {token: newToken}
       );
+      console.log('Token updated:', newToken);
 
       // Get updated transactions and update cache
       const transactions = await UserTransactions.getUserTransactionsByYear(
@@ -185,10 +190,11 @@ export class SyncService {
         year
       );
       await this.cache.updateTransactions(transactions, year, newToken);
+      console.log('Cache updated with new transaction');
 
       return transaction;
     } catch (error) {
-      console.error('Error creating transaction:', error);
+      console.error('Error in createTransaction:', error);
       return null;
     }
   }

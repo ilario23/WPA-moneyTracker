@@ -1,18 +1,32 @@
-import {doc, getDoc} from 'firebase/firestore';
+import {doc, getDoc, getDocs, collection} from 'firebase/firestore';
 import {DB} from '@/config/firebase';
 import type {Transaction} from '@/types/transaction';
 import {setLoading} from '@/services/utils';
 import {createSyncService} from '@/services/sync';
 
 const TOKENS_COLLECTION = 'tokens';
+const COLLECTION = 'transactions';
 
 export const UserTransactions = {
   /**
    * Get transactions for a specific year
    */
-  getUserTransactionsByYear: async (userId: string, year: string) => {
+  getUserTransactionsByYear: async (
+    userId: string,
+    year: string,
+    skipSync: boolean = false
+  ) => {
     setLoading(true);
     try {
+      if (skipSync) {
+        // Accesso diretto a Firebase senza sync
+        const snaps = await getDocs(
+          collection(DB, 'users', userId, COLLECTION, year, 'transactions')
+        );
+        return snaps.docs.map((snap) => snap.data() as Transaction);
+      }
+
+      // Usa il sync service per i casi normali
       const sync = createSyncService(userId);
       return await sync.syncTransactionsYear(year);
     } finally {

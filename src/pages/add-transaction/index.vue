@@ -308,7 +308,7 @@ async function addTransaction() {
     resetFields();
     router.back();
   } catch (error) {
-    console.error(error);
+    console.error('Error in addTransaction:', error);
     showNotify({
       type: 'danger',
       message: t(
