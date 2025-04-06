@@ -10,7 +10,6 @@ const menuExampleItems = computed(() => [
 ]);
 
 const menuUsedItems = computed(() => [
-  {title: t('menus.test'), route: 'test'},
   {title: t('menus.transaction'), route: 'add-transaction'},
   {title: t('menus.categories'), route: 'categories'},
   {title: t('menus.monthlyTransactions'), route: 'monthly-transactions'},
