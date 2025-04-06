@@ -1,16 +1,9 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  setDoc,
-  getDoc,
-} from 'firebase/firestore';
+import {doc, getDoc} from 'firebase/firestore';
 import {DB} from '@/config/firebase';
 import type {Transaction} from '@/types/transaction';
 import {setLoading} from '@/services/utils';
+import {createSyncService} from '@/services/sync';
 
-const COLLECTION = 'transactions';
 const TOKENS_COLLECTION = 'tokens';
 
 export const UserTransactions = {
@@ -20,10 +13,8 @@ export const UserTransactions = {
   getUserTransactionsByYear: async (userId: string, year: string) => {
     setLoading(true);
     try {
-      const snaps = await getDocs(
-        collection(DB, 'users', userId, COLLECTION, year, 'transactions')
-      );
-      return snaps.docs.map((snap) => snap.data() as Transaction);
+      const sync = createSyncService(userId);
+      return await sync.syncTransactionsYear(year);
     } finally {
       setLoading(false);
     }
@@ -35,33 +26,8 @@ export const UserTransactions = {
   createUserTransaction: async (userId: string, transaction: Transaction) => {
     setLoading(true);
     try {
-      const year = new Date(transaction.timestamp).getFullYear().toString();
-
-      // Save transaction
-      await setDoc(
-        doc(
-          DB,
-          'users',
-          userId,
-          COLLECTION,
-          year,
-          'transactions',
-          transaction.id
-        ),
-        transaction
-      );
-
-      // Update year's token
-      const newToken = new Date().toISOString();
-      await setDoc(
-        doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
-        {token: newToken}
-      );
-
-      return transaction;
-    } catch (err) {
-      console.error('Error creating transaction:', err);
-      return null;
+      const sync = createSyncService(userId);
+      return await sync.createTransaction(transaction);
     } finally {
       setLoading(false);
     }
@@ -73,34 +39,8 @@ export const UserTransactions = {
   updateUserTransaction: async (userId: string, transaction: Transaction) => {
     setLoading(true);
     try {
-      const year = new Date(transaction.timestamp).getFullYear().toString();
-
-      // Update transaction
-      await setDoc(
-        doc(
-          DB,
-          'users',
-          userId,
-          COLLECTION,
-          year,
-          'transactions',
-          transaction.id
-        ),
-        transaction,
-        {merge: true}
-      );
-
-      // Update year's token
-      const newToken = new Date().toISOString();
-      await setDoc(
-        doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
-        {token: newToken}
-      );
-
-      return transaction;
-    } catch (err) {
-      console.error('Error updating transaction:', err);
-      return null;
+      const sync = createSyncService(userId);
+      return await sync.updateTransaction(transaction);
     } finally {
       setLoading(false);
     }
@@ -116,27 +56,8 @@ export const UserTransactions = {
   ): Promise<void> => {
     setLoading(true);
     try {
-      // Delete transaction using correct path with year
-      const transactionRef = doc(
-        DB,
-        'users',
-        userId,
-        COLLECTION,
-        year,
-        'transactions',
-        transactionId
-      );
-      await deleteDoc(transactionRef);
-
-      // Update year's token
-      const newToken = new Date().toISOString();
-      await setDoc(
-        doc(DB, 'users', userId, TOKENS_COLLECTION, `transactions_${year}`),
-        {token: newToken}
-      );
-    } catch (error) {
-      console.error('Error deleting transaction:', error);
-      throw error;
+      const sync = createSyncService(userId);
+      await sync.deleteTransaction(transactionId, year);
     } finally {
       setLoading(false);
     }

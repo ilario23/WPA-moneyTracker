@@ -1,15 +1,9 @@
 import {BASE_CATEGORIES_ID} from '@/utils/category';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  getDoc,
-  setDoc,
-} from 'firebase/firestore';
+import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore';
 import {DB} from '@/config/firebase';
 import type {Category, CategoryWithType} from '@/types/category';
 import {setLoading} from '@/services/utils';
+import {createSyncService} from '@/services/sync';
 
 const COLLECTION = 'categories';
 const TOKENS_COLLECTION = 'tokens';
@@ -27,10 +21,12 @@ export const UserCategories = {
    */
   getUserCategories: async (userId: string) => {
     setLoading(true);
-    const snaps = await getDocs(
-      collection(DB, 'users', userId, COLLECTION)
-    ).finally(() => setLoading(false));
-    return snaps.docs.map((snap) => snap.data() as Category);
+    try {
+      const sync = createSyncService(userId);
+      return await sync.syncCategories();
+    } finally {
+      setLoading(false);
+    }
   },
 
   /**
@@ -107,7 +103,7 @@ export const UserCategories = {
         if (category.parentCategoryId) {
           const parent = categoriesMap.get(category.parentCategoryId);
           if (parent) {
-            return determineType(parent);
+            return determineType(parent as Category);
           }
         }
 
@@ -123,7 +119,7 @@ export const UserCategories = {
         if (category.parentCategoryId) {
           const parent = categoriesMap.get(category.parentCategoryId);
           if (parent) {
-            return determineColor(parent);
+            return determineColor(parent as Category);
           }
         }
 
