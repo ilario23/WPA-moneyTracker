@@ -176,6 +176,9 @@
     "rootCategories": "Categorie Base",
     "selectIcon": "Seleziona un'icona",
     "addNewCategory": "Aggiungi una nuova categoria",
-    "selectParentCategory": "Selezione la categoria padre"
+    "selectParentCategory": "Selezione la categoria padre",
+    "refreshSuccess": "Categorie aggiornate",
+    "fetchError": "Errore lettura nuove categorie",
+    "noUser": "Errore lettura utente"
   }
 }

@@ -36,6 +36,22 @@ export const UserCategories = {
     }
   },
 
+  //getResetUserCategories
+  /**
+   * @param userId
+   * @returns the categories for the specified user
+   */
+  getResetUserCategories: async (userId: string) => {
+    setLoading(true);
+    try {
+      // call the syncResetCategories function
+      const sync = createSyncService(userId);
+      return await sync.syncResetCategories();
+    } finally {
+      setLoading(false);
+    }
+  },
+
   /**
    * @param userId
    * @returns the categories formatted for the cascader component

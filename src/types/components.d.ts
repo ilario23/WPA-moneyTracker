@@ -33,6 +33,7 @@ declare module 'vue' {
     VanNumberKeyboard: typeof import('vant/es')['NumberKeyboard']
     VanPicker: typeof import('vant/es')['Picker']
     VanPopup: typeof import('vant/es')['Popup']
+    VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanStepper: typeof import('vant/es')['Stepper']
     VanSwipeCell: typeof import('vant/es')['SwipeCell']
     VanSwitch: typeof import('vant/es')['Switch']

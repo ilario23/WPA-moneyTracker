@@ -28,6 +28,29 @@ export class SyncService {
         return await this.syncCategoriesFromFirebase();
       }
 
+      // 2.In questa modialtà dò per scontato che se ho un token locale, ho anche i dati corretti
+      // 3. Quindi uso la cache
+
+      console.log('Using cached categories');
+      return store.categories;
+    } catch (error) {
+      console.error('Error syncing categories:', error);
+      throw error;
+    }
+  }
+
+  // create a function to sync categories from firebase
+  async syncResetCategories() {
+    try {
+      // 1. Prima controllo la cache locale
+      const store = await this.cache.getStore();
+      const localToken = store?.tokens.categoriesToken;
+
+      // Se non ho dati in cache, sincronizza da Firebase
+      if (!store?.categories || !localToken) {
+        return await this.syncCategoriesFromFirebase();
+      }
+
       // 2. Controllo il token remoto solo se ho un token locale
       const tokenDoc = await getDoc(
         doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories')
@@ -54,7 +77,17 @@ export class SyncService {
     const tokenDoc = await getDoc(
       doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories')
     );
-    const remoteToken = tokenDoc.data()?.token;
+    let remoteToken = tokenDoc.data()?.token;
+    if (!remoteToken) {
+      console.info('No remote token found for categories');
+      // in this case i need to create the token
+      remoteToken = new Date().toISOString();
+      await setDoc(
+        doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories'),
+        {token: remoteToken}
+      );
+      console.info('Created new remote token for categories');
+    }
 
     const categories = await UserCategories.getCategoriesWithType(this.userId);
     await this.cache.updateCategories(

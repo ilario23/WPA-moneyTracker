@@ -175,6 +175,9 @@
     "children": "Sub-categories",
     "selectIcon": "Select an icon",
     "addNewCategory": "Add a new category",
-    "selectParentCategory": "Select the parent category"
+    "selectParentCategory": "Select the parent category",
+    "refreshSuccess": "Categories updated",
+    "fetchError": "Error fetching new categories",
+    "noUser": "Error reading user name"
   }
 }

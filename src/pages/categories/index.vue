@@ -1,90 +1,111 @@
 <template>
-  <div style="align-items: center">
-    <van-divider style="margin: auto">{{
-      $t('category.rootCategories')
-    }}</van-divider>
-    <div style="display: flex; width: 100%; gap: 12px">
-      <van-cell
-        v-for="root in rootCategories"
-        :key="root.value"
-        :title="root.text"
-        @click="selectCategory(root)"
-        style="
-          padding: 12px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-        "
-      >
-        <template #right-icon>
-          <van-icon
-            :name="root.icon"
-            style="font-size: 20px; align-self: center; padding-right: 5px"
-          />
-        </template>
-      </van-cell>
-    </div>
-
-    <!-- Animazione per la categoria selezionata -->
-    <transition name="slide-horizontal" mode="out-in">
-      <van-swipe-cell
-        v-if="selectedCategory && selectedCategory.text"
-        :key="selectedCategory.value"
-        :title="selectedCategory.text"
-      >
-        <van-card
-          num="1"
-          price="2.00"
-          desc="Description"
-          :title="selectedCategory.text"
-          class="goods-card"
+  <van-pull-refresh
+    v-model="loadingPullRefresh"
+    @refresh="onPullRefresh"
+    :success-text="$t('category.refreshSuccess')"
+  >
+    <div style="align-items: center; min-height: 70vh">
+      <van-divider style="margin: auto">{{
+        $t('category.rootCategories')
+      }}</van-divider>
+      <div style="display: flex; width: 100%; gap: 12px">
+        <van-cell
+          v-for="root in rootCategories"
+          :key="root.value"
+          :title="root.text"
+          @click="selectCategory(root)"
+          style="
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+          "
         >
-          <template #thumb>
-            <div style="display: flex; align-items: center; height: 100%">
-              <van-icon :name="selectedIcon" style="font-size: 64px" />
-            </div>
+          <template #right-icon>
+            <van-icon
+              :name="root.icon"
+              style="font-size: 20px; align-self: center; padding-right: 5px"
+            />
           </template>
-        </van-card>
-        <template #right>
-          <van-button
-            square
-            icon="delete-o"
-            type="danger"
-            style="height: 100%"
-            @click="showDeleteDialog = true"
-          />
-        </template>
-        <template #left>
-          <van-button
-            square
-            icon="edit"
-            type="primary"
-            style="height: 100%"
-            @click="showEditDialog = true"
-          />
-        </template>
-      </van-swipe-cell>
-    </transition>
-
-    <!-- Transizione di fade-in con ritardo -->
-    <transition name="fade-delayed">
-      <div v-if="selectedCategory.children">
-        <van-divider dashed>{{ $t('category.children') }}</van-divider>
-        <van-cell-group inset>
-          <van-cell
-            v-for="child in selectedCategory.children"
-            :key="child.value"
-            :title="child.text"
-            @click="selectCategory(child)"
-          >
-            <template #right-icon>
-              <van-icon :name="child.icon" />
-            </template>
-          </van-cell>
-        </van-cell-group>
+        </van-cell>
       </div>
-    </transition>
-  </div>
+
+      <!-- Animazione per la categoria selezionata -->
+      <transition name="slide-horizontal" mode="out-in">
+        <van-swipe-cell
+          v-if="selectedCategory && selectedCategory.text"
+          :key="selectedCategory.value"
+          :title="selectedCategory.text"
+        >
+          <van-card
+            num="1"
+            price="2.00"
+            desc="Description"
+            :title="selectedCategory.text"
+            class="goods-card"
+          >
+            <template #thumb>
+              <div style="display: flex; align-items: center; height: 100%">
+                <van-icon :name="selectedIcon" style="font-size: 64px" />
+              </div>
+            </template>
+          </van-card>
+          <template #right>
+            <van-button
+              square
+              icon="delete-o"
+              type="danger"
+              style="height: 100%"
+              @click="showDeleteDialog = true"
+            />
+          </template>
+          <template #left>
+            <van-button
+              square
+              icon="edit"
+              type="primary"
+              style="height: 100%"
+              @click="showEditDialog = true"
+            />
+          </template>
+        </van-swipe-cell>
+      </transition>
+
+      <!-- Transizione di fade-in con ritardo -->
+      <transition name="fade-delayed">
+        <div v-if="selectedCategory.children">
+          <van-divider dashed>{{ $t('category.children') }}</van-divider>
+          <van-cell-group inset>
+            <van-cell
+              v-for="child in selectedCategory.children"
+              :key="child.value"
+              :title="child.text"
+              @click="selectCategory(child)"
+            >
+              <template #right-icon>
+                <van-icon :name="child.icon" />
+              </template>
+            </van-cell>
+          </van-cell-group>
+        </div>
+      </transition>
+    </div>
+  </van-pull-refresh>
+
+  <van-button
+    type="primary"
+    icon="plus"
+    style="
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    "
+    to="/add-category"
+  />
 
   <van-dialog
     v-model:show="showDeleteDialog"
@@ -106,21 +127,6 @@
   >
     <van-field v-model="selectedCategory.text" :label="$t('category.title')" />
   </van-dialog>
-
-  <van-button
-    type="primary"
-    icon="plus"
-    style="
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    "
-    to="/add-category"
-  />
 </template>
 
 <script lang="ts" setup>
@@ -144,6 +150,9 @@ const showDeleteDialog = ref(false);
 const showEditDialog = ref(false);
 
 const selectedIcon = ref(''); // Variabile per memorizzare l'icona della categoria selezionata
+
+// loadind pull refresh
+const loadingPullRefresh = ref(false);
 
 // Function to build category tree
 const buildCategoryTree = (categories: any[]) => {
@@ -205,6 +214,41 @@ const getUserCategories = () => {
 
 // Root categories
 getUserCategories();
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const onPullRefresh = async () => {
+  loadingPullRefresh.value = true;
+
+  if (userStore.userInfo?.uid) {
+    try {
+      const res = await API.Database.Users.Categories.getResetUserCategories(
+        userStore.userInfo.uid
+      );
+      categories.value = res;
+      rootCategories.value = buildCategoryTree(categories.value);
+    } catch (error) {
+      console.error('onPullRefresh - error', error);
+      showNotify({
+        type: 'danger',
+        message: $t('category.fetchError'),
+      });
+    }
+  } else {
+    showNotify({
+      type: 'danger',
+      message: $t('category.noUser'),
+    });
+  }
+
+  await sleep(300);
+  loadingPullRefresh.value = false;
+  // set il focus del cascader a null
+  selectedCategory.value = {
+    value: null,
+    text: '',
+    children: null,
+  };
+};
 
 // Function to find category by ID
 const findCategory = (categories: any[], id: string) => {
