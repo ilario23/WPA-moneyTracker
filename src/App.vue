@@ -13,7 +13,7 @@ useHead({
     },
     {
       name: 'theme-color',
-      content: () => (isDark.value ? '#00aba9' : '#ffffff'),
+      content: () => (isDark.value ? '#111111' : '#ffffff'),
     },
   ],
   link: [
