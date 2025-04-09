@@ -18,22 +18,32 @@
           <van-card
             :title="t('transaction.preview')"
             :desc="transactionData.description"
-            :price="transactionData.amount"
-            :thumb="dark ? logoDark : logo"
+            :price="transactionData.amount || 0"
             currency="€"
             :style="{
               backgroundColor: `${parentlessCategories[transactionType]?.color}70`,
             }"
             class="van-card-style"
           >
+            <template #thumb>
+              <div style="display: flex; align-items: center; height: 100%">
+                <van-icon
+                  :name="previewIcon"
+                  style="font-size: 64px; color: inherit"
+                />
+              </div>
+            </template>
+
             <template #tags>
               <van-tag
                 :style="{
                   backgroundColor: `${parentlessCategories[transactionType]?.color}`,
                 }"
-                >{{ category.text }}</van-tag
               >
+                {{ category.text }}
+              </van-tag>
             </template>
+
             <template #footer>
               <div>{{ dateLabel }}</div>
             </template>
@@ -157,6 +167,7 @@ interface Option {
   text: string;
   value: string;
   children?: Option[];
+  icon?: string;
 }
 
 // Ottieni lo store dell'utente
@@ -243,8 +254,6 @@ onMounted(async () => {
 });
 
 const {t} = useI18n();
-const logo = 'path/to/logo.png';
-const logoDark = 'path/to/logo-dark.png';
 const transactionType = ref(0);
 const loading = ref(false);
 const showBottomCalendar = ref<boolean>(false);
@@ -257,6 +266,8 @@ const currentDate = ref([
 // maxDate: end following year from now
 const minDate = new Date(new Date().getFullYear() - 4, 0, 1);
 const maxDate = new Date(new Date().getFullYear() + 1, 11, 31);
+
+const previewIcon = ref<string>('');
 
 const transactionData = reactive({...EMPTY_TRANSACTION});
 
@@ -349,6 +360,7 @@ const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
 
   transactionData.categoryId =
     selectedOptions[selectedOptions.length - 1].value;
+  previewIcon.value = selectedOptions[selectedOptions.length - 1].icon;
 };
 
 const onFinish = () => {
@@ -363,6 +375,9 @@ const swipingTabs = (index: number) => {
 
   // imposta la categoria selezionata
   transactionData.categoryId = parentlessCategories.value[index]?.id;
+
+  // imposta l'icona della preview
+  previewIcon.value = parentlessCategories.value[index]?.icon;
 
   // correggo il cascader e quello che si vede nel campo di testo
   cascaderValue.value = parentlessCategories.value[index]?.title;
