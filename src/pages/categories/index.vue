@@ -37,19 +37,21 @@
           :key="selectedCategory.value"
           :title="selectedCategory.text"
         >
-          <van-card
-            num="1"
-            price="2.00"
-            desc="Description"
+          <van-cell
             :title="selectedCategory.text"
-            class="goods-card"
+            :style="{
+              border: `1px solid ${selectedCategory.color}`,
+              borderRadius: '8px',
+              marginBottom: '12px',
+              marginTop: '12px',
+              backgroundColor: hexToRgba(selectedCategory.color, 0.07),
+            }"
           >
-            <template #thumb>
-              <div style="display: flex; align-items: center; height: 100%">
-                <van-icon :name="selectedIcon" style="font-size: 64px" />
-              </div>
+            <template #icon>
+              <van-icon :name="selectedCategory.icon" style="font-size: 32px" />
             </template>
-          </van-card>
+          </van-cell>
+
           <template #right>
             <van-button
               square
@@ -200,6 +202,16 @@ const pruneEmptyChildren = (node: any) => {
   }
 };
 
+function hexToRgba(hex: string, alpha: number): string {
+  const cleanHex = hex.replace('#', '');
+  const bigint = parseInt(cleanHex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 // Function to get user categories
 const getUserCategories = () => {
   if (userStore.userInfo?.uid) {
@@ -247,6 +259,8 @@ const onPullRefresh = async () => {
     value: null,
     text: '',
     children: null,
+    icon: '',
+    color: '',
   };
 };
 
@@ -267,16 +281,19 @@ const selectedCategory = ref({
   value: null,
   text: '',
   children: null,
+  icon: '',
+  color: '',
 });
 
 // Function to select a category and show details
 const selectCategory = (category) => {
   selectedCategory.value = category; // Aggiorna la categoria selezionata
-  fetchCategoryIcon(); // Recupera i dettagli della categoria e aggiorna l'icona
+  fetchCategoryIconColor(); // Recupera i dettagli della categoria e aggiorna l'icona
+  console.log('selectedCategory.value.color', selectedCategory.value.color);
 };
 
 // Function to fetch category icon
-const fetchCategoryIcon = async () => {
+const fetchCategoryIconColor = async () => {
   try {
     const categoryId = selectedCategory.value.value; // Ottieni l'ID della categoria selezionata
     if (!categoryId) {

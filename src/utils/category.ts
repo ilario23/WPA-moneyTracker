@@ -20,7 +20,7 @@ export const BASE_CATEGORIES: Category[] = [
     id: '533d4482-df54-47e5-b8d8-000000000001',
     title: 'Expenses',
     color: '#f99595',
-    icon: 'cart-o"',
+    icon: 'cart-o',
     parentCategoryId: null,
     userId: userStore.userInfo?.uid,
     active: true,

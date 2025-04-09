@@ -19,6 +19,8 @@ interface Option {
   text: string;
   value: string;
   children?: Option[];
+  color?: string;
+  icon: string;
 }
 
 export const UserCategories = {
@@ -67,6 +69,8 @@ export const UserCategories = {
       categoryMap.set(category.id, {
         text: category.title,
         value: category.id,
+        color: category.color || null,
+        icon: category.icon,
         children: [],
       });
     });
@@ -111,6 +115,7 @@ export const UserCategories = {
     userId: string
   ): Promise<CategoryWithType[]> => {
     try {
+      // TODO: this shoulf be moved to sync service
       // Get categories directly from Firebase without using sync service to avoid recursion
       const snaps = await getDocs(collection(DB, 'users', userId, COLLECTION));
       const categories = snaps.docs.map((snap) => snap.data() as Category);
@@ -242,6 +247,7 @@ export const UserCategories = {
   ): Promise<Category | null> => {
     setLoading(true);
     try {
+      // TODO: mettere questa cosa in Sync
       const categoryDoc = await getDoc(
         doc(DB, 'users', userId, COLLECTION, categoryId)
       );
