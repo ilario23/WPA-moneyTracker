@@ -75,6 +75,10 @@ async function logout() {
       />
     </VanCellGroup>
 
+    <div class="fixed bottom-50 left-1/2 -translate-x-1/2 z-10">
+      <van-image class="h-128" src="public/favicon.svg" fit="cover" round />
+    </div>
+
     <!-- Dialog -->
     <van-dialog
       v-model:show="showDialog"
