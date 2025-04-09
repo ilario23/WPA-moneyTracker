@@ -21,6 +21,17 @@ import 'vant/es/toast/style';
 import 'vant/es/dialog/style';
 import 'vant/es/notify/style';
 import 'vant/es/image-preview/style';
+import {registerSW} from 'virtual:pwa-register';
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    console.log('🆕 Nuova versione disponibile, aggiorno...');
+    updateSW(true); // forza l'aggiornamento
+  },
+  onOfflineReady() {
+    console.log('📦 App pronta per funzionare offline!');
+  },
+});
 
 const app = createApp(App);
 const head = createHead();
