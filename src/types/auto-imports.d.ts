@@ -288,6 +288,7 @@ declare global {
   const useToNumber: typeof import('@vueuse/core')['useToNumber']
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
+  const useTransactionChart: typeof import('../composables/useTransactionChart')['useTransactionChart']
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
