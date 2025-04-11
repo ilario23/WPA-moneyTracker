@@ -74,8 +74,11 @@
       </transition>
 
       <!-- Transizione di fade-in con ritardo -->
-      <transition name="fade-delayed">
-        <div v-if="selectedCategory.children">
+      <transition name="fade-delayed" mode="out-in">
+        <div
+          v-if="selectedCategory.children"
+          style="position: absolute; top: 20vh; left: 0; width: 100%"
+        >
           <van-divider dashed>{{ $t('category.children') }}</van-divider>
           <van-cell-group inset>
             <van-cell
