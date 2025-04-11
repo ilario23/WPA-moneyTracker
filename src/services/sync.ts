@@ -71,9 +71,8 @@ export class SyncService {
     }
   }
 
-  private async syncCategoriesFromFirebase() {
+  public async syncCategoriesFromFirebase() {
     console.log('Syncing categories from Firebase');
-    // Ottieni il token prima delle categorie per evitare race conditions
     const tokenDoc = await getDoc(
       doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories')
     );
@@ -89,7 +88,7 @@ export class SyncService {
       console.info('Created new remote token for categories');
     }
 
-    const categories = await UserCategories.getCategoriesWithType(this.userId);
+    const categories = await UserCategories.getFirebaseCategories(this.userId);
     await this.cache.updateCategories(
       categories,
       remoteToken || new Date().toISOString()

@@ -115,10 +115,8 @@ export const UserCategories = {
     userId: string
   ): Promise<CategoryWithType[]> => {
     try {
-      // TODO: this shoulf be moved to sync service
-      // Get categories directly from Firebase without using sync service to avoid recursion
-      const snaps = await getDocs(collection(DB, 'users', userId, COLLECTION));
-      const categories = snaps.docs.map((snap) => snap.data() as Category);
+      const sync = createSyncService(userId);
+      const categories = (await sync.syncCategories()) as Category[];
 
       const categoriesMap = new Map(categories.map((cat) => [cat.id, cat]));
 
@@ -176,6 +174,10 @@ export const UserCategories = {
         token: newToken,
       });
 
+      // Update local cache
+      const sync = createSyncService(userId);
+      await sync.syncResetCategories();
+
       return category;
     } catch (err) {
       console.error(err);
@@ -205,6 +207,10 @@ export const UserCategories = {
         token: newToken,
       });
 
+      // Update local cache
+      const sync = createSyncService(userId);
+      await sync.syncResetCategories();
+
       return category;
     } catch (err) {
       console.error(err);
@@ -231,6 +237,10 @@ export const UserCategories = {
       await setDoc(doc(DB, 'users', userId, TOKENS_COLLECTION, 'categories'), {
         token: newToken,
       });
+
+      // Update local cache
+      const sync = createSyncService(userId);
+      await sync.syncCategories();
     } finally {
       setLoading(false);
     }
@@ -269,5 +279,20 @@ export const UserCategories = {
       doc(DB, 'users', userId, TOKENS_COLLECTION, 'categories')
     );
     return tokenDoc.data()?.token || null;
+  },
+
+  /**
+   * @param userId id of the user
+   * @returns the categories from firebase
+   */
+  getFirebaseCategories: async (userId: string): Promise<Category[]> => {
+    const categories: Category[] = [];
+    const querySnapshot = await getDocs(
+      collection(DB, 'users', userId, COLLECTION)
+    );
+    querySnapshot.forEach((doc) => {
+      categories.push(doc.data() as Category);
+    });
+    return categories;
   },
 };
