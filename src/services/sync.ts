@@ -81,10 +81,15 @@ export class SyncService {
       console.info('No remote token found for categories');
       // in this case i need to create the token
       remoteToken = new Date().toISOString();
-      await setDoc(
-        doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories'),
-        {token: remoteToken}
-      );
+      try {
+        await setDoc(
+          doc(DB, 'users', this.userId, TOKENS_COLLECTION, 'categories'),
+          {token: remoteToken}
+        );
+        console.log('Transaction saved to Firebase');
+      } catch (e) {
+        console.error('Error writing to Firestore', e);
+      }
       console.info('Created new remote token for categories');
     }
 
@@ -143,7 +148,24 @@ export class SyncService {
     const year = new Date(transaction.timestamp).getFullYear().toString();
 
     // Update transaction in Firestore
-    await UserTransactions.createUserTransaction(this.userId, transaction);
+    try {
+      console.log('Saving transaction to Firestore:', transaction);
+      await setDoc(
+        doc(
+          DB,
+          'users',
+          this.userId,
+          COLLECTION,
+          year,
+          'transactions',
+          transaction.id
+        ),
+        transaction
+      );
+      console.log('Transaction saved to Firestore:', transaction);
+    } catch (e) {
+      console.error('Error writing to Firestore', e);
+    }
 
     // Get updated transactions and token
     const transactions = await UserTransactions.getUserTransactionsByYear(
@@ -184,50 +206,75 @@ export class SyncService {
     transaction: Transaction
   ): Promise<Transaction | null> {
     const year = new Date(transaction.timestamp).getFullYear().toString();
-    console.log('Creating transaction for year:', year, transaction);
+
+    // Validate required data
+    if (!this.userId || !transaction.id || !year) {
+      console.error('❌ Missing required data:', {
+        userId: this.userId,
+        transactionId: transaction.id,
+        year,
+      });
+      throw new Error('Missing required data for transaction creation');
+    }
 
     try {
-      // Save to Firebase
-      await setDoc(
-        doc(
-          DB,
-          'users',
-          this.userId,
-          COLLECTION,
-          year,
-          'transactions',
-          transaction.id
-        ),
-        transaction
+      // Create the correct document reference
+      const transactionRef = doc(
+        DB,
+        'users',
+        this.userId,
+        COLLECTION,
+        year,
+        'transactions',
+        transaction.id
       );
-      console.log('Transaction saved to Firebase');
+      // Write the transaction with all required fields
+      const transactionData = {
+        ...transaction,
+        userId: this.userId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
+      // Write directly to the correct path
+      await setDoc(transactionRef, transactionData);
+
+      // Verify the write
+      const verifyDoc = await getDoc(transactionRef);
+      if (!verifyDoc.exists()) {
+        throw new Error('Transaction was not written successfully');
+      }
+    } catch (e) {
+      console.error('❌ Error writing transaction:', e);
+      throw e;
+    }
+
+    try {
       // Update token
-      const newToken = new Date().toISOString();
-      await setDoc(
-        doc(
-          DB,
-          'users',
-          this.userId,
-          TOKENS_COLLECTION,
-          `transactions_${year}`
-        ),
-        {token: newToken}
+      const tokenRef = doc(
+        DB,
+        'users',
+        this.userId,
+        TOKENS_COLLECTION,
+        `transactions_${year}`
       );
-      console.log('Token updated:', newToken);
+      const newToken = new Date().toISOString();
 
-      // Get updated transactions and update cache
+      await setDoc(tokenRef, {token: newToken});
+      console.log('✅ Token updated successfully');
+
+      // Update cache
       const transactions = await UserTransactions.getUserTransactionsByYear(
         this.userId,
         year
       );
       await this.cache.updateTransactions(transactions, year, newToken);
-      console.log('Cache updated with new transaction');
+      console.log('✅ Cache updated with new transaction');
 
       return transaction;
-    } catch (error) {
-      console.error('Error in createTransaction:', error);
-      return null;
+    } catch (e) {
+      console.error('❌ Error updating token or cache:', e);
+      throw e;
     }
   }
 
@@ -237,7 +284,7 @@ export class SyncService {
     const year = new Date(transaction.timestamp).getFullYear().toString();
 
     try {
-      // Update in Firebase
+      console.log('Saving transaction to Firestore:', transaction);
       await setDoc(
         doc(
           DB,
@@ -251,7 +298,12 @@ export class SyncService {
         transaction,
         {merge: true}
       );
+      console.log('Transaction saved to Firestore:', transaction);
+    } catch (e) {
+      console.error('Error writing to Firestore', e);
+    }
 
+    try {
       // Update token
       const newToken = new Date().toISOString();
       await setDoc(
@@ -264,24 +316,26 @@ export class SyncService {
         ),
         {token: newToken}
       );
-
-      // Get updated transactions and update cache
-      const transactions = await UserTransactions.getUserTransactionsByYear(
-        this.userId,
-        year
-      );
-      await this.cache.updateTransactions(transactions, year, newToken);
-
-      return transaction;
-    } catch (error) {
-      console.error('Error updating transaction:', error);
-      return null;
+      console.log('Transaction saved to Firebase');
+    } catch (e) {
+      console.error('Error writing to Firestore', e);
     }
+
+    // Get updated transactions and update cache
+    const transactions = await UserTransactions.getUserTransactionsByYear(
+      this.userId,
+      year
+    );
+
+    const newToken = new Date().toISOString(); // Define newToken
+    await this.cache.updateTransactions(transactions, year, newToken);
+
+    return transaction;
   }
 
   async deleteTransaction(transactionId: string, year: string): Promise<void> {
     try {
-      // Delete from Firebase
+      console.log('Saving transaction to Firestore:', transactionId);
       await deleteDoc(
         doc(
           DB,
@@ -293,7 +347,12 @@ export class SyncService {
           transactionId
         )
       );
+      console.log('Transaction saved to Firestore:', transactionId);
+    } catch (e) {
+      console.error('Error writing to Firestore', e);
+    }
 
+    try {
       // Update token
       const newToken = new Date().toISOString();
       await setDoc(
@@ -306,17 +365,19 @@ export class SyncService {
         ),
         {token: newToken}
       );
-
-      // Get updated transactions and update cache
-      const transactions = await UserTransactions.getUserTransactionsByYear(
-        this.userId,
-        year
-      );
-      await this.cache.updateTransactions(transactions, year, newToken);
-    } catch (error) {
-      console.error('Error deleting transaction:', error);
-      throw error;
+      console.log('Transaction saved to Firebase');
+    } catch (e) {
+      console.error('Error writing to Firestore', e);
     }
+
+    // Get updated transactions and update cache
+    const transactions = await UserTransactions.getUserTransactionsByYear(
+      this.userId,
+      year
+    );
+
+    const newToken = new Date().toISOString(); // Define newToken
+    await this.cache.updateTransactions(transactions, year, newToken);
   }
 }
 

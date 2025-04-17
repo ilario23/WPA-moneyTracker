@@ -23,7 +23,8 @@
     "monthlyTransactions": "📗 Spese Mensili"
   },
   "common": {
-    "all": "Tutti"
+    "all": "Tutti",
+    "loading": "Caricamento"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",

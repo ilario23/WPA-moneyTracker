@@ -29,7 +29,8 @@
     "reset": "Reset"
   },
   "common": {
-    "all": "All"
+    "all": "All",
+    "loading": "Loading"
   },
   "charts": {
     "January": "Jan",

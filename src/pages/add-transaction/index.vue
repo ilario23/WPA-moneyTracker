@@ -305,8 +305,13 @@ async function addTransaction() {
       categoryId: transactionData.categoryId,
     };
 
-    // Usa il servizio sync per gestire sia l'aggiunta che la modifica
-    await sync.updateTransactionAndCache(transaction);
+    if (transactionId) {
+      // Modifica transazione esistente
+      await sync.updateTransaction(transaction);
+    } else {
+      // Nuova transazione
+      await sync.createTransaction(transaction);
+    }
 
     showNotify({
       type: 'success',

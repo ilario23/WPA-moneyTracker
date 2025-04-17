@@ -292,7 +292,6 @@ const selectedCategory = ref({
 const selectCategory = (category) => {
   selectedCategory.value = category; // Aggiorna la categoria selezionata
   fetchCategoryIconColor(); // Recupera i dettagli della categoria e aggiorna l'icona
-  console.log('selectedCategory.value.color', selectedCategory.value.color);
 };
 
 // Function to fetch category icon
