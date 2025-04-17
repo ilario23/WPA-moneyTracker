@@ -177,8 +177,6 @@ const userStore = useUserStore();
 // Ottieni l'uid dell'utente come stringa
 const userId: string = userStore.userInfo.uid;
 
-console.log('User ID:', userId);
-
 // Definisci una variabile per memorizzare i dati delle categorie
 const categoryOptions = ref<Option[]>([]);
 const filteredCategoriesOptions = ref<Option[]>([]);
