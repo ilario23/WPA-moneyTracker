@@ -22,7 +22,13 @@
     <VanCell center :title="$t('settings.currentVersion')">
       <div class="text-gray">v{{ version }}</div>
     </VanCell>
+  </VanCellGroup>
 
+  <VanCellGroup
+    :title="t('settings.cacheSectionTitle')"
+    :border="false"
+    :inset="true"
+  >
     <VanCell
       center
       is-link
@@ -34,6 +40,18 @@
       is-link
       :title="t('settings.clearRecurringExpensesCache')"
       @click="clearRecurringExpensesCache"
+    />
+    <VanCell
+      center
+      is-link
+      :title="t('settings.clearTransactionsCache')"
+      @click="clearTransactionsCache"
+    />
+    <VanCell
+      center
+      is-link
+      :title="t('settings.clearCategoriesCache')"
+      @click="clearCategoriesCache"
     />
   </VanCellGroup>
 
@@ -54,7 +72,7 @@ import useAppStore from '@/stores/modules/app';
 import {languageColumns, locale} from '@/utils/i18n';
 import {createCacheService} from '@/services/cache';
 import {showNotify, showConfirmDialog} from 'vant';
-import {RecurringSyncService} from '@/services/recurringSync'; // Import RecurringSyncService
+import {RecurringSyncService} from '@/services/recurringSync';
 
 const {t} = useI18n();
 const appStore = useAppStore();
@@ -119,6 +137,60 @@ async function clearRecurringExpensesCache() {
     showNotify({
       type: 'danger',
       message: t('settings.recurringExpensesCacheClearError'),
+    });
+  }
+}
+
+async function clearTransactionsCache() {
+  try {
+    await showConfirmDialog({
+      title: t('settings.clearTransactionsCache'),
+      message: t('settings.clearTransactionsCacheConfirm'),
+    });
+
+    const store = await cacheService.getStore();
+    if (store) {
+      store.transactions = {};
+      store.tokens.transactionTokens = {};
+      await cacheService.setStore(store);
+    }
+    showNotify({
+      type: 'success',
+      message: t('settings.transactionsCacheClearedSuccess'),
+    });
+  } catch (error) {
+    if (error?.toString().includes('cancel')) return;
+    console.error('Error clearing transactions cache:', error);
+    showNotify({
+      type: 'danger',
+      message: t('settings.transactionsCacheClearError'),
+    });
+  }
+}
+
+async function clearCategoriesCache() {
+  try {
+    await showConfirmDialog({
+      title: t('settings.clearCategoriesCache'),
+      message: t('settings.clearCategoriesCacheConfirm'),
+    });
+
+    const store = await cacheService.getStore();
+    if (store) {
+      store.categories = [];
+      store.tokens.categoriesToken = '';
+      await cacheService.setStore(store);
+    }
+    showNotify({
+      type: 'success',
+      message: t('settings.categoriesCacheClearedSuccess'),
+    });
+  } catch (error) {
+    if (error?.toString().includes('cancel')) return;
+    console.error('Error clearing categories cache:', error);
+    showNotify({
+      type: 'danger',
+      message: t('settings.categoriesCacheClearError'),
     });
   }
 }
