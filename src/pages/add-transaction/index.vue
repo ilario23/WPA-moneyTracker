@@ -410,7 +410,7 @@ async function saveDefinition() {
       isActive: true,
     };
 
-    const id = await UserRecurringExpenses.addRecurringExpense(
+    await UserRecurringExpenses.addRecurringExpense(
       userId,
       recurringExpenseDefinition
     );

@@ -1,7 +1,6 @@
 import {RecurringSyncService} from './recurringSync';
 import {createSyncService} from './sync';
 import {useUserStore} from '@/stores/modules/user'; // Import user store
-import type {RecurringExpenseDefinition} from '@/types/recurringExpense';
 import type {Transaction} from '@/types/transaction';
 
 function addMonths(date: Date, months: number): Date {
