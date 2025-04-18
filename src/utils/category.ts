@@ -1,17 +1,24 @@
 import type {Category} from '@/types/category';
-import {useUserStore} from '@/stores';
-const userStore = useUserStore();
+
+// Use dynamic import to avoid initialization issues
+let userStore: any = null;
+async function getUserStore() {
+  if (!userStore) {
+    userStore = await import('@/stores');
+  }
+  return userStore.useUserStore();
+}
 
 export const EMPTY_CATEGORY: Category = {
   id: crypto.randomUUID(),
   title: '',
-  userId: userStore.userInfo?.uid,
   color: '',
   icon: '',
   budget: null,
   parentCategoryId: null,
   excludeFromStat: false,
   active: true,
+  userId: '', // Initialize with empty string
 };
 
 //export base 3 categories
@@ -22,7 +29,7 @@ export const BASE_CATEGORIES: Category[] = [
     color: '#f99595',
     icon: 'cart-o',
     parentCategoryId: null,
-    userId: userStore.userInfo?.uid,
+    userId: '', // Initialize with empty string
     active: true,
   },
   {
@@ -31,7 +38,7 @@ export const BASE_CATEGORIES: Category[] = [
     color: '#168d3a',
     icon: 'paid',
     parentCategoryId: null,
-    userId: userStore.userInfo?.uid,
+    userId: '', // Initialize with empty string
     active: true,
   },
   {
@@ -40,10 +47,19 @@ export const BASE_CATEGORIES: Category[] = [
     color: '#0906a7',
     icon: 'balance-o',
     parentCategoryId: null,
-    userId: userStore.userInfo?.uid,
+    userId: '', // Initialize with empty string
     active: true,
   },
 ];
+
+(async () => {
+  const userStore = await getUserStore();
+  EMPTY_CATEGORY.userId = userStore.userInfo?.uid;
+  BASE_CATEGORIES.forEach((category) => {
+    category.userId = userStore.userInfo?.uid;
+  });
+})();
+
 export const BASE_CATEGORIES_ID = BASE_CATEGORIES.map(
   (category) => category.id
 );

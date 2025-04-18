@@ -64,12 +64,17 @@ class CacheService {
   ): Promise<void> {
     const store = (await this.getStore()) || {
       categories: [],
+      recurringExpenses: [], // Initialize recurringExpenses
       transactions: {},
       tokens: {
         categoriesToken: '',
         transactionTokens: {},
+        recurringTransactionToken: '', // Initialize recurringTransactionToken
       },
     };
+
+    // Ensure store.transactions exists
+    store.transactions = store.transactions || {};
 
     // Aggiorna le transazioni per l'anno specifico - gestiamo il timestamp come stringa
     store.transactions[year] = transactions.map((t) => ({
@@ -79,6 +84,14 @@ class CacheService {
           ? (t.timestamp as Date).toISOString()
           : t.timestamp,
     }));
+
+    // Ensure store.tokens and store.tokens.transactionTokens exist
+    store.tokens = store.tokens || {
+      categoriesToken: '',
+      transactionTokens: {},
+      recurringTransactionToken: '',
+    };
+    store.tokens.transactionTokens = store.tokens.transactionTokens || {};
 
     // Se c'è un nuovo token, aggiornalo
     if (token) {
@@ -94,10 +107,12 @@ class CacheService {
   ): Promise<void> {
     const store = (await this.getStore()) || {
       categories: [],
+      recurringExpenses: [], // Initialize recurringExpenses
       transactions: {},
       tokens: {
         categoriesToken: '',
         transactionTokens: {},
+        recurringTransactionToken: '', // Initialize recurringTransactionToken
       },
     };
 

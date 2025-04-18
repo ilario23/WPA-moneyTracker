@@ -93,7 +93,11 @@
     "clearCache": "Clear Cache",
     "clearCacheConfirm": "Are you sure you want to clear the application cache?",
     "cacheClearedSuccess": "Cache cleared successfully",
-    "cacheClearError": "Error clearing cache"
+    "cacheClearError": "Error clearing cache",
+    "clearRecurringExpensesCache": "Clear Recurring Expenses Cache",
+    "clearRecurringExpensesCacheConfirm": "Are you sure you want to clear the recurring expenses cache?",
+    "recurringExpensesCacheClearedSuccess": "Recurring expenses cache cleared successfully",
+    "recurringExpensesCacheClearError": "Error clearing recurring expenses cache"
   },
   "transaction": {
     "expense": "Expense",
@@ -123,6 +127,16 @@
     "oldest": "Oldest First",
     "allCategories": "All Categories",
     "loadError": "Error loading data",
+    "recurringExpenseLabel": "Recurring Expense?",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "saveDefinition": "Save Definition",
+    "startDate": "Start Date",
+    "selectDate": "Select Date",
+    "pleaseEnterAmountAndCategory": "Please enter the amount and category",
+    "recurringExpenseAdded": "Recurring expense definition added successfully",
+    "recurringExpenseError": "Error adding recurring expense definition",
     "months": {
       "january": "January",
       "february": "February",

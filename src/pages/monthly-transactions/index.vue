@@ -34,14 +34,22 @@
           <div v-if="Number(totalInvestment) > 0" class="investment">
             {{ $t('transaction.investment') }}: €{{ totalInvestment }}
           </div>
-          <div class="saving-rate basic">
+          <!-- Show saving rate only if there is income -->
+          <div
+            v-if="Number(totalIncome) > 0"
+            class="saving-rate"
+            :class="{
+              income: Number(savingRate.basic.absolute) > 0,
+              expense: Number(savingRate.basic.absolute) < 0,
+            }"
+          >
             {{ $t('transaction.savingRate') }}: €{{
               savingRate.basic.absolute
             }}
             ({{ savingRate.basic.percentage }}%)
           </div>
           <div
-            v-if="Number(totalInvestment) > 0"
+            v-if="Number(totalIncome) > 0 && Number(totalInvestment) > 0"
             class="saving-rate with-investments"
           >
             {{ $t('transaction.savingRateWithInvestments') }}: €{{
@@ -134,6 +142,7 @@ import {UserCategories} from '@/api/database/modules/subcollections/user.categor
 import {showNotify} from 'vant';
 import {useI18n} from 'vue-i18n';
 import {useRouter} from 'vue-router';
+import {RecurringProcessor} from '@/services/recurringProcessor';
 import type {Transaction} from '@/types/transaction';
 import type {CategoryWithType} from '@/types/category';
 
@@ -198,6 +207,9 @@ const years = computed(() => {
 
 // Verify the current year is selected on mount
 onMounted(async () => {
+  await RecurringProcessor.processRecurringExpenses();
+  // Dopo aver processato le ricorrenti, aggiorna le transazioni
+  await fetchData();
   // Ensure we're on the current year
   const currentYear = new Date().getFullYear();
   const yearIndex = years.value.findIndex((y) => y.value === currentYear);
@@ -329,8 +341,8 @@ const savingRate = computed(() => {
   const basicSavings = income - expenses;
   const basicPercentage = income > 0 ? (basicSavings / income) * 100 : 0;
 
-  // Calculate savings including investments
-  const totalSavings = basicSavings + investments;
+  // Calculate savings including investments as part of expenses
+  const totalSavings = income - (expenses + investments);
   const totalPercentage = income > 0 ? (totalSavings / income) * 100 : 0;
 
   return {
@@ -487,11 +499,6 @@ const handleDelete = async (transactionId: string) => {
 .saving-rate {
   font-weight: bold;
   margin-top: 4px;
-  color: var(--van-primary-color);
-}
-
-.saving-rate.basic {
-  color: #07c160;
 }
 
 .saving-rate.with-investments {

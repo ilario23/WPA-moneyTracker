@@ -29,6 +29,12 @@
       :title="t('settings.clearCache')"
       @click="clearCache"
     />
+    <VanCell
+      center
+      is-link
+      :title="t('settings.clearRecurringExpensesCache')"
+      @click="clearRecurringExpensesCache"
+    />
   </VanCellGroup>
 
   <van-popup v-model:show="showLanguagePicker" position="bottom">
@@ -48,6 +54,7 @@ import useAppStore from '@/stores/modules/app';
 import {languageColumns, locale} from '@/utils/i18n';
 import {createCacheService} from '@/services/cache';
 import {showNotify, showConfirmDialog} from 'vant';
+import {RecurringSyncService} from '@/services/recurringSync'; // Import RecurringSyncService
 
 const {t} = useI18n();
 const appStore = useAppStore();
@@ -91,6 +98,28 @@ async function clearCache() {
     if (error?.toString().includes('cancel')) return;
     console.error('Error clearing cache:', error);
     showNotify({type: 'danger', message: t('settings.cacheClearError')});
+  }
+}
+
+async function clearRecurringExpensesCache() {
+  try {
+    await showConfirmDialog({
+      title: t('settings.clearRecurringExpensesCache'),
+      message: t('settings.clearRecurringExpensesCacheConfirm'),
+    });
+
+    await RecurringSyncService.clearRecurringExpensesCache();
+    showNotify({
+      type: 'success',
+      message: t('settings.recurringExpensesCacheClearedSuccess'),
+    });
+  } catch (error) {
+    if (error?.toString().includes('cancel')) return;
+    console.error('Error clearing recurring expenses cache:', error);
+    showNotify({
+      type: 'danger',
+      message: t('settings.recurringExpensesCacheClearError'),
+    });
   }
 }
 </script>

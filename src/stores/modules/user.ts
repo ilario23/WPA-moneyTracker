@@ -3,6 +3,7 @@ import {signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import {AUTH} from '@/config/firebase';
 import {clearToken, setToken} from '@/utils/auth';
 import type {UserState, LoginData} from '@/api/user';
+import {RecurringProcessor} from '@/services/recurringProcessor'; // Import RecurringProcessor
 
 const InitUserInfo = {
   uid: '',
@@ -28,6 +29,9 @@ export const useUserStore = defineStore('user', {
           displayName: user.displayName || '',
           avatar: user.photoURL || '', // Aggiunto avatar
         });
+
+        // Process recurring expenses (lazy loading)
+        RecurringProcessor.processRecurringExpenses();
       } else {
         throw new Error('User not logged in');
       }

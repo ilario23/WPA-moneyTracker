@@ -94,7 +94,11 @@
     "clearCache": "Svuota Cache",
     "clearCacheConfirm": "Sei sicuro di voler svuotare la cache dell'applicazione?",
     "cacheClearedSuccess": "Cache svuotata con successo",
-    "cacheClearError": "Errore durante la pulizia della cache"
+    "cacheClearError": "Errore durante la pulizia della cache",
+    "clearRecurringExpensesCache": "Pulisci Cache Spese Ricorrenti",
+    "clearRecurringExpensesCacheConfirm": "Sei sicuro di voler pulire la cache delle spese ricorrenti?",
+    "recurringExpensesCacheClearedSuccess": "Cache spese ricorrenti pulita con successo",
+    "recurringExpensesCacheClearError": "Errore durante la pulizia della cache delle spese ricorrenti"
   },
   "transaction": {
     "expense": "Spesa",
@@ -124,6 +128,16 @@
     "oldest": "Più Vecchi",
     "allCategories": "Tutte le Categorie",
     "loadError": "Errore nel caricamento dei dati",
+    "recurringExpenseLabel": "Spesa Ricorrente?",
+    "weekly": "Settimanale",
+    "monthly": "Mensile",
+    "yearly": "Annuale",
+    "saveDefinition": "Salva Definizione",
+    "startDate": "Data Inizio",
+    "selectDate": "Seleziona Data",
+    "pleaseEnterAmountAndCategory": "Per favore inserisci l'importo e la categoria",
+    "recurringExpenseAdded": "Definizione spesa ricorrente aggiunta con successo",
+    "recurringExpenseError": "Errore nell'aggiunta della definizione di spesa ricorrente",
     "months": {
       "january": "Gennaio",
       "february": "Febbraio",

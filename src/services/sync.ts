@@ -104,7 +104,8 @@ export class SyncService {
   async syncTransactionsYear(year: string) {
     // 1. Prima controllo se ho dati in cache e il token locale
     const store = await this.cache.getStore();
-    const localToken = store?.tokens.transactionTokens[year];
+    // Safely access nested properties
+    const localToken = store?.tokens?.transactionTokens?.[year];
 
     // Se non ho token locale, devo per forza sincronizzare con Firebase
     if (!localToken) {
@@ -146,6 +147,21 @@ export class SyncService {
 
   async updateTransactionAndCache(transaction: Transaction): Promise<void> {
     const year = new Date(transaction.timestamp).getFullYear().toString();
+
+    // Ottieni tutte le transazioni per quell'anno dalla cache
+    const store = await this.cache.getStore();
+    const yearTransactions = store.transactions[year] || [];
+
+    // Aggiorna o aggiungi la transazione
+    const idx = yearTransactions.findIndex((t) => t.id === transaction.id);
+    if (idx !== -1) {
+      yearTransactions[idx] = transaction;
+    } else {
+      yearTransactions.push(transaction);
+    }
+
+    // Aggiorna la cache locale
+    await this.cache.updateTransactions(yearTransactions, year);
 
     // Update transaction in Firestore
     try {

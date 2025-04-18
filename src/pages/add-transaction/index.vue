@@ -104,7 +104,7 @@
           left-icon="calendar-o"
           readonly
           name="datePicker"
-          placeholder="Select date"
+          :placeholder="datePickerLabel"
           @click="showBottomCalendar = true"
         />
         <van-popup
@@ -137,6 +137,24 @@
         />
       </div>
 
+      <!-- Recurring Expense Section -->
+      <van-cell-group inset class="mt-16">
+        <van-field :label="t('transaction.recurringExpenseLabel')">
+          <template #input>
+            <van-switch v-model="isRecurring" size="20" />
+          </template>
+        </van-field>
+
+        <div v-if="isRecurring" class="p-16">
+          <van-radio-group v-model="frequency" direction="horizontal">
+            <van-radio name="WEEKLY">{{ t('transaction.weekly') }}</van-radio>
+            <van-radio name="MONTHLY">{{ t('transaction.monthly') }}</van-radio>
+            <van-radio name="YEARLY">{{ t('transaction.yearly') }}</van-radio>
+          </van-radio-group>
+        </div>
+      </van-cell-group>
+      <!-- End Recurring Expense Section -->
+
       <div class="mt-16">
         <van-button
           :loading="loading"
@@ -145,7 +163,8 @@
           round
           block
         >
-          {{ $t('transaction.add') }}
+          {{ submitButtonText }}
+          <!-- Use computed text -->
         </van-button>
       </div>
     </van-form>
@@ -162,6 +181,9 @@ import {UserCategories} from '@/api/database/modules/subcollections/user.categor
 import {createSyncService} from '@/services/sync';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {useRoute, useRouter} from 'vue-router';
+import type {FrequencyType} from '@/types/recurringExpense'; // Import FrequencyType
+import {UserRecurringExpenses} from '@/api/database/modules/subcollections/user.recurringExpenses';
+import {RecurringSyncService} from '@/services/recurringSync';
 
 interface Option {
   text: string;
@@ -169,6 +191,11 @@ interface Option {
   children?: Option[];
   icon?: string;
 }
+
+// --- Recurring Expense State ---
+const isRecurring = ref(false);
+const frequency = ref<FrequencyType>('MONTHLY'); // Default frequency
+// -----------------------------
 
 // Ottieni lo store dell'utente
 const router = useRouter();
@@ -272,6 +299,15 @@ const transactionData = reactive({...EMPTY_TRANSACTION});
 const dateLabel = ref<string>(currentDate.value.join('/'));
 const dark = ref<boolean>(isDark.value);
 
+// --- Computed properties for conditional UI ---
+const datePickerLabel = computed(() =>
+  isRecurring.value ? t('transaction.startDate') : t('transaction.selectDate')
+);
+const submitButtonText = computed(() =>
+  isRecurring.value ? t('transaction.saveDefinition') : t('transaction.add')
+);
+// ------------------------------------------
+
 watch(
   () => isDark.value,
   (newMode) => {
@@ -293,6 +329,14 @@ const rules = reactive({
 const sync = createSyncService(userId);
 
 async function addTransaction() {
+  if (isRecurring.value) {
+    await saveDefinition();
+  } else {
+    await saveTransaction();
+  }
+}
+
+async function saveTransaction() {
   try {
     loading.value = true;
     const transaction = {
@@ -303,13 +347,8 @@ async function addTransaction() {
       categoryId: transactionData.categoryId,
     };
 
-    if (transactionId) {
-      // Modifica transazione esistente
-      await sync.updateTransaction(transaction);
-    } else {
-      // Nuova transazione
-      await sync.createTransaction(transaction);
-    }
+    // Usa il servizio sync per gestire sia l'aggiunta che la modifica
+    await sync.updateTransactionAndCache(transaction);
 
     showNotify({
       type: 'success',
@@ -322,7 +361,7 @@ async function addTransaction() {
     resetFields();
     router.back();
   } catch (error) {
-    console.error('Error in addTransaction:', error);
+    console.error('Error in saveTransaction:', error);
     showNotify({
       type: 'danger',
       message: t(
@@ -341,13 +380,73 @@ const resetFields = () => {
     (new Date().getMonth() + 1).toString().padStart(2, '0'),
     new Date().getDate().toString().padStart(2, '0'),
   ].join('/');
+  // Reset recurring fields as well
+  isRecurring.value = false;
+  frequency.value = 'MONTHLY';
 };
+
+async function saveDefinition() {
+  try {
+    loading.value = true;
+
+    // Basic validation (more robust validation might be needed)
+    if (!transactionData.amount || !transactionData.categoryId) {
+      showNotify({
+        type: 'danger',
+        message: t('transaction.pleaseEnterAmountAndCategory'), // Assuming you add this translation
+      });
+      return;
+    }
+
+    const startDate = new Date(currentDate.value.join('-')).toISOString();
+
+    const recurringExpenseDefinition = {
+      amount: transactionData.amount,
+      categoryId: transactionData.categoryId,
+      description: transactionData.description,
+      frequency: frequency.value,
+      startDate: startDate,
+      nextOccurrence: startDate, // Initially the same as start date
+      isActive: true,
+    };
+
+    const id = await UserRecurringExpenses.addRecurringExpense(
+      userId,
+      recurringExpenseDefinition
+    );
+
+    // After adding, reload all recurring expenses to update the cache
+    await RecurringSyncService.getRecurringExpenses(userId, true);
+
+    showNotify({
+      type: 'success',
+      message: t('transaction.recurringExpenseAdded'), // Assuming you add this translation
+    });
+
+    resetFields();
+    router.back();
+  } catch (error) {
+    console.error('Error in saveDefinition:', error);
+    showNotify({
+      type: 'danger',
+      message: t('transaction.recurringExpenseError'), // Assuming you add this translation
+    });
+  } finally {
+    loading.value = false;
+  }
+}
 
 const onConfirmCalendar = ({selectedValues}) => {
   dateLabel.value = selectedValues.join('/');
   currentDate.value = selectedValues;
   showBottomCalendar.value = false;
-  transactionData.timestamp = new Date(selectedValues.join('-')).toISOString();
+  // Only set timestamp for non-recurring transactions.
+  // For recurring, this date is the startDate, handled in addTransaction/saveDefinition
+  if (!isRecurring.value) {
+    transactionData.timestamp = new Date(
+      selectedValues.join('-')
+    ).toISOString();
+  }
 };
 
 const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
