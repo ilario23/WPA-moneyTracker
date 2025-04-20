@@ -7,13 +7,11 @@ import {
 import type {Category} from '@/types/category';
 import {doc, getDoc, setDoc} from 'firebase/firestore';
 import {DB} from '@/config/firebase';
-// import base categories from '@/utils/category';
-import {BASE_CATEGORIES} from '@/utils/category';
 
 // Define interfaces
 export interface LoginData {
   email: string;
-  password: string;
+  password;
 }
 
 export interface LoginRes {
@@ -96,7 +94,8 @@ export async function handleNewUser(user: UserState): Promise<boolean> {
         createdAt: new Date().toISOString(),
       });
 
-      // Crea una collection base con il costruttore di categorie
+      // Import BASE_CATEGORIES here to avoid initialization issues
+      const {BASE_CATEGORIES} = await import('@/utils/category');
       const defaultCategories: Category[] = BASE_CATEGORIES.map((category) => ({
         ...category,
         userId: user.uid,
