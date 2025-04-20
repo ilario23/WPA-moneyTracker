@@ -76,11 +76,10 @@ async function logout() {
     </VanCellGroup>
 
     <div class="fixed bottom-50 left-1/2 -translate-x-1/2 z-10">
-      <van-image
-        class="h-128"
+      <img
         src="@/assets/images/turtle-logo.svg"
-        fit="cover"
-        round
+        class="h-156"
+        alt="logo image"
       />
     </div>
 
