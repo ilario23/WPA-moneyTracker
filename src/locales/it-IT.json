@@ -106,7 +106,8 @@
     "clearCategoriesCache": "Pulisci cache categorie",
     "clearCategoriesCacheConfirm": "Sei sicuro di voler pulire la cache delle categorie?",
     "categoriesCacheClearedSuccess": "Cache categorie pulita con successo",
-    "categoriesCacheClearError": "Errore durante la pulizia della cache delle categorie"
+    "categoriesCacheClearError": "Errore durante la pulizia della cache delle categorie",
+    "environmentMode": "Ambiente"
   },
   "transaction": {
     "expense": "Spesa",

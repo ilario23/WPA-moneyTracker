@@ -96,9 +96,6 @@
     "cacheClearedSuccess": "Cache cleared successfully",
     "cacheClearError": "Error while clearing cache",
     "clearRecurringExpensesCache": "Clear recurring expenses cache",
-    "clearRecurringExpensesCacheConfirm": "Are you sure you want to clear the recurring expenses cache?",
-    "recurringExpensesCacheClearedSuccess": "Recurring expenses cache cleared successfully",
-    "recurringExpensesCacheClearError": "Error while clearing recurring expenses cache",
     "clearTransactionsCache": "Clear transactions cache",
     "clearTransactionsCacheConfirm": "Are you sure you want to clear the transactions cache?",
     "transactionsCacheClearedSuccess": "Transactions cache cleared successfully",
@@ -109,7 +106,8 @@
     "categoriesCacheClearError": "Error while clearing categories cache",
     "clearRecurringExpensesCacheConfirm": "Are you sure you want to clear the recurring expenses cache?",
     "recurringExpensesCacheClearedSuccess": "Recurring expenses cache cleared successfully",
-    "recurringExpensesCacheClearError": "Error clearing recurring expenses cache"
+    "recurringExpensesCacheClearError": "Error clearing recurring expenses cache",
+    "environmentMode": "Environment"
   },
   "transaction": {
     "expense": "Expense",

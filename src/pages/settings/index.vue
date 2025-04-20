@@ -22,6 +22,10 @@
     <VanCell center :title="$t('settings.currentVersion')">
       <div class="text-gray">v{{ version }}</div>
     </VanCell>
+
+    <VanCell center :title="$t('settings.environmentMode')">
+      <div class="text-gray">{{ environmentMode }}</div>
+    </VanCell>
   </VanCellGroup>
 
   <VanCellGroup
@@ -76,6 +80,7 @@ import {RecurringSyncService} from '@/services/recurringSync';
 
 const {t} = useI18n();
 const appStore = useAppStore();
+const environmentMode = computed(() => import.meta.env.MODE);
 const checked = ref<boolean>(isDark.value);
 const cacheService = createCacheService();
 
