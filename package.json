@@ -9,6 +9,7 @@
     "dev": "cross-env vite --mode development",
     "build": "vue-tsc --noEmit && vite build --mode production",
     "build:dev": "vue-tsc --noEmit && vite build --mode=development",
+    "build:vercel": "node scripts/vercel-build.js",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
