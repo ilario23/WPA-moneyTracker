@@ -1,22 +1,47 @@
 <template>
   <div>
-    <!-- Year Selector Tabs -->
-    <van-tabs
-      v-model:active="currentYearIndex"
-      swipeable
-      @change="handleYearChange"
-    >
-      <van-tab v-for="year in years" :key="year.value" :title="year.text" />
-    </van-tabs>
+    <div class="tabs-search-container">
+      <!-- Year Selector Tabs -->
+      <van-tabs
+        v-model:active="currentYearIndex"
+        swipeable
+        @change="handleYearChange"
+      >
+        <van-tab v-for="year in years" :key="year.value" :title="year.text" />
+      </van-tabs>
 
-    <!-- Month Selector Tabs -->
-    <van-tabs
-      v-model:active="currentMonthIndex"
-      swipeable
-      @change="handleMonthChange"
-    >
-      <van-tab v-for="month in months" :key="month.value" :title="month.text" />
-    </van-tabs>
+      <!-- Month Selector Tabs -->
+      <van-tabs
+        v-model:active="currentMonthIndex"
+        swipeable
+        @change="handleMonthChange"
+      >
+        <van-tab
+          v-for="month in months"
+          :key="month.value"
+          :title="month.text"
+        />
+      </van-tabs>
+
+      <!-- Tabs and Search Icon Container -->
+
+      <van-icon
+        :name="showSearch ? 'close' : 'search'"
+        size="24"
+        class="search-icon"
+        @click="showSearch = !showSearch"
+      />
+    </div>
+
+    <transition name="slide-down">
+      <van-search
+        v-if="showSearch"
+        v-model="searchQuery"
+        :placeholder="$t('transaction.searchPlaceholder')"
+        shape="round"
+        class="search-input"
+      />
+    </transition>
 
     <!-- Riepilogo -->
     <van-card class="summary-card">
@@ -138,6 +163,7 @@
 import {ref, computed, onMounted, nextTick, watch} from 'vue';
 import {useUserStore} from '@/stores';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
+// Removed incorrect Vant imports from previous attempt, will add specific ones later if needed by auto-import
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {showNotify} from 'vant';
 import {useI18n} from 'vue-i18n';
@@ -151,7 +177,11 @@ const userStore = useUserStore();
 const userId = userStore.userInfo.uid;
 const router = useRouter();
 
-// State variables
+// State variables for search
+const showSearch = ref(false); // Controls search bar visibility
+const searchQuery = ref(''); // Holds the search input value
+
+// Existing State variables
 const transactions = ref<Transaction[]>([]);
 const categories = ref<CategoryWithType[]>([]); // Change the type
 const loading = ref(false);
@@ -247,27 +277,47 @@ watch(currentYearIndex, () => {
   fetchData();
 });
 
+// Modified computed property to include search filtering
 const filteredTransactions = computed(() => {
   if (!transactions.value.length) return [];
 
   const selectedYear = years.value[currentYearIndex.value].value;
   const isAllTab = currentMonthIndex.value === months.value.length - 1;
+  const query = searchQuery.value.toLowerCase().trim();
 
-  return transactions.value
-    .filter((transaction) => {
-      const transDate = new Date(transaction.timestamp);
-      if (isAllTab) {
-        return transDate.getFullYear() === selectedYear;
-      }
-      return (
-        transDate.getFullYear() === selectedYear &&
-        transDate.getMonth() === currentMonthIndex.value
-      );
-    })
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  // Filter by year and month first
+  let yearMonthFiltered = transactions.value.filter((transaction) => {
+    const transDate = new Date(transaction.timestamp);
+    if (isAllTab) {
+      return transDate.getFullYear() === selectedYear;
+    }
+    return (
+      transDate.getFullYear() === selectedYear &&
+      transDate.getMonth() === currentMonthIndex.value
     );
+  });
+
+  // Then filter by search query if there is one
+  if (query) {
+    yearMonthFiltered = yearMonthFiltered.filter((transaction) => {
+      const amountMatch = transaction.amount
+        .toString()
+        .toLowerCase()
+        .includes(query);
+      const descriptionMatch = (transaction.description || '')
+        .toLowerCase()
+        .includes(query);
+      const categoryNameMatch = getCategoryName(transaction.categoryId)
+        .toLowerCase()
+        .includes(query);
+      return amountMatch || descriptionMatch || categoryNameMatch;
+    });
+  }
+
+  // Finally, sort the results
+  return yearMonthFiltered.sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
 });
 
 function handleMonthChange(index: number) {

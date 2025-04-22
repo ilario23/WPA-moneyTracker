@@ -133,6 +133,7 @@
     "unknownCategory": "Unknown Category",
     "selectMonth": "Select Month",
     "fetchError": "Error loading transactions",
+    "searchPlaceholder": "Search by amount, description, category...",
     "newest": "Newest First",
     "oldest": "Oldest First",
     "allCategories": "All Categories",

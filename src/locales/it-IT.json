@@ -133,6 +133,7 @@
     "unknownCategory": "Categoria Sconosciuta",
     "selectMonth": "Seleziona Mese",
     "fetchError": "Errore nel caricamento delle transazioni",
+    "searchPlaceholder": "Cerca per importo, descrizione, categoria...",
     "newest": "Più Recenti",
     "oldest": "Più Vecchi",
     "allCategories": "Tutte le Categorie",
