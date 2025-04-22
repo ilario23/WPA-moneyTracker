@@ -239,15 +239,12 @@ const years = computed(() => {
 onMounted(async () => {
   await RecurringProcessor.processRecurringExpenses();
   // Dopo aver processato le ricorrenti, aggiorna le transazioni
-  await fetchData();
   // Ensure we're on the current year
   const currentYear = new Date().getFullYear();
   const yearIndex = years.value.findIndex((y) => y.value === currentYear);
   if (yearIndex !== -1) {
     currentYearIndex.value = yearIndex;
   }
-
-  await fetchData();
 });
 
 // Fetch transactions and categories
@@ -273,9 +270,13 @@ async function fetchData() {
 }
 
 // Add watch for year changes to reload transactions
-watch(currentYearIndex, () => {
-  fetchData();
-});
+watch(
+  currentYearIndex,
+  () => {
+    fetchData();
+  },
+  {immediate: true}
+);
 
 // Modified computed property to include search filtering
 const filteredTransactions = computed(() => {

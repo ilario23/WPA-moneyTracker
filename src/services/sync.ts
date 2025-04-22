@@ -31,7 +31,7 @@ export class SyncService {
       // 2.In questa modialtà dò per scontato che se ho un token locale, ho anche i dati corretti
       // 3. Quindi uso la cache
 
-      console.log('Using cached categories');
+      console.log('[sync] Using cached categories');
       return store.categories;
     } catch (error) {
       console.error('Error syncing categories:', error);
@@ -59,7 +59,7 @@ export class SyncService {
 
       // 3. Se i token corrispondono, usa la cache
       if (remoteToken === localToken) {
-        console.log('Using cached categories');
+        console.log('[sync] Using cached categories');
         return store.categories;
       }
 
@@ -102,34 +102,42 @@ export class SyncService {
   }
 
   async syncTransactionsYear(year: string) {
-    // 1. Prima controllo se ho dati in cache e il token locale
+    // 1. Check if data and local token are in cache
     const store = await this.cache.getStore();
-    // Safely access nested properties
     const localToken = store?.tokens?.transactionTokens?.[year];
 
-    // Se non ho token locale, devo per forza sincronizzare con Firebase
+    // If no local token, must sync from Firebase
     if (!localToken) {
+      console.log(
+        `[sync] Reading transactions for ${year} from Firebase (no token in cache)`
+      );
       return await this.syncFromFirebase(year);
     }
 
-    // 2. Solo se ho un token locale, controllo quello remoto
+    // 2. If local token exists, check remote token
     const tokenDoc = await getDoc(
       doc(DB, 'users', this.userId, TOKENS_COLLECTION, `transactions_${year}`)
     );
     const remoteToken = tokenDoc.data()?.token;
 
-    // 3. Se i token corrispondono, uso i dati in cache
+    // 3. If tokens match, use cache
     if (remoteToken === localToken) {
+      console.log('[sync] Using cached transactions for', year);
       return store.transactions[year] || [];
     }
 
-    // 4. Se i token sono diversi, sincronizzo con Firebase
+    // 4. If tokens differ, sync from Firebase
+    console.log(
+      `[sync] Token mismatch: reading transactions for ${year} from Firebase`
+    );
     return await this.syncFromFirebase(year);
   }
 
-  // Metodo helper per la sincronizzazione con Firebase
+  // Helper method for syncing from Firebase
   private async syncFromFirebase(year: string) {
-    console.log('Syncing from Firebase for year:', year);
+    console.log(
+      `[sync] (syncFromFirebase) Reading transactions for ${year} from Firebase`
+    );
     const transactions = await UserTransactions.getUserTransactionsByYear(
       this.userId,
       year,

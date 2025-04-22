@@ -23,7 +23,6 @@ function addWeeks(date: Date, weeks: number): Date {
 
 export const RecurringProcessor = {
   async processRecurringExpenses(): Promise<void> {
-    console.log('RecurringProcessor.processRecurringExpenses() called!');
     const userStore = useUserStore();
     const userId = userStore.userInfo.uid;
     if (!userId) {
@@ -35,7 +34,6 @@ export const RecurringProcessor = {
     const sync = createSyncService(userId);
 
     try {
-      console.log('Processing recurring expenses for user:', userId);
       const recurringExpenses =
         await RecurringSyncService.getRecurringExpenses(userId);
 

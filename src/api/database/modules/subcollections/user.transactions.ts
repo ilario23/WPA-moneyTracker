@@ -20,6 +20,9 @@ export const UserTransactions = {
     try {
       if (skipSync) {
         // Accesso diretto a Firebase senza sync
+        console.log(
+          `[user.transactions] Leggo transazioni ${year} da Firebase (skipSync)`
+        );
         const snaps = await getDocs(
           collection(DB, 'users', userId, COLLECTION, year, 'transactions')
         );
