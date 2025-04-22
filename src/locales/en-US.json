@@ -160,7 +160,9 @@
       "october": "October",
       "november": "November",
       "december": "December"
-    }
+    },
+    "showInvestments": "Show Investments",
+    "showInvestmentsTooltip": "Include investments in the chart. Investments are shown as a separate bar."
   },
   "category": {
     "title": "Title",

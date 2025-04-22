@@ -16,6 +16,11 @@ export function useTransactionChart() {
   const loading = ref(false);
   const transactions = ref<Transaction[]>([]);
   const categories = ref<CategoryWithType[]>([]);
+  const showInvestment = ref(false);
+
+  function setShowInvestment(val: boolean) {
+    showInvestment.value = val;
+  }
 
   // --- Year Selection ---
   const availableYears = computed(() => {
@@ -65,9 +70,14 @@ export function useTransactionChart() {
 
   // --- Chart Option Generation ---
   const chartOptions = computed<EChartsOption>(() => {
-    const monthlyData: {income: number[]; expense: number[]} = {
+    const monthlyData: {
+      income: number[];
+      expense: number[];
+      investment: number[];
+    } = {
       income: Array(12).fill(0),
       expense: Array(12).fill(0),
+      investment: Array(12).fill(0),
     };
 
     const incomeCategoryIds = new Set(
@@ -75,6 +85,9 @@ export function useTransactionChart() {
     );
     const expenseCategoryIds = new Set(
       categories.value.filter((cat) => cat.type === 1).map((cat) => cat.id)
+    );
+    const investmentCategoryIds = new Set(
+      categories.value.filter((cat) => cat.type === 3).map((cat) => cat.id)
     );
 
     transactions.value.forEach((t) => {
@@ -85,6 +98,8 @@ export function useTransactionChart() {
         monthlyData.income[monthIndex] += amount;
       } else if (expenseCategoryIds.has(t.categoryId)) {
         monthlyData.expense[monthIndex] += amount;
+      } else if (investmentCategoryIds.has(t.categoryId)) {
+        monthlyData.investment[monthIndex] += amount;
       }
     });
 
@@ -94,15 +109,42 @@ export function useTransactionChart() {
       return date.toLocaleString(locale.value, {month: 'short'});
     });
 
+    // Build legend and series dynamically
+    const legendData = [t('transaction.income'), t('transaction.expense')];
+    const series: EChartsOption['series'] = [
+      {
+        name: t('transaction.income'),
+        type: 'bar',
+        emphasis: {focus: 'series'},
+        data: monthlyData.income.map((val) => val.toFixed(2)),
+        itemStyle: {color: '#07c160'},
+      },
+      {
+        name: t('transaction.expense'),
+        type: 'bar',
+        emphasis: {focus: 'series'},
+        data: monthlyData.expense.map((val) => val.toFixed(2)),
+        itemStyle: {color: '#ee0a24'},
+      },
+    ];
+    if (showInvestment.value) {
+      legendData.push(t('transaction.investment'));
+      series.push({
+        name: t('transaction.investment'),
+        type: 'bar',
+        emphasis: {focus: 'series'},
+        data: monthlyData.investment.map((val) => val.toFixed(2)),
+        itemStyle: {color: '#1989fa'},
+      });
+    }
+
     return {
       tooltip: {
         trigger: 'axis',
-        axisPointer: {
-          type: 'shadow',
-        },
+        axisPointer: {type: 'shadow'},
       },
       legend: {
-        data: [t('transaction.income'), t('transaction.expense')],
+        data: legendData,
       },
       grid: {
         left: '3%',
@@ -124,32 +166,7 @@ export function useTransactionChart() {
           },
         },
       ],
-      series: [
-        {
-          name: t('transaction.income'),
-          type: 'bar',
-          stack: 'Total', // Stack income and expense for comparison if needed, or remove for separate bars
-          emphasis: {
-            focus: 'series',
-          },
-          data: monthlyData.income.map((val) => val.toFixed(2)),
-          itemStyle: {
-            color: '#07c160', // Green for income
-          },
-        },
-        {
-          name: t('transaction.expense'),
-          type: 'bar',
-          stack: 'Total',
-          emphasis: {
-            focus: 'series',
-          },
-          data: monthlyData.expense.map((val) => val.toFixed(2)),
-          itemStyle: {
-            color: '#ee0a24', // Red for expense
-          },
-        },
-      ],
+      series,
     };
   });
 
@@ -163,5 +180,6 @@ export function useTransactionChart() {
     selectedYear,
     chartOptions,
     fetchData, // Expose fetchData if manual refresh is needed
+    setShowInvestment,
   };
 }
