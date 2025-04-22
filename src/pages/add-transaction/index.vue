@@ -84,7 +84,7 @@
           v-model:show="showCascader"
           round
           position="bottom"
-          :style="{height: '40%'}"
+          :style="{height: '60%'}"
         >
           <van-cascader
             v-model="cascaderValue"
@@ -450,8 +450,6 @@ const onConfirmCalendar = ({selectedValues}) => {
 };
 
 const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
-  // onChange e onFinish sono
-
   // Logica per gestire il cambiamento della selezione
   cascaderValue.value = selectedOptions[selectedOptions.length - 1].value;
   //questi altri due invece servono per l'inserimento della spesa, uno l'id e l'altro il nome
@@ -482,7 +480,7 @@ const swipingTabs = (index: number) => {
   previewIcon.value = parentlessCategories.value[index]?.icon;
 
   // correggo il cascader e quello che si vede nel campo di testo
-  cascaderValue.value = parentlessCategories.value[index]?.title;
+  cascaderValue.value = parentlessCategories.value[index]?.id || ''; // stringa
   fieldCategotyValue.value = parentlessCategories.value[index]?.title;
 
   // aggiorno le opzioni del cascader

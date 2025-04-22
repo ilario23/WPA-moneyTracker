@@ -38,7 +38,7 @@
             v-model:show="showCascader"
             round
             position="bottom"
-            :style="{height: '40%'}"
+            :style="{height: '60%'}"
           >
             <van-cascader
               v-model="cascaderValue"
