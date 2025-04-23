@@ -95,8 +95,8 @@ export function createVitePlugins(mode: string) {
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'safari-pinned-tab.svg'],
       manifest: {
-        name: 'vue3-vant-mobile',
-        short_name: 'vue3-vant-mobile',
+        name: 'turtlet',
+        short_name: 'turtlet',
         orientation: 'portrait',
         theme_color: '#ffffff',
         icons: [

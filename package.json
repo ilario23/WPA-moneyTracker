@@ -1,9 +1,9 @@
 {
-  "name": "vue3-vant-mobile",
+  "name": "turtlet",
   "type": "module",
-  "version": "3.5.2",
+  "version": "0.1.1",
   "packageManager": "pnpm@10.8.0",
-  "description": "An mobile web apps template based on the Vue 3 ecosystem",
+  "description": "Smart savings, one slow step at a time",
   "license": "MIT",
   "scripts": {
     "dev": "cross-env vite --mode development",
