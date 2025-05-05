@@ -60,7 +60,59 @@
             </div>
           </div>
         </div>
-        <!-- Add more settings rows here if needed -->
+        <van-divider style="margin: 16px 0" />
+        <div style="margin-top: 16px">
+          <van-button
+            icon="cart-o"
+            :text="$t('common.sidePanel')"
+            type="default"
+            size="small"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              border: none;
+              background: none;
+              box-shadow: none;
+              padding: 0;
+            "
+            @click="clickSidePanel()"
+          >
+            <template #icon>
+              <van-icon name="cart-o" />
+            </template>
+            <span>{{ $t('common.sidePanel') }}</span>
+          </van-button>
+        </div>
+      </div>
+    </van-popup>
+
+    <!-- SidePanel: Supported Charts List -->
+    <van-popup
+      v-model:show="showSidePanel"
+      position="left"
+      closeable
+      @close="showSidePanel = false"
+      style="width: 80vw; max-width: 400px; height: 100%"
+      safe-area-inset-top
+      safe-area-inset-bottom
+    >
+      <div style="display: flex; height: 100%">
+        <van-sidebar v-model="selectedChartIndex" style="min-width: 120px">
+          <van-sidebar-item
+            v-for="(chart, idx) in supportedCharts"
+            :key="chart.id"
+            :title="chart.name"
+          />
+        </van-sidebar>
+        <div style="flex: 1; padding: 24px">
+          <h3 style="margin-bottom: 16px">
+            {{ supportedCharts[selectedChartIndex]?.name }}
+          </h3>
+          <div style="font-size: 14px; color: #888">
+            {{ supportedCharts[selectedChartIndex]?.desc }}
+          </div>
+        </div>
       </div>
     </van-popup>
 
@@ -82,6 +134,17 @@ import Chart from '@/components/Chart/index.vue';
 const showInvestment = ref(false);
 const showSettings = ref(false);
 
+// SidePanel state
+const showSidePanel = ref(false);
+const selectedChartIndex = ref(0);
+
+// Mock list of supported charts
+const supportedCharts = [
+  {id: 1, name: 'Bar Chart', desc: 'Simple bar chart for transactions.'},
+  {id: 2, name: 'Line Chart', desc: 'Line chart for trends.'},
+  {id: 3, name: 'Pie Chart', desc: 'Pie chart for category breakdown.'},
+];
+
 const {
   loading,
   availableYears,
@@ -91,6 +154,11 @@ const {
 } = useTransactionChart();
 
 watch(showInvestment, setShowInvestment, {immediate: true});
+
+function clickSidePanel() {
+  showSettings.value = false;
+  showSidePanel.value = true;
+}
 </script>
 
 <route lang="json5">

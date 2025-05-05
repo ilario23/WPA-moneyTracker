@@ -24,7 +24,8 @@
   },
   "common": {
     "all": "Tutti",
-    "loading": "Caricamento"
+    "loading": "Caricamento",
+    "sidePanel": "Lista Grafici"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",

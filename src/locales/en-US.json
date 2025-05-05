@@ -30,7 +30,8 @@
   },
   "common": {
     "all": "All",
-    "loading": "Loading"
+    "loading": "Loading",
+    "sidePanel": "Graphs List"
   },
   "charts": {
     "January": "Jan",
