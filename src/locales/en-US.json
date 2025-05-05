@@ -1,7 +1,7 @@
 {
   "menus": {
     "home": "Home",
-    "profile": "My Center",
+    "profile": "🔧 My Center",
     "darkMode": "🌗 Dark Mode",
     "mockGuide": "💿 Mock Guide",
     "language": "📚 Language",
@@ -15,12 +15,13 @@
     "login": "🔒 Login",
     "settings": "Settings",
     "basicSettings": "Basic Settings",
-    "exampleComponents": "Example components",
+    "listComponents": "Expand the functionality by visiting:",
     "forgot-password": "Forgot Password",
     "categories": "🫙 View Categories",
     "add-category": "➕🫙 Add Category",
-    "user": "User",
-    "monthlyTransactions": "📗 Monthly Transactions"
+    "user": "🔧 User",
+    "monthlyTransactions": "📗 Monthly Transactions",
+    "more": "🕹️ More"
   },
   "mock": {
     "fromAsyncData": "Data from asynchronous requests",

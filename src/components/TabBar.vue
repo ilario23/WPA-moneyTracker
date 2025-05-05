@@ -1,25 +1,26 @@
 <script setup lang="ts">
-import { routeWhiteList } from '@/config/routes'
+import {routeWhiteList} from '@/config/routes';
 
-const { t } = useI18n()
-const active = ref(0)
-const route = useRoute()
+const {t} = useI18n();
+const route = useRoute();
 
-const show = computed(() => route.name && routeWhiteList.includes(route.name))
+const show = computed(
+  () => route.name && routeWhiteList.includes(route.name as string)
+); // Cast route.name to string
 </script>
 
 <template>
-  <van-tabbar v-if="show" v-model="active" placeholder route>
-    <van-tabbar-item replace to="/">
-      {{ t('layouts.home') }}
+  <van-tabbar v-if="show" placeholder route>
+    <van-tabbar-item replace to="/add-transaction">
+      {{ t('menus.transaction') }}
       <template #icon>
-        <div class="i-carbon:home" />
+        <div class="i-carbon:add-alt" />
       </template>
     </van-tabbar-item>
-    <van-tabbar-item replace to="/profile">
-      {{ t('layouts.profile') }}
+    <van-tabbar-item replace to="/more/">
+      {{ t('menus.more') }}
       <template #icon>
-        <div class="i-carbon:user" />
+        <div class="i-carbon:menu" />
       </template>
     </van-tabbar-item>
   </van-tabbar>

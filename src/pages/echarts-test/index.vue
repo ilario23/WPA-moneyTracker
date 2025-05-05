@@ -100,7 +100,7 @@
       <div style="display: flex; height: 100%">
         <van-sidebar v-model="selectedChartIndex" style="min-width: 120px">
           <van-sidebar-item
-            v-for="(chart, idx) in supportedCharts"
+            v-for="chart in supportedCharts"
             :key="chart.id"
             :title="chart.name"
           />

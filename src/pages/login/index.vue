@@ -52,7 +52,7 @@ async function loginWithGoogle() {
     // Reindirizza alla home
     const {redirect, ...othersQuery} = router.currentRoute.value.query;
     router.push({
-      name: 'home',
+      name: 'transaction',
       query: {
         ...othersQuery,
       },

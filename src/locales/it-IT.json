@@ -1,7 +1,7 @@
 {
   "menus": {
     "home": "Home",
-    "profile": "Il Mio Centro",
+    "profile": "🔧 Il Mio Centro",
     "darkMode": "🌗 Modalità Scura",
     "mockGuide": "💿 Guida Mock",
     "language": "📚 Lingua",
@@ -15,12 +15,13 @@
     "login": "🔒 Accedi",
     "settings": "Impostazioni",
     "basicSettings": "Impostazioni di base",
-    "exampleComponents": "Componenti Esempio",
     "forgot-password": "Password Dimenticata",
     "categories": "🫙 Elenco Categorie",
     "add-category": "➕🫙 Aggiungi Categoria",
-    "user": "Utente",
-    "monthlyTransactions": "📗 Spese Mensili"
+    "listComponents": "Espandi la funzionalità visitando:",
+    "user": "🔧 Utente",
+    "monthlyTransactions": "📗 Spese Mensili",
+    "more": "🕹️ Altro"
   },
   "common": {
     "all": "Tutti",

@@ -1,5 +1,9 @@
-import {createRouter, createWebHistory} from 'vue-router/auto';
-import {handleHotUpdate, routes} from 'vue-router/auto-routes';
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from 'vue-router/auto';
+import {handleHotUpdate, routes as autoRoutes} from 'vue-router/auto-routes';
 
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
@@ -12,6 +16,15 @@ import {isLogin} from '@/utils/auth';
 import setPageTitle from '@/utils/set-page-title';
 
 NProgress.configure({showSpinner: true, parent: '#app'});
+
+// Add redirect from root to add-transaction
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    redirect: '/add-transaction', // Redirect root path to add-transaction using path string
+  },
+  ...autoRoutes, // Include automatically generated routes
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_APP_PUBLIC_PATH),

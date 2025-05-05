@@ -138,9 +138,9 @@
       </div>
 
       <!-- Recurring Expense Section -->
-      <van-cell-group inset class="mt-16">
+      <van-cell-group class="mt-16 overflow-hidden rounded-3xl">
         <van-field :label="t('transaction.recurringExpenseLabel')">
-          <template #input>
+          <template #button>
             <van-switch v-model="isRecurring" size="20" />
           </template>
         </van-field>
