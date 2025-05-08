@@ -62,12 +62,14 @@
     >
       <div class="overflow-hidden rounded-3xl">
         <van-field
-          v-model="transactionData.amount"
+          v-model="amountInput"
           :rules="rules.amount"
           left-icon="shopping-cart-o"
           name="amount"
-          type="number"
+          type="text"
+          inputmode="decimal"
           :placeholder="t('transaction.amount')"
+          @blur="normalizeAmount"
         />
       </div>
 
@@ -295,6 +297,22 @@ const maxDate = new Date(new Date().getFullYear() + 1, 11, 31);
 const previewIcon = ref<string>('');
 
 const transactionData = reactive({...EMPTY_TRANSACTION});
+
+const amountInput = ref(transactionData.amount?.toString() || '');
+
+function normalizeAmount() {
+  const normalized = amountInput.value.replace(',', '.');
+  const parsed = parseFloat(normalized);
+
+  const validAmount = isNaN(parsed) ? 0 : parsed;
+
+  // Mostra fino a 2 decimali *solo se necessari*
+  amountInput.value = Number.isInteger(validAmount)
+    ? validAmount.toString()
+    : validAmount.toFixed(2);
+
+  transactionData.amount = parseFloat(amountInput.value) || 0;
+}
 
 const dateLabel = ref<string>(currentDate.value.join('/'));
 const dark = ref<boolean>(isDark.value);
