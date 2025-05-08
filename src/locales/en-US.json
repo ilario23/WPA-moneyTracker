@@ -109,7 +109,8 @@
     "clearRecurringExpensesCacheConfirm": "Are you sure you want to clear the recurring expenses cache?",
     "recurringExpensesCacheClearedSuccess": "Recurring expenses cache cleared successfully",
     "recurringExpensesCacheClearError": "Error clearing recurring expenses cache",
-    "environmentMode": "Environment"
+    "environmentMode": "Environment",
+    "autoUpdateMessage": "Automatic update: the app will be updated to the new version."
   },
   "transaction": {
     "expense": "Expense",

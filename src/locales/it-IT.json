@@ -109,7 +109,8 @@
     "clearCategoriesCacheConfirm": "Sei sicuro di voler pulire la cache delle categorie?",
     "categoriesCacheClearedSuccess": "Cache categorie pulita con successo",
     "categoriesCacheClearError": "Errore durante la pulizia della cache delle categorie",
-    "environmentMode": "Ambiente"
+    "environmentMode": "Ambiente",
+    "autoUpdateMessage": "Aggiornamento automatico: l'app verrà aggiornata alla nuova versione."
   },
   "transaction": {
     "expense": "Spesa",

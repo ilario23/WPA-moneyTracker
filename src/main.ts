@@ -7,6 +7,7 @@ import 'virtual:uno.css';
 import '@/styles/app.less';
 import '@/styles/var.less';
 import {i18n} from '@/utils/i18n';
+import {showNotify} from 'vant';
 
 // Vant Desktop Adaptation
 import '@vant/touch-emulator';
@@ -26,6 +27,11 @@ import {registerSW} from 'virtual:pwa-register';
 const updateSW = registerSW({
   onNeedRefresh() {
     console.log('🆕 Nuova versione disponibile, aggiorno...');
+    showNotify({
+      type: 'primary',
+      message: i18n.global.t('settings.autoUpdateMessage'),
+      duration: 3000,
+    });
     updateSW(true); // forza l'aggiornamento
   },
   onOfflineReady() {
