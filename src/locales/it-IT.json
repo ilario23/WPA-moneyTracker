@@ -25,6 +25,12 @@
     "editRecurringExpense": "Modifica Spesa Ricorrente",
     "more": "🕹️ Altro"
   },
+  "morePage": {
+    "groupTransactionsTitle": "Transazioni e Pianificazione",
+    "groupDataManagementTitle": "Gestione Dati",
+    "groupAccountTitle": "Account",
+    "groupAnalyticsTitle": "Analisi e Report"
+  },
   "recurringExpense": {
     "title": "Spese Ricorrenti",
     "edit": "Modifica",

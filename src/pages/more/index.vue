@@ -1,26 +1,84 @@
 <script setup lang="ts">
+import {computed} from 'vue'; // Import computed if using isDevMode
 const {t} = useI18n();
 
-const menuUsedItems = computed(() => [
-  {title: t('menus.echartsTest'), route: '/echarts-test'},
-  {title: t('menus.categories'), route: '/categories'},
-  {title: t('menus.monthlyTransactions'), route: '/monthly-transactions'},
-  {title: t('menus.recurringExpenses'), route: '/recurring-expenses'},
-  {title: t('menus.profile'), route: '/profile'},
-]);
+// Computed property to check if in development mode
+const isDevMode = computed(() => import.meta.env.DEV);
 </script>
 
 <template>
-  <VanCellGroup
-    :border="false"
-    :inset="true"
-    :title="t('menus.listComponents')"
-  >
-    <template v-for="item in menuUsedItems" :key="item.route">
-      <VanCell :title="item.title" :to="item.route" is-link />
-    </template>
-  </VanCellGroup>
+  <div class="more-page-container p-2">
+    <!-- Group 1: Transactions & Planning -->
+    <VanCellGroup
+      inset
+      :title="t('morePage.groupTransactionsTitle')"
+      class="mb-4"
+    >
+      <VanCell
+        :title="t('menus.monthlyTransactions')"
+        to="/monthly-transactions"
+        is-link
+        icon="bill-o"
+      />
+      <VanCell
+        :title="t('menus.recurringExpenses')"
+        to="/recurring-expenses"
+        is-link
+        icon="replay"
+      />
+    </VanCellGroup>
+
+    <!-- Group 2: Data Management -->
+    <VanCellGroup
+      inset
+      :title="t('morePage.groupDataManagementTitle')"
+      class="mb-4"
+    >
+      <VanCell
+        :title="t('menus.categories')"
+        to="/categories"
+        is-link
+        icon="apps-o"
+      />
+    </VanCellGroup>
+
+    <!-- Group 3: Account -->
+    <VanCellGroup inset :title="t('morePage.groupAccountTitle')" class="mb-4">
+      <VanCell
+        :title="t('menus.profile')"
+        to="/profile"
+        is-link
+        icon="user-circle-o"
+      />
+      <!-- You might add a settings link here if it's not on a main tab bar -->
+      <!-- <VanCell :title="t('menus.settings')" to="/settings" is-link icon="setting-o" /> -->
+    </VanCellGroup>
+
+    <!-- Optional: Analytics & Reports Section -->
+    <VanCellGroup
+      v-if="isDevMode"
+      inset
+      :title="t('morePage.groupAnalyticsTitle')"
+      class="mb-4"
+    >
+      <VanCell
+        :title="t('menus.echartsTest')"
+        to="/echarts-test"
+        is-link
+        icon="chart-trending-o"
+      />
+    </VanCellGroup>
+  </div>
 </template>
+
+<style scoped>
+.more-page-container {
+  padding-bottom: 60px; /* Add padding to avoid overlap with tabbar if present */
+}
+.mb-4 {
+  margin-bottom: 16px; /* Equivalent to UnoCSS mb-4, adjust as needed */
+}
+</style>
 
 <route lang="json5">
 {

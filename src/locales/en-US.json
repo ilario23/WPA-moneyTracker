@@ -25,6 +25,12 @@
     "editRecurringExpense": "Edit Recurring Expense",
     "more": "🕹️ More"
   },
+  "morePage": {
+    "groupTransactionsTitle": "Transactions & Planning",
+    "groupDataManagementTitle": "Data Management",
+    "groupAccountTitle": "Account",
+    "groupAnalyticsTitle": "Analytics & Reports"
+  },
   "recurringExpense": {
     "title": "Recurring Expenses",
     "edit": "Edit",
