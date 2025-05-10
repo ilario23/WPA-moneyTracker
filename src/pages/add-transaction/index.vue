@@ -560,16 +560,22 @@ async function saveTransaction() {
 
 const resetFields = () => {
   Object.assign(transactionData, EMPTY_TRANSACTION);
-  dateLabel.value = [
-    new Date().getFullYear().toString(),
-    (new Date().getMonth() + 1).toString().padStart(2, '0'),
-    new Date().getDate().toString().padStart(2, '0'),
-  ].join('/');
+  amountInput.value = ''; // Reset amount input field
+  const today = new Date();
+  currentDate.value = [
+    // Reset calendar to today
+    today.getFullYear().toString(),
+    (today.getMonth() + 1).toString().padStart(2, '0'),
+    today.getDate().toString().padStart(2, '0'),
+  ];
+  dateLabel.value = currentDate.value.join('/'); // Reset date label
+
   // Reset recurring fields as well
   isRecurring.value = false;
   frequency.value = 'MONTHLY';
-  isEditModeRecurring.value = false; // Ensure this is reset
-  recurringExpenseIdToEdit.value = null; // Ensure this is reset
+  isActiveRecurring.value = true; // Reset active state to default true
+  isEditModeRecurring.value = false;
+  recurringExpenseIdToEdit.value = null;
 };
 
 async function saveDefinition() {
