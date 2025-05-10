@@ -21,7 +21,27 @@
     "listComponents": "Espandi la funzionalità visitando:",
     "user": "🔧 Utente",
     "monthlyTransactions": "📗 Spese Mensili",
+    "recurringExpenses": "🔁 Spese Ricorrenti",
+    "editRecurringExpense": "Modifica Spesa Ricorrente",
     "more": "🕹️ Altro"
+  },
+  "recurringExpense": {
+    "title": "Spese Ricorrenti",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "deleteConfirmTitle": "Conferma Eliminazione",
+    "deleteConfirmMessage": "Sei sicuro di voler eliminare questa spesa ricorrente?",
+    "deleteSuccess": "Spesa ricorrente eliminata con successo.",
+    "deleteError": "Errore durante l'eliminazione della spesa ricorrente.",
+    "fetchError": "Errore nel recupero delle spese ricorrenti.",
+    "noExpenses": "Nessuna spesa ricorrente trovata.",
+    "nextOccurrence": "Prossima",
+    "startDate": "Inizia il",
+    "frequency": "Frequenza",
+    "weekly": "Settimanale",
+    "monthly": "Mensile",
+    "yearly": "Annuale",
+    "unknownCategory": "Categoria Sconosciuta"
   },
   "common": {
     "all": "Tutti",

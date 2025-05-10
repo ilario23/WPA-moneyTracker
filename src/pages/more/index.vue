@@ -5,6 +5,7 @@ const menuUsedItems = computed(() => [
   {title: t('menus.echartsTest'), route: '/echarts-test'},
   {title: t('menus.categories'), route: '/categories'},
   {title: t('menus.monthlyTransactions'), route: '/monthly-transactions'},
+  {title: t('menus.recurringExpenses'), route: '/recurring-expenses'},
   {title: t('menus.profile'), route: '/profile'},
 ]);
 </script>

@@ -7,11 +7,17 @@ import {
   deleteDoc,
   query,
   where,
+  setDoc, // Added for token update
 } from 'firebase/firestore';
-import {DB} from '@/config/firebase'; // Corrected import name
-import type {RecurringExpenseDefinition} from '@/types/recurringExpense';
+import {DB} from '@/config/firebase'; // Corrected import path
+import type {RecurringExpenseDefinition} from '@/types/recurringExpense'; // Corrected import path
+import {
+  RecurringSyncService,
+  RECURRING_EXPENSES_TOKEN,
+} from '@/services/recurringSync'; // Import for token and cache management
 
 const RECURRING_EXPENSES_COLLECTION = 'recurringExpenses';
+const TOKENS_COLLECTION = 'tokens'; // Define if not already defined elsewhere for this context
 
 export const UserRecurringExpenses = {
   // Add a new recurring expense definition
@@ -106,6 +112,28 @@ export const UserRecurringExpenses = {
       await deleteDoc(expenseDocRef);
       console.log(
         `Recurring expense definition ${expenseId} deleted successfully.`
+      );
+
+      // Update Firebase token and local cache
+      const newToken = new Date().toISOString();
+      // Set remote token directly first
+      const tokenDocRef = doc(
+        DB,
+        'users',
+        userId,
+        TOKENS_COLLECTION,
+        RECURRING_EXPENSES_TOKEN
+      );
+      await setDoc(tokenDocRef, {token: newToken});
+      console.log(
+        `Remote token for recurring expenses updated for user ${userId}.`
+      );
+
+      // Force refresh of cache, which will also ensure local token matches remote
+      // This also handles updating the local cache with the deleted item removed.
+      await RecurringSyncService.getRecurringExpenses(userId, true);
+      console.log(
+        `Recurring expenses cache updated for user ${userId} after deletion.`
       );
     } catch (error) {
       console.error(

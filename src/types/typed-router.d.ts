@@ -30,6 +30,8 @@ declare module 'vue-router/auto-routes' {
     'monthly-transactions': RouteRecordInfo<'monthly-transactions', '/monthly-transactions', Record<never, never>, Record<never, never>>,
     'more': RouteRecordInfo<'more', '/more', Record<never, never>, Record<never, never>>,
     'profile': RouteRecordInfo<'profile', '/profile', Record<never, never>, Record<never, never>>,
+    '/recurring-expenses/': RouteRecordInfo<'/recurring-expenses/', '/recurring-expenses', Record<never, never>, Record<never, never>>,
+    '/recurring-expenses/edit/[expenseId]': RouteRecordInfo<'/recurring-expenses/edit/[expenseId]', '/recurring-expenses/edit/:expenseId', { expenseId: ParamValue<true> }, { expenseId: ParamValue<false> }>,
     'settings': RouteRecordInfo<'settings', '/settings', Record<never, never>, Record<never, never>>,
     'unocss': RouteRecordInfo<'unocss', '/unocss', Record<never, never>, Record<never, never>>,
   }
