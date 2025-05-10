@@ -75,7 +75,7 @@
 
       <div class="mt-16 overflow-hidden rounded-3xl">
         <van-field
-          v-model="fieldCategotyValue"
+          v-model="fieldCategoryValue"
           is-link
           readonly
           label="Category"
@@ -143,30 +143,68 @@
       <van-cell-group class="mt-16 overflow-hidden rounded-3xl">
         <van-field :label="t('transaction.recurringExpenseLabel')">
           <template #button>
-            <van-switch v-model="isRecurring" size="20" />
+            <van-switch
+              v-model="isRecurring"
+              size="20"
+              :disabled="isEditModeRecurring"
+            />
           </template>
         </van-field>
 
         <div v-if="isRecurring" class="p-16">
-          <van-radio-group v-model="frequency" direction="horizontal">
+          <van-field :label="t('transaction.activeLabel')">
+            <template #button>
+              <van-switch
+                v-model="isActiveRecurring"
+                size="20"
+                disabled
+                class="mb-16"
+              />
+            </template>
+          </van-field>
+          <van-radio-group
+            v-model="frequency"
+            direction="horizontal"
+            class="mb-16"
+          >
             <van-radio name="WEEKLY">{{ t('transaction.weekly') }}</van-radio>
             <van-radio name="MONTHLY">{{ t('transaction.monthly') }}</van-radio>
             <van-radio name="YEARLY">{{ t('transaction.yearly') }}</van-radio>
           </van-radio-group>
+
+          <van-field
+            v-if="calculatedNextOccurrenceDisplay"
+            :label="t('transaction.calculatedNextOccurrenceLabel')"
+            :model-value="calculatedNextOccurrenceDisplay"
+            readonly
+            class="mt-16 calculated-next-occurrence"
+          />
         </div>
       </van-cell-group>
       <!-- End Recurring Expense Section -->
 
-      <div class="mt-16">
+      <div class="mt-16 action-buttons-container">
+        <van-button
+          v-if="transactionId || recurringExpenseIdToEdit"
+          type="default"
+          round
+          class="cancel-button"
+          @click="router.back()"
+        >
+          {{ t('common.cancelButton') }}
+          <!-- New i18n key -->
+        </van-button>
         <van-button
           :loading="loading"
           type="primary"
           native-type="submit"
           round
-          block
+          :class="{
+            'submit-button-full': !transactionId && !recurringExpenseIdToEdit,
+            'submit-button-partial': transactionId || recurringExpenseIdToEdit,
+          }"
         >
           {{ submitButtonText }}
-          <!-- Use computed text -->
         </van-button>
       </div>
     </van-form>
@@ -174,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, onBeforeMount, onMounted} from 'vue';
+import {ref, reactive, onBeforeMount, onMounted, computed, watch} from 'vue'; // Added computed and watch
 import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
 import {useUserStore} from '@/stores/modules/user';
@@ -183,7 +221,10 @@ import {UserCategories} from '@/api/database/modules/subcollections/user.categor
 import {createSyncService} from '@/services/sync';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {useRoute, useRouter} from 'vue-router';
-import type {FrequencyType} from '@/types/recurringExpense'; // Import FrequencyType
+import type {
+  FrequencyType,
+  RecurringExpenseDefinition,
+} from '@/types/recurringExpense'; // Import FrequencyType and RecurringExpenseDefinition
 import {UserRecurringExpenses} from '@/api/database/modules/subcollections/user.recurringExpenses';
 import {RecurringSyncService} from '@/services/recurringSync';
 
@@ -197,6 +238,9 @@ interface Option {
 // --- Recurring Expense State ---
 const isRecurring = ref(false);
 const frequency = ref<FrequencyType>('MONTHLY'); // Default frequency
+const isEditModeRecurring = ref(false); // New ref for recurring edit mode
+const recurringExpenseIdToEdit = ref<string | null>(null); // Store ID if editing recurring
+const isActiveRecurring = ref(true); // For the new 'isActive' switch, defaults to true
 // -----------------------------
 
 // Ottieni lo store dell'utente
@@ -211,14 +255,17 @@ const categoryOptions = ref<Option[]>([]);
 const filteredCategoriesOptions = ref<Option[]>([]);
 const rootCategories = ref();
 const showCascader = ref(false);
-const fieldCategotyValue = ref('');
+const fieldCategoryValue = ref('');
 const cascaderValue = ref('');
 const parentlessCategories = ref([]);
 const vanTabColor = ref('');
 const vanTabTitleActiveColor = ref('');
 
 const route = useRoute();
-const transactionId = route.query.id as string;
+const transactionId = route.query.id as string; // For editing regular transactions
+recurringExpenseIdToEdit.value = route.query.recurringExpenseId as
+  | string
+  | null; // For editing recurring expenses
 
 // onBeforeMount, chiama getCategories per ottenere i dati delle categorie
 onBeforeMount(async () => {
@@ -229,8 +276,50 @@ onBeforeMount(async () => {
       category.parentCategoryId === '' || category.parentCategoryId === null
   );
 
-  // Se c'è un ID nella query, carica i dati della transazione
-  if (transactionId) {
+  if (recurringExpenseIdToEdit.value) {
+    isEditModeRecurring.value = true;
+    isRecurring.value = true; // It's a recurring expense by definition
+    const expenseToEdit = await UserRecurringExpenses.getRecurringExpenseById(
+      userId,
+      recurringExpenseIdToEdit.value
+    );
+    if (expenseToEdit) {
+      transactionData.amount = expenseToEdit.amount;
+      amountInput.value = expenseToEdit.amount.toString();
+      transactionData.categoryId = expenseToEdit.categoryId;
+      transactionData.description = expenseToEdit.description || '';
+      frequency.value = expenseToEdit.frequency;
+      isActiveRecurring.value = expenseToEdit.isActive; // Load isActive status
+
+      // Use nextOccurrence for the calendar when editing a recurring expense
+      const nextOccurrenceDate = new Date(expenseToEdit.nextOccurrence);
+      currentDate.value = [
+        nextOccurrenceDate.getFullYear().toString(),
+        (nextOccurrenceDate.getMonth() + 1).toString().padStart(2, '0'),
+        nextOccurrenceDate.getDate().toString().padStart(2, '0'),
+      ];
+      dateLabel.value = currentDate.value.join('/');
+
+      const category = allCategories.find(
+        (c) => c.id === expenseToEdit.categoryId
+      );
+      if (category) {
+        fieldCategoryValue.value = category.title;
+        cascaderValue.value = category.id;
+        const parentIndex = parentlessCategories.value.findIndex(
+          (c) => c.id === (category.parentCategoryId || category.id)
+        );
+        if (parentIndex !== -1) {
+          transactionType.value = parentIndex;
+          // swipingTabs will be called in onMounted or after this block if needed
+        }
+      }
+    } else {
+      showNotify({type: 'danger', message: t('recurringExpense.fetchError')}); // Using existing i18n key
+      router.back();
+    }
+  } else if (transactionId) {
+    // Existing logic for editing regular transactions
     const year = new Date().getFullYear().toString();
     const yearTransactions = await UserTransactions.getUserTransactionsByYear(
       userId,
@@ -239,10 +328,9 @@ onBeforeMount(async () => {
     const transaction = yearTransactions.find((t) => t.id === transactionId);
 
     if (transaction) {
-      // Precompila i dati del form
       Object.assign(transactionData, transaction);
+      amountInput.value = transaction.amount?.toString() || '';
 
-      // Imposta la data
       const date = new Date(transaction.timestamp);
       currentDate.value = [
         date.getFullYear().toString(),
@@ -251,25 +339,26 @@ onBeforeMount(async () => {
       ];
       dateLabel.value = currentDate.value.join('/');
 
-      // Imposta la categoria
       const category = allCategories.find(
         (c) => c.id === transaction.categoryId
       );
       if (category) {
-        fieldCategotyValue.value = category.title;
+        fieldCategoryValue.value = category.title;
         cascaderValue.value = category.id;
-
-        // Trova l'indice della categoria padre per impostare il tab corretto
         const parentIndex = parentlessCategories.value.findIndex(
           (c) => c.id === (category.parentCategoryId || category.id)
         );
         if (parentIndex !== -1) {
           transactionType.value = parentIndex;
-          swipingTabs(parentIndex);
         }
       }
     }
   }
+  // If transactionType was potentially updated, ensure tabs reflect this.
+  // onMounted already calls swipingTabs(0) or the relevant index.
+  // If editing, we might need to call swipingTabs(transactionType.value) here
+  // or ensure onMounted handles the updated transactionType.value correctly.
+  // For now, let's assume onMounted's swipingTabs(0) or subsequent user interaction handles tab visuals.
 });
 
 onMounted(async () => {
@@ -319,11 +408,87 @@ const dark = ref<boolean>(isDark.value);
 
 // --- Computed properties for conditional UI ---
 const datePickerLabel = computed(() =>
-  isRecurring.value ? t('transaction.startDate') : t('transaction.selectDate')
+  // When creating a recurring expense, the date picker sets the start date.
+  // When editing a recurring expense, the date picker sets the next occurrence.
+  // For regular transactions, it's just 'selectDate'.
+  isEditModeRecurring.value
+    ? t('transaction.nextOccurrenceDateLabel') // New i18n key
+    : isRecurring.value
+      ? t('transaction.startDate')
+      : t('transaction.selectDate')
 );
-const submitButtonText = computed(() =>
-  isRecurring.value ? t('transaction.saveDefinition') : t('transaction.add')
+
+const calculatedNextOccurrenceDisplay = ref('');
+
+function calculateNextOccurrence(startDate: Date, freq: FrequencyType): Date {
+  const nextDate = new Date(startDate);
+  switch (freq) {
+    case 'WEEKLY':
+      nextDate.setDate(startDate.getDate() + 7);
+      break;
+    case 'MONTHLY':
+      nextDate.setMonth(startDate.getMonth() + 1);
+      break;
+    case 'YEARLY':
+      nextDate.setFullYear(startDate.getFullYear() + 1);
+      break;
+  }
+  return nextDate;
+}
+
+function updateCalculatedNextOccurrenceDisplay() {
+  if (isRecurring.value && !isEditModeRecurring.value) {
+    // Only for new recurring definitions
+    const selectedDate = new Date(currentDate.value.join('-'));
+    if (!Number.isNaN(selectedDate.getTime())) {
+      const nextDate = calculateNextOccurrence(selectedDate, frequency.value);
+      calculatedNextOccurrenceDisplay.value = nextDate.toLocaleDateString(
+        undefined,
+        {year: 'numeric', month: 'long', day: 'numeric'}
+      );
+    } else {
+      calculatedNextOccurrenceDisplay.value = t(
+        'transaction.selectValidDatePrompt'
+      ); // New i18n key
+    }
+  } else if (isEditModeRecurring.value) {
+    // For editing, the date picker directly shows/modifies the nextOccurrence, so no separate calculation display needed here.
+    // Or, if we want to show what the *next* next would be after the selected one:
+    const selectedNextOccurrence = new Date(currentDate.value.join('-'));
+    if (!Number.isNaN(selectedNextOccurrence.getTime())) {
+      const futureNextDate = calculateNextOccurrence(
+        selectedNextOccurrence,
+        frequency.value
+      );
+      calculatedNextOccurrenceDisplay.value = `(Next after this: ${futureNextDate.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})})`;
+    } else {
+      calculatedNextOccurrenceDisplay.value = '';
+    }
+  } else {
+    calculatedNextOccurrenceDisplay.value = '';
+  }
+}
+
+watch(
+  [currentDate, frequency, isRecurring, isEditModeRecurring],
+  updateCalculatedNextOccurrenceDisplay,
+  {immediate: true}
 );
+
+const submitButtonText = computed(() => {
+  if (isEditModeRecurring.value) {
+    return t('transaction.updateRecurringExpenseButton'); // Corrected/New i18n key
+  }
+  if (transactionId) {
+    // Editing a regular transaction
+    return t('transaction.updateTransactionButton'); // New i18n key
+  }
+  if (isRecurring.value) {
+    // Creating a new recurring definition
+    return t('transaction.saveRecurringExpense');
+  }
+  return t('transaction.add'); // Creating a new regular transaction
+});
 // ------------------------------------------
 
 watch(
@@ -347,10 +512,12 @@ const rules = reactive({
 const sync = createSyncService(userId);
 
 async function addTransaction() {
-  if (isRecurring.value) {
-    await saveDefinition();
+  if (isEditModeRecurring.value && recurringExpenseIdToEdit.value) {
+    await updateRecurringDefinition();
+  } else if (isRecurring.value) {
+    await saveDefinition(); // This is for creating new recurring definitions
   } else {
-    await saveTransaction();
+    await saveTransaction(); // For regular transactions (create/update)
   }
 }
 
@@ -401,13 +568,16 @@ const resetFields = () => {
   // Reset recurring fields as well
   isRecurring.value = false;
   frequency.value = 'MONTHLY';
+  isEditModeRecurring.value = false; // Ensure this is reset
+  recurringExpenseIdToEdit.value = null; // Ensure this is reset
 };
 
 async function saveDefinition() {
+  // This function is now only for CREATING new recurring definitions
   try {
     loading.value = true;
 
-    // Basic validation (more robust validation might be needed)
+    // Basic validation
     if (!transactionData.amount || !transactionData.categoryId) {
       showNotify({
         type: 'danger',
@@ -416,16 +586,16 @@ async function saveDefinition() {
       return;
     }
 
-    const startDate = new Date(currentDate.value.join('-')).toISOString();
+    const initialStartDate = new Date(currentDate.value.join('-'));
 
     const recurringExpenseDefinition = {
       amount: transactionData.amount,
       categoryId: transactionData.categoryId,
       description: transactionData.description,
       frequency: frequency.value,
-      startDate: startDate,
-      nextOccurrence: startDate, // Initially the same as start date
-      isActive: true,
+      startDate: initialStartDate.toISOString(),
+      nextOccurrence: initialStartDate.toISOString(), // Initially the same as start date
+      isActive: isActiveRecurring.value,
     };
 
     await UserRecurringExpenses.addRecurringExpense(
@@ -438,7 +608,7 @@ async function saveDefinition() {
 
     showNotify({
       type: 'success',
-      message: t('transaction.recurringExpenseAdded'), // Assuming you add this translation
+      message: t('transaction.recurringExpenseAdded'),
     });
 
     resetFields();
@@ -447,7 +617,65 @@ async function saveDefinition() {
     console.error('Error in saveDefinition:', error);
     showNotify({
       type: 'danger',
-      message: t('transaction.recurringExpenseError'), // Assuming you add this translation
+      message: t('transaction.recurringExpenseError'),
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function updateRecurringDefinition() {
+  if (!recurringExpenseIdToEdit.value) return;
+
+  try {
+    loading.value = true;
+
+    if (!transactionData.amount || !transactionData.categoryId) {
+      showNotify({
+        type: 'danger',
+        message: t('transaction.pleaseEnterAmountAndCategory'),
+      });
+      return;
+    }
+
+    const newNextOccurrence = new Date(
+      currentDate.value.join('-')
+    ).toISOString();
+
+    const updatedExpenseData: Partial<RecurringExpenseDefinition> = {
+      amount: transactionData.amount,
+      categoryId: transactionData.categoryId,
+      description: transactionData.description,
+      frequency: frequency.value,
+      nextOccurrence: newNextOccurrence,
+      isActive: isActiveRecurring.value, // Save the state of the new switch
+      // startDate is not updated here, it's kept from the original definition.
+    };
+
+    // If you also want to allow editing startDate, you'd need another field or different logic.
+    // For now, editing the date field modifies nextOccurrence.
+
+    await UserRecurringExpenses.updateRecurringExpense(
+      userId,
+      recurringExpenseIdToEdit.value,
+      updatedExpenseData
+    );
+
+    // After updating, reload all recurring expenses to update the cache
+    await RecurringSyncService.getRecurringExpenses(userId, true);
+
+    showNotify({
+      type: 'success',
+      message: t('transaction.recurringExpenseUpdated'), // New i18n key
+    });
+
+    resetFields();
+    router.back();
+  } catch (error) {
+    console.error('Error in updateRecurringDefinition:', error);
+    showNotify({
+      type: 'danger',
+      message: t('transaction.recurringExpenseUpdateError'), // New i18n key
     });
   } finally {
     loading.value = false;
@@ -472,7 +700,7 @@ const onChange = ({selectedOptions}: {selectedOptions: Option[]}) => {
   cascaderValue.value = selectedOptions[selectedOptions.length - 1].value;
   //questi altri due invece servono per l'inserimento della spesa, uno l'id e l'altro il nome
   // da mostrare nella pagina
-  fieldCategotyValue.value = selectedOptions
+  fieldCategoryValue.value = selectedOptions
     .map((option) => option.text)
     .join('/');
 
@@ -499,7 +727,7 @@ const swipingTabs = (index: number) => {
 
   // correggo il cascader e quello che si vede nel campo di testo
   cascaderValue.value = parentlessCategories.value[index]?.id || ''; // stringa
-  fieldCategotyValue.value = parentlessCategories.value[index]?.title;
+  fieldCategoryValue.value = parentlessCategories.value[index]?.title;
 
   // aggiorno le opzioni del cascader
   filteredCategoriesOptions.value = categoryOptions.value.filter(

@@ -8,6 +8,7 @@ import {
   query,
   where,
   setDoc, // Added for token update
+  getDoc, // Added import for getDoc
 } from 'firebase/firestore';
 import {DB} from '@/config/firebase'; // Corrected import path
 import type {RecurringExpenseDefinition} from '@/types/recurringExpense'; // Corrected import path
@@ -66,6 +67,39 @@ export const UserRecurringExpenses = {
     } catch (error) {
       console.error('Error getting active recurring expenses: ', error);
       throw new Error('Failed to retrieve active recurring expenses.');
+    }
+  },
+
+  // Get a single recurring expense definition by its ID
+  async getRecurringExpenseById(
+    userId: string,
+    expenseId: string
+  ): Promise<RecurringExpenseDefinition | null> {
+    try {
+      const expenseDocRef = doc(
+        DB,
+        'users',
+        userId,
+        RECURRING_EXPENSES_COLLECTION,
+        expenseId
+      );
+      const docSnap = await getDoc(expenseDocRef);
+      if (docSnap.exists()) {
+        return {
+          id: docSnap.id,
+          ...docSnap.data(),
+        } as RecurringExpenseDefinition;
+      }
+      console.warn(
+        `Recurring expense with ID ${expenseId} not found for user ${userId}.`
+      );
+      return null;
+    } catch (error) {
+      console.error(
+        `Error getting recurring expense definition ${expenseId}: `,
+        error
+      );
+      throw new Error('Failed to retrieve recurring expense definition.');
     }
   },
 

@@ -165,9 +165,8 @@ function formatFrequency(frequency: FrequencyType): string {
 
 function handleEdit(expense: RecurringExpenseDefinition) {
   router.push({
-    // Corrected route name based on file path for vue-router/auto-routes
-    name: '/recurring-expenses/edit/[expenseId]',
-    params: {expenseId: expense.id},
+    name: 'transaction', // Route name for add-transaction page
+    query: {recurringExpenseId: expense.id},
   });
 }
 

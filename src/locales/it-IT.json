@@ -46,7 +46,8 @@
   "common": {
     "all": "Tutti",
     "loading": "Caricamento",
-    "sidePanel": "Lista Grafici"
+    "sidePanel": "Lista Grafici",
+    "cancelButton": "Annulla"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",
@@ -165,12 +166,20 @@
     "weekly": "Settimanale",
     "monthly": "Mensile",
     "yearly": "Annuale",
-    "saveDefinition": "Salva Definizione",
+    "saveRecurringExpense": "Salva Spesa Ricorrente",
     "startDate": "Data Inizio",
     "selectDate": "Seleziona Data",
     "pleaseEnterAmountAndCategory": "Per favore inserisci l'importo e la categoria",
     "recurringExpenseAdded": "Definizione spesa ricorrente aggiunta con successo",
-    "recurringExpenseError": "Errore nell'aggiunta della definizione di spesa ricorrente",
+    "recurringExpenseError": "Errore nell'aggiunta della spesa ricorrente",
+    "updateTransactionButton": "Aggiorna Transazione",
+    "updateRecurringExpenseButton": "Aggiorna Spesa Ricorrente",
+    "recurringExpenseUpdated": "Spesa ricorrente aggiornata con successo.",
+    "recurringExpenseUpdateError": "Errore durante l'aggiornamento della spesa ricorrente.",
+    "activeLabel": "Attiva",
+    "nextOccurrenceDateLabel": "Data Prossima Occorrenza",
+    "calculatedNextOccurrenceLabel": "Prossima Occorrenza Calcolata",
+    "selectValidDatePrompt": "Seleziona una data valida",
     "months": {
       "january": "Gennaio",
       "february": "Febbraio",

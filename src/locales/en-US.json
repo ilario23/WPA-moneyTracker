@@ -52,7 +52,8 @@
   "common": {
     "all": "All",
     "loading": "Loading",
-    "sidePanel": "Graphs List"
+    "sidePanel": "Graphs List",
+    "cancelButton": "Cancel"
   },
   "charts": {
     "January": "Jan",
@@ -165,12 +166,20 @@
     "weekly": "Weekly",
     "monthly": "Monthly",
     "yearly": "Yearly",
-    "saveDefinition": "Save Definition",
+    "saveRecurringExpense": "Save Recurring Expense",
     "startDate": "Start Date",
     "selectDate": "Select Date",
     "pleaseEnterAmountAndCategory": "Please enter the amount and category",
-    "recurringExpenseAdded": "Recurring expense definition added successfully",
-    "recurringExpenseError": "Error adding recurring expense definition",
+    "recurringExpenseAdded": "Recurring expense added successfully",
+    "recurringExpenseError": "Error adding recurring expense",
+    "updateTransactionButton": "Update Transaction",
+    "updateRecurringExpenseButton": "Update Recurring Expense",
+    "recurringExpenseUpdated": "Recurring expense updated successfully.",
+    "recurringExpenseUpdateError": "Error updating recurring expense.",
+    "activeLabel": "Active",
+    "nextOccurrenceDateLabel": "Next Occurrence Date",
+    "calculatedNextOccurrenceLabel": "Calculated Next Occurrence",
+    "selectValidDatePrompt": "Please select a valid date",
     "months": {
       "january": "January",
       "february": "February",
