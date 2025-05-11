@@ -14,7 +14,7 @@ export function generatePieTotalByTypeOptions(
   transactions: Transaction[],
   cats: CategoryWithType[],
   i18nTranslate: (key: string, defaultMsg?: string) => string,
-  currentLocale: string // eslint-disable-line @typescript-eslint/no-unused-vars
+  currentLocale: string
 ): EChartsOption {
   const totals = {
     income: 0,
@@ -60,8 +60,22 @@ export function generatePieTotalByTypeOptions(
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}€ ({d}%)', // Note: < and > for < and > in XML/HTML context, but in JS string it's fine.
-      // However, ECharts formatter might interpret HTML.
+      formatter: (params: any) => {
+        // Consider using a more specific ECharts formatter params type if available
+        const value = typeof params.value === 'number' ? params.value : 0;
+        const name = params.name || '';
+        // const seriesName = params.seriesName || ''; // seriesName is available via params.seriesName
+        const percent = typeof params.percent === 'number' ? params.percent : 0;
+
+        const formattedValue = value.toLocaleString(currentLocale, {
+          style: 'currency',
+          currency: 'EUR', // Assuming EUR is the base currency
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        // Using params.seriesName for the first part of the tooltip
+        return `${params.seriesName}<br/>${name}: ${formattedValue} (${percent}%)`;
+      },
     },
     legend: {
       orient: 'vertical',

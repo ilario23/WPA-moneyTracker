@@ -60,7 +60,8 @@
     "all": "All",
     "loading": "Loading",
     "sidePanel": "Graphs List",
-    "cancelButton": "Cancel"
+    "cancelButton": "Cancel",
+    "settings": "Settings"
   },
   "charts": {
     "January": "Jan",

@@ -54,7 +54,8 @@
     "all": "Tutti",
     "loading": "Caricamento",
     "sidePanel": "Lista Grafici",
-    "cancelButton": "Annulla"
+    "cancelButton": "Annulla",
+    "settings": "Impostazioni"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",

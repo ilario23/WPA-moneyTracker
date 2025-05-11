@@ -100,8 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted, nextTick} from 'vue';
-import {Tabs, Tab, Loading, Button, Popup, Empty} from 'vant';
+import {ref, computed, onMounted, nextTick} from 'vue';
 import type {EChartsOption} from 'echarts';
 import {useI18n} from 'vue-i18n';
 
@@ -309,7 +308,7 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
         filteredTransactions.value,
         categories.value,
         t,
-        locale.value
+        locale.value // Adding locale.value as the 4th argument
       );
     }
     // Add a fallback or error if a key is somehow not matched,
@@ -362,8 +361,5 @@ onMounted(async () => {
 /* Adjust tab height if needed */
 :deep(.van-tabs__wrap) {
   height: 36px;
-}
-.chart-container {
-  /* Styles already in template */
 }
 </style>
