@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {computed} from 'vue'; // Import computed if using isDevMode
 const {t} = useI18n();
-
-// Computed property to check if in development mode
-const isDevMode = computed(() => import.meta.env.DEV);
 </script>
 
 <template>
@@ -54,13 +50,8 @@ const isDevMode = computed(() => import.meta.env.DEV);
       <!-- <VanCell :title="t('menus.settings')" to="/settings" is-link icon="setting-o" /> -->
     </VanCellGroup>
 
-    <!-- Optional: Analytics & Reports Section -->
-    <VanCellGroup
-      v-if="isDevMode"
-      inset
-      :title="t('morePage.groupAnalyticsTitle')"
-      class="mb-4"
-    >
+    <!-- Analytics & Reports Section -->
+    <VanCellGroup inset :title="t('morePage.groupAnalyticsTitle')" class="mb-4">
       <VanCell
         :title="t('menus.echartsTest')"
         to="/echarts-test"
