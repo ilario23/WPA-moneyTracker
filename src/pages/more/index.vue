@@ -58,6 +58,12 @@ const {t} = useI18n();
         is-link
         icon="chart-trending-o"
       />
+      <VanCell
+        :title="t('menus.financialCharts', 'Financial Charts')"
+        to="/financial-charts"
+        is-link
+        icon="bar-chart-o"
+      />
     </VanCellGroup>
   </div>
 </template>

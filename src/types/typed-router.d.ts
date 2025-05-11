@@ -25,6 +25,7 @@ declare module 'vue-router/auto-routes' {
     'charts': RouteRecordInfo<'charts', '/charts', Record<never, never>, Record<never, never>>,
     'counter': RouteRecordInfo<'counter', '/counter', Record<never, never>, Record<never, never>>,
     'echarts-test': RouteRecordInfo<'echarts-test', '/echarts-test', Record<never, never>, Record<never, never>>,
+    'financial-charts': RouteRecordInfo<'financial-charts', '/financial-charts', Record<never, never>, Record<never, never>>,
     'KeepAlive': RouteRecordInfo<'KeepAlive', '/keepalive', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'monthly-transactions': RouteRecordInfo<'monthly-transactions', '/monthly-transactions', Record<never, never>, Record<never, never>>,

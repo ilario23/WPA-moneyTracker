@@ -23,7 +23,8 @@
     "monthlyTransactions": "📗 Monthly Transactions",
     "recurringExpenses": "🔁 Recurring Expenses",
     "editRecurringExpense": "Edit Recurring Expense",
-    "more": "🕹️ More"
+    "more": "🕹️ More",
+    "financialCharts": "📊 Financial Charts"
   },
   "morePage": {
     "groupTransactionsTitle": "Transactions & Planning",
@@ -67,7 +68,13 @@
     "March": "Mar",
     "April": "Apr",
     "May": "May",
-    "June": "Jun"
+    "June": "Jun",
+    "pieNameTotalByType": "Pie by Type",
+    "barNameMonthlyExpenses": "Bar Monthly Expenses",
+    "noData": "No data to display",
+    "settingsPlaceholder": "Chart configuration options will be available here in the future.",
+    "transactionType": "Summary by Type",
+    "monthlyExpensesTitle": "Monthly Expenses"
   },
   "layouts": {
     "home": "HOME",

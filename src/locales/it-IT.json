@@ -23,7 +23,8 @@
     "monthlyTransactions": "📗 Spese Mensili",
     "recurringExpenses": "🔁 Spese Ricorrenti",
     "editRecurringExpense": "Modifica Spesa Ricorrente",
-    "more": "🕹️ Altro"
+    "more": "🕹️ Altro",
+    "financialCharts": "📊 Grafici Finanziari"
   },
   "morePage": {
     "groupTransactionsTitle": "Transazioni e Pianificazione",
@@ -67,7 +68,13 @@
     "March": "Mar",
     "April": "Apr",
     "May": "Mag",
-    "June": "Giu"
+    "June": "Giu",
+    "pieNameTotalByType": "Torta per Tipo",
+    "barNameMonthlyExpenses": "Barre Spese Mensili",
+    "noData": "Nessun dato da visualizzare",
+    "settingsPlaceholder": "Le opzioni di configurazione per i grafici saranno disponibili qui in futuro.",
+    "transactionType": "Riepilogo per Tipo",
+    "monthlyExpensesTitle": "Spese Mensili"
   },
   "layouts": {
     "home": "HOME",
