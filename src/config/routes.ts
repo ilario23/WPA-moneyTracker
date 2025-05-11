@@ -2,4 +2,5 @@
 export const routeWhiteList: readonly string[] = [
   'transaction', // Add Transaction page (Corrected name)
   'more', // More page
+  'login', // Login page
 ];
