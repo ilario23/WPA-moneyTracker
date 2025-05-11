@@ -194,6 +194,11 @@
     "nextOccurrenceDateLabel": "Data Prossima Occorrenza",
     "calculatedNextOccurrenceLabel": "Prossima Occorrenza Calcolata",
     "selectValidDatePrompt": "Seleziona una data valida",
+    "nextScheduledOccurrenceLabel": "Prossima occorrenza programmata",
+    "firstOccurrenceOnLabel": "Prima occorrenza il",
+    "thenLabel": "poi il",
+    "nextAfterThisLabel": "Successiva a questa",
+    "pastInstanceCreated": "Istanza passata per il {date} creata.",
     "months": {
       "january": "Gennaio",
       "february": "Febbraio",

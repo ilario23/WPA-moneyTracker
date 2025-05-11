@@ -193,7 +193,12 @@
     "activeLabel": "Active",
     "nextOccurrenceDateLabel": "Next Occurrence Date",
     "calculatedNextOccurrenceLabel": "Calculated Next Occurrence",
-    "selectValidDatePrompt": "Please select a valid date",
+    "selectValidDatePrompt": "Select a valid date",
+    "nextScheduledOccurrenceLabel": "Next scheduled occurrence",
+    "firstOccurrenceOnLabel": "First occurrence on",
+    "thenLabel": "then on",
+    "nextAfterThisLabel": "Next after this",
+    "pastInstanceCreated": "Past instance for {date} created.",
     "months": {
       "january": "January",
       "february": "February",

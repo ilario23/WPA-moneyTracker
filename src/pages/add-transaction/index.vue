@@ -440,29 +440,52 @@ function calculateNextOccurrence(startDate: Date, freq: FrequencyType): Date {
 
 function updateCalculatedNextOccurrenceDisplay() {
   if (isRecurring.value && !isEditModeRecurring.value) {
-    // Only for new recurring definitions
-    const selectedDate = new Date(currentDate.value.join('-'));
-    if (!Number.isNaN(selectedDate.getTime())) {
-      const nextDate = calculateNextOccurrence(selectedDate, frequency.value);
-      calculatedNextOccurrenceDisplay.value = nextDate.toLocaleDateString(
-        undefined,
-        {year: 'numeric', month: 'long', day: 'numeric'}
-      );
-    } else {
+    // CREAZIONE NUOVA SPESA RICORRENTE
+    const selectedStartDate = new Date(currentDate.value.join('-'));
+    if (Number.isNaN(selectedStartDate.getTime())) {
       calculatedNextOccurrenceDisplay.value = t(
         'transaction.selectValidDatePrompt'
-      ); // New i18n key
+      );
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // Normalizza anche selectedStartDate per un confronto corretto solo sulla data
+    const normalizedSelectedStartDate = new Date(selectedStartDate);
+    normalizedSelectedStartDate.setHours(0, 0, 0, 0);
+
+    let effectiveNextOccurrence = new Date(normalizedSelectedStartDate);
+
+    if (effectiveNextOccurrence < today) {
+      // Data di inizio nel passato, calcola la prima occorrenza valida da oggi
+      while (effectiveNextOccurrence < today) {
+        effectiveNextOccurrence = calculateNextOccurrence(
+          effectiveNextOccurrence,
+          frequency.value
+        );
+      }
+      calculatedNextOccurrenceDisplay.value = `${t('transaction.nextScheduledOccurrenceLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
+    } else {
+      // Data di inizio è oggi o nel futuro: questa è la prima occorrenza
+      calculatedNextOccurrenceDisplay.value = `${t('transaction.firstOccurrenceOnLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
+      // Mostra opzionalmente quella successiva
+      const subsequentOccurrence = calculateNextOccurrence(
+        effectiveNextOccurrence,
+        frequency.value
+      );
+      calculatedNextOccurrenceDisplay.value += ` (${t('transaction.thenLabel')}: ${subsequentOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})})`;
     }
   } else if (isEditModeRecurring.value) {
-    // For editing, the date picker directly shows/modifies the nextOccurrence, so no separate calculation display needed here.
-    // Or, if we want to show what the *next* next would be after the selected one:
+    // MODIFICA SPESA RICORRENTE ESISTENTE
     const selectedNextOccurrence = new Date(currentDate.value.join('-'));
     if (!Number.isNaN(selectedNextOccurrence.getTime())) {
       const futureNextDate = calculateNextOccurrence(
         selectedNextOccurrence,
         frequency.value
       );
-      calculatedNextOccurrenceDisplay.value = `(Next after this: ${futureNextDate.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})})`;
+      // Qui il testo si riferisce alla prossima occorrenza *dopo quella selezionata per la modifica*
+      calculatedNextOccurrenceDisplay.value = `(${t('transaction.nextAfterThisLabel')}: ${futureNextDate.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})})`;
     } else {
       calculatedNextOccurrenceDisplay.value = '';
     }
@@ -609,22 +632,63 @@ async function saveDefinition() {
       return;
     }
 
-    const initialStartDate = new Date(currentDate.value.join('-'));
+    const initialStartDate = new Date(currentDate.value.join('-')); // Data selezionata dall'utente
+    let calculatedNextOccurrenceDate = new Date(initialStartDate); // Copia per calcolare la prossima occorrenza
+    calculatedNextOccurrenceDate.setHours(0, 0, 0, 0); // Normalizza per confronto solo date
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalizza oggi
+
+    let createPastTransactionRecord = false; // Flag
+
+    if (calculatedNextOccurrenceDate < today) {
+      // La data di inizio scelta dall'utente è nel passato
+      createPastTransactionRecord = true;
+      // Calcola la prima occorrenza valida da oggi in poi per la definizione
+      while (calculatedNextOccurrenceDate < today) {
+        calculatedNextOccurrenceDate = calculateNextOccurrence(
+          calculatedNextOccurrenceDate,
+          frequency.value
+        );
+      }
+    }
+    // Ora 'calculatedNextOccurrenceDate' è la data corretta per la 'nextOccurrence' della definizione
 
     const recurringExpenseDefinition = {
       amount: transactionData.amount,
       categoryId: transactionData.categoryId,
       description: transactionData.description,
       frequency: frequency.value,
-      startDate: initialStartDate.toISOString(),
-      nextOccurrence: initialStartDate.toISOString(), // Initially the same as start date
+      startDate: initialStartDate.toISOString(), // Salva la data di inizio scelta dall'utente
+      nextOccurrence: calculatedNextOccurrenceDate.toISOString(), // Salva la prossima occorrenza calcolata
       isActive: isActiveRecurring.value,
     };
 
+    // Salva la DEFINIZIONE della spesa ricorrente
     await UserRecurringExpenses.addRecurringExpense(
       userId,
       recurringExpenseDefinition
     );
+
+    // Se la data di inizio originale era nel passato, crea una TRANSAZIONE per quella data
+    if (createPastTransactionRecord) {
+      const pastTransaction = {
+        id: crypto.randomUUID(), // ID univoco per questa transazione singola
+        amount: transactionData.amount,
+        categoryId: transactionData.categoryId,
+        description: transactionData.description, // Potrebbe essere utile aggiungere un riferimento alla spesa ricorrente
+        timestamp: initialStartDate.toISOString(), // Timestamp della transazione = data di inizio scelta
+        userId: userId,
+        // recurringDefinitionId: newDefinition.id, // Opzionale: se vuoi collegare questa transazione alla definizione
+      };
+      await sync.updateTransactionAndCache(pastTransaction); // Usa il servizio esistente per salvare la transazione
+      showNotify({
+        type: 'primary', // Changed from 'info' to 'primary'
+        message: t('transaction.pastInstanceCreated', {
+          date: initialStartDate.toLocaleDateString(),
+        }),
+      });
+    }
 
     // After adding, reload all recurring expenses to update the cache
     await RecurringSyncService.getRecurringExpenses(userId, true);
