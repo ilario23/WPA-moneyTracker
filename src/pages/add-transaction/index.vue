@@ -87,6 +87,7 @@
           round
           position="bottom"
           :style="{height: '60%'}"
+          safe-area-inset-bottom
         >
           <van-cascader
             v-model="cascaderValue"
@@ -95,6 +96,7 @@
             @close="showCascader = false"
             @change="onChange"
             @finish="onFinish"
+            class="h-full"
           />
         </van-popup>
       </div>
@@ -576,6 +578,21 @@ const resetFields = () => {
   isActiveRecurring.value = true; // Reset active state to default true
   isEditModeRecurring.value = false;
   recurringExpenseIdToEdit.value = null;
+
+  // Reset category fields to the current active tab's root category
+  if (
+    parentlessCategories.value.length > 0 &&
+    transactionType.value < parentlessCategories.value.length
+  ) {
+    swipingTabs(transactionType.value);
+  } else if (parentlessCategories.value.length > 0) {
+    swipingTabs(0); // Default to the first tab if current index is somehow out of bounds
+  } else {
+    // Handle case where categories might not be loaded yet, though unlikely here
+    fieldCategoryValue.value = '';
+    cascaderValue.value = '';
+    previewIcon.value = ''; // Or a default icon
+  }
 };
 
 async function saveDefinition() {
