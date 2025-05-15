@@ -107,6 +107,7 @@ import {useI18n} from 'vue-i18n';
 import Chart from '@/components/Chart/index.vue';
 import {generatePieTotalByTypeOptions} from './charts/pieTotalByType';
 import {generateBarMonthlyExpensesOptions} from './charts/barMonthlyExpenses';
+import {generateTreemapTotalByCategoryOptions} from './charts/treemapTotalByCategory';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {useUserStore} from '@/stores';
@@ -139,6 +140,13 @@ const chartDefinitions = ref([
       t('charts.barNameMonthlyExpenses', 'Barre Spese Mensili')
     ),
     generatorFunction: generateBarMonthlyExpensesOptions,
+  },
+  {
+    key: 'treemapTotalByCategory',
+    name: computed(() =>
+      t('charts.treemapTotalByCategory', 'Treemap per Categoria')
+    ),
+    generatorFunction: generateTreemapTotalByCategoryOptions,
   },
 ]);
 const selectedChartKey = ref(chartDefinitions.value[0].key);
@@ -310,6 +318,10 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
         t,
         locale.value // Adding locale.value as the 4th argument
       );
+    } else if (key === 'treemapTotalByCategory') {
+      return (
+        generatorFunction as typeof generateTreemapTotalByCategoryOptions
+      )(filteredTransactions.value, categories.value, t, locale.value);
     }
     // Add a fallback or error if a key is somehow not matched,
     // though with the current setup (only two chart types) this is exhaustive.
