@@ -131,7 +131,7 @@ import {useI18n} from 'vue-i18n';
 
 import Chart from '@/components/Chart/index.vue';
 import {generatePieTotalByTypeOptions} from './charts/pieTotalByType';
-import {generateBarMonthlyExpensesOptions} from './charts/barMonthlyExpenses';
+import {generateBarMonthlyTransactionsOptions} from './charts/barMonthlyTransactions';
 import {generateTreemapTotalByCategoryOptions} from './charts/treemapTotalByCategory';
 import {generateSunburstTotalByCategoryOptions} from './charts/sunburstTotalByCategory';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
@@ -161,11 +161,11 @@ const chartDefinitions = ref([
     generatorFunction: generatePieTotalByTypeOptions,
   },
   {
-    key: 'barMonthlyExpenses',
+    key: 'barMonthlyTransactions',
     name: computed(() =>
-      t('charts.barNameMonthlyExpenses', 'Barre Spese Mensili')
+      t('charts.barNameMonthlyTransactions', 'Transazioni Mensili')
     ),
-    generatorFunction: generateBarMonthlyExpensesOptions,
+    generatorFunction: generateBarMonthlyTransactionsOptions,
   },
   {
     key: 'treemapTotalByCategory',
@@ -342,11 +342,10 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
     ] as const;
 
     switch (key) {
-      case 'barMonthlyExpenses':
-        return (generatorFunction as typeof generateBarMonthlyExpensesOptions)(
-          ...commonArgs,
-          selectedMonthValue.value
-        );
+      case 'barMonthlyTransactions':
+        return (
+          generatorFunction as typeof generateBarMonthlyTransactionsOptions
+        )(...commonArgs, selectedMonthValue.value);
       case 'pieTotalByType':
         return (generatorFunction as typeof generatePieTotalByTypeOptions)(
           ...commonArgs
