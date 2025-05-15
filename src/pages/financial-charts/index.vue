@@ -108,6 +108,7 @@ import Chart from '@/components/Chart/index.vue';
 import {generatePieTotalByTypeOptions} from './charts/pieTotalByType';
 import {generateBarMonthlyExpensesOptions} from './charts/barMonthlyExpenses';
 import {generateTreemapTotalByCategoryOptions} from './charts/treemapTotalByCategory';
+import {generateSunburstTotalByCategoryOptions} from './charts/sunburstTotalByCategory';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {useUserStore} from '@/stores';
@@ -147,6 +148,13 @@ const chartDefinitions = ref([
       t('charts.treemapTotalByCategory', 'Treemap per Categoria')
     ),
     generatorFunction: generateTreemapTotalByCategoryOptions,
+  },
+  {
+    key: 'sunburstTotalByCategory',
+    name: computed(() =>
+      t('charts.sunburstTotalByCategory', 'Sunburst per Categoria')
+    ),
+    generatorFunction: generateSunburstTotalByCategoryOptions,
   },
 ]);
 const selectedChartKey = ref(chartDefinitions.value[0].key);
@@ -299,33 +307,29 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
     (def) => def.key === selectedChartKey.value
   );
   if (chartDefinition) {
-    const {generatorFunction, key} = chartDefinition; // Destructure for clarity
+    const {generatorFunction, key} = chartDefinition;
 
-    if (key === 'barMonthlyExpenses') {
-      // Ensure 'generatorFunction' is treated as the 5-arg version
-      return (generatorFunction as typeof generateBarMonthlyExpensesOptions)(
-        filteredTransactions.value,
-        categories.value,
-        t,
-        locale.value,
-        selectedMonthValue.value
-      );
-    } else if (key === 'pieTotalByType') {
-      // Ensure 'generatorFunction' is treated as the 4-arg version
-      return (generatorFunction as typeof generatePieTotalByTypeOptions)(
-        filteredTransactions.value,
-        categories.value,
-        t,
-        locale.value // Adding locale.value as the 4th argument
-      );
-    } else if (key === 'treemapTotalByCategory') {
-      return (
-        generatorFunction as typeof generateTreemapTotalByCategoryOptions
-      )(filteredTransactions.value, categories.value, t, locale.value);
+    const commonArgs = [
+      filteredTransactions.value,
+      categories.value,
+      t,
+      locale.value,
+    ] as const;
+
+    switch (key) {
+      case 'barMonthlyExpenses':
+        return (generatorFunction as typeof generateBarMonthlyExpensesOptions)(
+          ...commonArgs,
+          selectedMonthValue.value
+        );
+      case 'pieTotalByType':
+        return (generatorFunction as typeof generatePieTotalByTypeOptions)(
+          ...commonArgs
+        );
+      case 'treemapTotalByCategory':
+      case 'sunburstTotalByCategory':
+        return generatorFunction(...commonArgs, selectedMonthValue.value);
     }
-    // Add a fallback or error if a key is somehow not matched,
-    // though with the current setup (only two chart types) this is exhaustive.
-    // console.warn(`Unknown chart key: ${key}`); // Optional: for debugging future additions
   }
   return null;
 });
