@@ -57,6 +57,8 @@ export function generatePieTotalByTypeOptions(
     title: {
       text: i18nTranslate('charts.transactionType', 'Riepilogo per Tipo'),
       left: 'center',
+      top: '20',
+      padding: [0, 0, 20, 0],
     },
     tooltip: {
       trigger: 'item',
@@ -78,15 +80,42 @@ export function generatePieTotalByTypeOptions(
       },
     },
     legend: {
-      orient: 'vertical',
-      left: 'left',
+      orient: 'horizontal',
+      bottom: '10',
+      left: 'center',
+      padding: [15, 0, 15, 0],
+      itemGap: 30,
       data: data.map((item) => item.name),
     },
     series: [
       {
         name: i18nTranslate('charts.transactionType', 'Tipo Transazione'),
         type: 'pie',
-        radius: '50%',
+        radius: ['30%', '70%'], // Make the pie larger and hollow
+        center: ['50%', '50%'], // Center in the available space
+        label: {
+          show: true,
+          formatter: (params: any) => {
+            const value = Number(params.value).toFixed(2);
+            return `${params.name}: ${value}€\n(${params.percent.toFixed(1)}%)`;
+          },
+          position: 'inside',
+          alignTo: 'edge',
+          minMargin: 5,
+          edgeDistance: 10,
+          lineHeight: 15,
+          rich: {
+            time: {
+              fontSize: 10,
+              color: '#999',
+            },
+          },
+        },
+        labelLine: {
+          length: 15,
+          length2: 0,
+          maxSurfaceAngle: 80,
+        },
         data,
         emphasis: {
           itemStyle: {
