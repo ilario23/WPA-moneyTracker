@@ -51,7 +51,7 @@ export function generateSunburstTotalByCategoryOptions(
         rotate: 'tangential',
         minAngle: 10, // Mostra etichette solo per settori più grandi di 5 gradi
         formatter: (params: any) => {
-          const value = params.value.toFixed(2);
+          const value = Number(params.value).toFixed(2);
           // Per i livelli esterni, formatta diversamente
           if (params.depth === 2) {
             return `${params.name}\n${value}€`;

@@ -101,7 +101,10 @@ export function generateTreemapTotalByCategoryOptions(
         data: seriesData,
         label: {
           show: true,
-          formatter: '{b}\n{c}€', // Shows both name and value
+          formatter: (params: any) => {
+            const value = Number(params.value).toFixed(2);
+            return `${params.name}\n${value}€`;
+          },
         },
         upperLabel: {
           show: true,
