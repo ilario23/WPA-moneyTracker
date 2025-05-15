@@ -38,7 +38,7 @@
       <van-field
         :model-value="formattedTotal"
         readonly
-        :label="t('transaction.totalExpenses', 'Totale Spese')"
+        :label="t('charts.totalExpenses')"
         :style="{
           flex: 1,
           '--van-field-label-width': 'auto',
@@ -72,9 +72,13 @@
         <van-tab
           v-for="chartDef in chartDefinitions"
           :key="chartDef.key"
-          :title="chartDef.name"
+          :title-slot="true"
           :name="chartDef.key"
-        />
+        >
+          <template #title>
+            <van-icon :name="chartDef.icon" style="margin-right: 4px" />
+          </template>
+        </van-tab>
       </van-tabs>
     </div>
 
@@ -157,28 +161,26 @@ const categories = ref<CategoryWithType[]>([]);
 const chartDefinitions = ref([
   {
     key: 'pieTotalByType',
-    name: computed(() => t('charts.pieNameTotalByType', 'Torta per Tipo')),
+    name: computed(() => t('charts.pieNameTotalByType')),
+    icon: 'chart-trending-o',
     generatorFunction: generatePieTotalByTypeOptions,
   },
   {
     key: 'barMonthlyTransactions',
-    name: computed(() =>
-      t('charts.barNameMonthlyTransactions', 'Transazioni Mensili')
-    ),
+    name: computed(() => t('charts.barNameMonthlyTransactions')),
+    icon: 'bar-chart-o',
     generatorFunction: generateBarMonthlyTransactionsOptions,
   },
   {
     key: 'treemapTotalByCategory',
-    name: computed(() =>
-      t('charts.treemapTotalByCategory', 'Treemap per Categoria')
-    ),
+    name: computed(() => t('charts.treemapTotalByCategory')),
+    icon: 'apps-o',
     generatorFunction: generateTreemapTotalByCategoryOptions,
   },
   {
     key: 'sunburstTotalByCategory',
-    name: computed(() =>
-      t('charts.sunburstTotalByCategory', 'Sunburst per Categoria')
-    ),
+    name: computed(() => t('charts.sunburstTotalByCategory')),
+    icon: 'cluster-o',
     generatorFunction: generateSunburstTotalByCategoryOptions,
   },
 ]);

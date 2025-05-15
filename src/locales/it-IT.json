@@ -72,6 +72,11 @@
     "June": "Giu",
     "pieNameTotalByType": "Torta per Tipo",
     "barNameMonthlyExpenses": "Barre Spese Mensili",
+    "barNameMonthlyTransactions": "Transazioni Mensili",
+    "treemapTotalByCategory": "Treemap per Categoria",
+    "sunburstTotalByCategory": "Sunburst per Categoria",
+    "monthlyTransactionsTitle": "Panoramica Transazioni Mensili",
+    "totalExpenses": "Totale Spese",
     "noData": "Nessun dato da visualizzare",
     "settingsPlaceholder": "Le opzioni di configurazione per i grafici saranno disponibili qui in futuro.",
     "transactionType": "Riepilogo per Tipo",
@@ -214,7 +219,8 @@
       "december": "Dicembre"
     },
     "showInvestments": "Mostra investimenti",
-    "showInvestmentsTooltip": "Includi gli investimenti nel grafico. Gli investimenti sono mostrati come una barra separata."
+    "showInvestmentsTooltip": "Includi gli investimenti nel grafico. Gli investimenti sono mostrati come una barra separata.",
+    "averageBalance": "Media Bilancio"
   },
   "category": {
     "title": "Titolo",

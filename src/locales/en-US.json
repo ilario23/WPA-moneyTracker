@@ -72,6 +72,11 @@
     "June": "Jun",
     "pieNameTotalByType": "Pie by Type",
     "barNameMonthlyExpenses": "Bar Monthly Expenses",
+    "barNameMonthlyTransactions": "Monthly Transactions",
+    "treemapTotalByCategory": "Treemap by Category",
+    "sunburstTotalByCategory": "Sunburst by Category",
+    "monthlyTransactionsTitle": "Monthly Transactions Overview",
+    "totalExpenses": "Total Expenses",
     "noData": "No data to display",
     "settingsPlaceholder": "Chart configuration options will be available here in the future.",
     "transactionType": "Summary by Type",
@@ -214,7 +219,8 @@
       "december": "December"
     },
     "showInvestments": "Show Investments",
-    "showInvestmentsTooltip": "Include investments in the chart. Investments are shown as a separate bar."
+    "showInvestmentsTooltip": "Include investments in the chart. Investments are shown as a separate bar.",
+    "averageBalance": "Average Balance"
   },
   "category": {
     "title": "Title",
