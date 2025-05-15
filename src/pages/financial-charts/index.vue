@@ -27,12 +27,37 @@
     </div>
 
     <!-- Pulsante Impostazioni -->
-    <div style="display: flex; justify-content: flex-end; padding: 8px 16px">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 16px;
+      "
+    >
+      <van-field
+        :model-value="formattedTotal"
+        readonly
+        :label="t('transaction.totalExpenses', 'Totale Spese')"
+        :style="{
+          flex: 1,
+          '--van-field-label-width': 'auto',
+          '--van-field-background': 'transparent',
+          '--van-field-input-background': 'transparent',
+          '--van-field-padding': '0',
+          '--van-cell-background': 'transparent',
+        }"
+      />
       <van-button
         icon="setting-o"
         type="default"
         size="small"
-        style="border: none; background: none; box-shadow: none"
+        style="
+          border: none;
+          background: none;
+          box-shadow: none;
+          margin-left: 8px;
+        "
         @click="showSettingsPanel = true"
       />
     </div>
@@ -334,7 +359,26 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
   return null;
 });
 
-// ECharts Option Generator Functions are now in separate files
+// Computed Property for Total
+const formattedTotal = computed(() => {
+  const total = filteredTransactions.value.reduce((acc, transaction) => {
+    const category = categories.value.find(
+      (c) => c.id === transaction.categoryId
+    );
+    if (category?.type === 1) {
+      // Solo le spese
+      return acc + Number(transaction.amount);
+    }
+    return acc;
+  }, 0);
+
+  return total.toLocaleString(locale.value, {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+});
 
 // Lifecycle Hooks
 onMounted(async () => {

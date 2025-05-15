@@ -85,7 +85,6 @@ export function generateBarMonthlyExpensesOptions(
             }
             return '';
           },
-          // color: '#333', // Removed to allow theme to control label color
         },
       },
     ],
