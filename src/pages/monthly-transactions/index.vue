@@ -22,26 +22,26 @@
           :title="month.text"
         />
       </van-tabs>
-
-      <!-- Tabs and Search Icon Container -->
-
+    </div>
+    <!-- Tabs and Search Icon Container -->
+    <div class="search-container">
       <van-icon
         :name="showSearch ? 'close' : 'search'"
         size="24"
         class="search-icon"
         @click="showSearch = !showSearch"
       />
-    </div>
 
-    <transition name="slide-down">
-      <van-search
-        v-if="showSearch"
-        v-model="searchQuery"
-        :placeholder="$t('transaction.searchPlaceholder')"
-        shape="round"
-        class="search-input"
-      />
-    </transition>
+      <transition name="slide-down">
+        <van-search
+          v-if="showSearch"
+          v-model="searchQuery"
+          :placeholder="$t('transaction.searchPlaceholder')"
+          shape="round"
+          class="search-input"
+        />
+      </transition>
+    </div>
 
     <!-- Riepilogo -->
     <van-card class="summary-card">
@@ -659,5 +659,26 @@ const handleDelete = async (transactionId: string) => {
 .delete-button {
   height: 100%;
   width: 64px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px;
+}
+
+.search-icon {
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex-grow: 1;
+  margin: 0;
+}
+
+:deep(.van-search) {
+  padding: 0;
+  width: 100%;
 }
 </style>
