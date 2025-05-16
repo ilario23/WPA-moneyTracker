@@ -85,13 +85,15 @@
     <!-- Area di Visualizzazione Grafico -->
     <div
       class="chart-container"
-      style="
-        padding: 16px;
-        min-height: 400px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      "
+      ref="chartContainer"
+      :style="{
+        padding: '16px',
+        minHeight: '400px',
+        height: `${chartHeight}px`,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }"
     >
       <van-loading v-if="loading" size="24px" vertical>
         {{ $t('common.loading') || 'Caricamento...' }}
@@ -100,7 +102,10 @@
         :key="selectedChartKey"
         v-else-if="currentChartOptions && !loading"
         :option="currentChartOptions"
-        style="width: 100%; height: 400px"
+        :style="{
+          width: '100%',
+          height: `${chartHeight}px`,
+        }"
       />
       <van-empty
         v-else
@@ -129,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, nextTick} from 'vue';
+import {ref, computed, onMounted, onUnmounted, nextTick} from 'vue';
 import type {EChartsOption} from 'echarts';
 import {useI18n} from 'vue-i18n';
 
@@ -138,6 +143,7 @@ import {generatePieTotalByTypeOptions} from './charts/pieTotalByType';
 import {generateBarMonthlyTransactionsOptions} from './charts/barMonthlyTransactions';
 import {generateTreemapTotalByCategoryOptions} from './charts/treemapTotalByCategory';
 import {generateSunburstTotalByCategoryOptions} from './charts/sunburstTotalByCategory';
+import {generateCalendarHeatmapOptions} from './charts/calendarHeatmapTransactions';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {useUserStore} from '@/stores';
@@ -182,6 +188,12 @@ const chartDefinitions = ref([
     name: computed(() => t('charts.sunburstTotalByCategory')),
     icon: 'cluster-o',
     generatorFunction: generateSunburstTotalByCategoryOptions,
+  },
+  {
+    key: 'calendarHeatmap',
+    name: computed(() => t('charts.calendarHeatmap')),
+    icon: 'calendar-o',
+    generatorFunction: generateCalendarHeatmapOptions,
   },
 ]);
 const selectedChartKey = ref(chartDefinitions.value[0].key);
@@ -355,6 +367,11 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
       case 'treemapTotalByCategory':
       case 'sunburstTotalByCategory':
         return generatorFunction(...commonArgs, selectedMonthValue.value);
+      case 'calendarHeatmap':
+        return (generatorFunction as typeof generateCalendarHeatmapOptions)(
+          ...commonArgs,
+          selectedMonthValue.value
+        );
     }
   }
   return null;
@@ -381,6 +398,26 @@ const formattedTotal = computed(() => {
   });
 });
 
+// Chart Height Computation
+const chartContainer = ref<HTMLElement | null>(null);
+const chartHeight = ref(400);
+
+const updateChartHeight = () => {
+  if (!chartContainer.value) return;
+
+  const viewportHeight = window.innerHeight;
+  const containerTop = chartContainer.value.getBoundingClientRect().top;
+  const bottomPadding = 16; // Spazio dal fondo
+  const safetyMargin = 50; // Margine extra di sicurezza
+
+  // Sottrai la posizione top del container, il padding e il margine di sicurezza
+  const availableHeight =
+    viewportHeight - containerTop - bottomPadding - safetyMargin;
+
+  // Imposta un minimo di 400px
+  chartHeight.value = Math.max(400, availableHeight);
+};
+
 // Lifecycle Hooks
 onMounted(async () => {
   // Set currentYearIndex to the current actual year
@@ -399,6 +436,15 @@ onMounted(async () => {
   // Ensure availableMonths is populated based on the fetched year's data
   await nextTick();
   setDefaultMonthOrAll();
+
+  // Aggiungi il calcolo iniziale dell'altezza e l'event listener per il resize
+  updateChartHeight();
+  window.addEventListener('resize', updateChartHeight);
+});
+
+// Cleanup dell'event listener
+onUnmounted(() => {
+  window.removeEventListener('resize', updateChartHeight);
 });
 </script>
 
@@ -422,5 +468,9 @@ onMounted(async () => {
 /* Adjust tab height if needed */
 :deep(.van-tabs__wrap) {
   height: 36px;
+}
+
+.chart-container {
+  transition: height 0.3s ease;
 }
 </style>

@@ -80,7 +80,8 @@
     "noData": "Nessun dato da visualizzare",
     "settingsPlaceholder": "Le opzioni di configurazione per i grafici saranno disponibili qui in futuro.",
     "transactionType": "Riepilogo per Tipo",
-    "monthlyExpensesTitle": "Spese Mensili"
+    "monthlyExpensesTitle": "Spese Mensili",
+    "calendarHeatmap": "Vista Calendario"
   },
   "layouts": {
     "home": "HOME",
