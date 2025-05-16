@@ -144,6 +144,7 @@ import {generateBarMonthlyTransactionsOptions} from './charts/barMonthlyTransact
 import {generateTreemapTotalByCategoryOptions} from './charts/treemapTotalByCategory';
 import {generateSunburstTotalByCategoryOptions} from './charts/sunburstTotalByCategory';
 import {generateCalendarHeatmapOptions} from './charts/calendarHeatmapTransactions';
+import {generateSankeyFlowOptions} from './charts/sankeyCategoryFlow';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {useUserStore} from '@/stores';
@@ -194,6 +195,12 @@ const chartDefinitions = ref([
     name: computed(() => t('charts.calendarHeatmap')),
     icon: 'calendar-o',
     generatorFunction: generateCalendarHeatmapOptions,
+  },
+  {
+    key: 'sankeyFlow',
+    name: computed(() => t('charts.sankeyFlow')),
+    icon: 'cluster-o',
+    generatorFunction: generateSankeyFlowOptions,
   },
 ]);
 const selectedChartKey = ref(chartDefinitions.value[0].key);
@@ -371,6 +378,10 @@ const currentChartOptions = computed<EChartsOption | null>(() => {
         return (generatorFunction as typeof generateCalendarHeatmapOptions)(
           ...commonArgs,
           selectedMonthValue.value
+        );
+      case 'sankeyFlow':
+        return (generatorFunction as typeof generateSankeyFlowOptions)(
+          ...commonArgs
         );
     }
   }

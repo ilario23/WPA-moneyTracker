@@ -61,7 +61,8 @@
     "loading": "Loading",
     "sidePanel": "Graphs List",
     "cancelButton": "Cancel",
-    "settings": "Settings"
+    "settings": "Settings",
+    "income": "Income"
   },
   "charts": {
     "January": "Jan",
@@ -81,7 +82,8 @@
     "settingsPlaceholder": "Chart configuration options will be available here in the future.",
     "transactionType": "Summary by Type",
     "monthlyExpensesTitle": "Monthly Expenses",
-    "calendarHeatmap": "Calendar Heatmap"
+    "calendarHeatmap": "Calendar Heatmap",
+    "sankeyFlow": "Sankey Graph"
   },
   "layouts": {
     "home": "HOME",

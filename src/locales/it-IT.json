@@ -55,7 +55,8 @@
     "loading": "Caricamento",
     "sidePanel": "Lista Grafici",
     "cancelButton": "Annulla",
-    "settings": "Impostazioni"
+    "settings": "Impostazioni",
+    "income": "Entrate"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",
@@ -81,7 +82,8 @@
     "settingsPlaceholder": "Le opzioni di configurazione per i grafici saranno disponibili qui in futuro.",
     "transactionType": "Riepilogo per Tipo",
     "monthlyExpensesTitle": "Spese Mensili",
-    "calendarHeatmap": "Vista Calendario"
+    "calendarHeatmap": "Vista Calendario",
+    "sankeyFlow": "Sankey Spese"
   },
   "layouts": {
     "home": "HOME",
