@@ -96,12 +96,16 @@
 
     <div v-else class="transaction-list">
       <div v-for="(group, date) in groupedTransactions" :key="date">
-        <van-swipe-cell v-for="transaction in group" :key="transaction.id">
+        <van-swipe-cell
+          v-for="transaction in group"
+          :key="transaction.id"
+          @click="showTransactionDetail(transaction)"
+        >
           <template #left>
             <van-button
               square
               type="primary"
-              text="Edit"
+              :text="$t('common.edit')"
               class="edit-button"
               @click="handleEdit(transaction.id)"
             />
@@ -110,7 +114,7 @@
             <van-button
               square
               type="danger"
-              text="Delete"
+              text="$t('common.delete')"
               class="delete-button"
               @click="handleDelete(transaction.id)"
             />
@@ -148,6 +152,16 @@
       </div>
     </div>
 
+    <TransactionDetailPopup
+      v-model:show="showDetail"
+      :transaction="selectedTransaction"
+      :get-category-name="getCategoryName"
+      :get-category-color="getCategoryColor"
+      :get-category-icon="getCategoryIcon"
+      @edit="handleEdit(selectedTransaction?.id)"
+      @delete="handleDelete(selectedTransaction?.id)"
+    />
+
     <!-- Month Picker -->
     <van-popup v-model:show="showMonthPicker" position="bottom" round>
       <van-date-picker
@@ -175,6 +189,8 @@ import {useRouter} from 'vue-router';
 import {RecurringProcessor} from '@/services/recurringProcessor';
 import type {Transaction} from '@/types/transaction';
 import type {CategoryWithType} from '@/types/category';
+import {useTransactionDetail} from '@/composables/useTransactionDetail';
+import TransactionDetailPopup from '@/components/TransactionDetailPopup.vue';
 
 const {t, locale} = useI18n();
 const userStore = useUserStore();
@@ -190,6 +206,13 @@ const transactions = ref<Transaction[]>([]);
 const categories = ref<CategoryWithType[]>([]); // Change the type
 const loading = ref(false);
 const showMonthPicker = ref(false);
+
+const {
+  showDetail,
+  selectedTransaction,
+  showTransactionDetail,
+  hideTransactionDetail,
+} = useTransactionDetail();
 
 // Date range for month picker
 const minDate = new Date(new Date().getFullYear() - 4, 0, 1);
