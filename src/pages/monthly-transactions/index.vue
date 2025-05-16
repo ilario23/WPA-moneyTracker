@@ -582,12 +582,20 @@ const handleDelete = async (transactionId: string) => {
 
 /* Stili per il contenitore e i bottoni */
 :deep(.van-swipe-cell) {
-  margin: 8px;
+  margin: 8px 0;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.transaction-list {
+  padding: 0 16px;
+}
+
+:deep(.van-card) {
+  background-color: transparent;
+  margin: 0;
+  padding: 16px;
+  width: 100%;
 }
 
 :deep(.van-swipe-cell__left),
@@ -601,7 +609,6 @@ const handleDelete = async (transactionId: string) => {
 .delete-button {
   height: 100%;
   width: 64px;
-  border-radius: 0;
 }
 
 :deep(.van-card) {
