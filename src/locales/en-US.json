@@ -197,7 +197,7 @@
     "recurringExpenseUpdateError": "Error updating recurring expense.",
     "activeLabel": "Active",
     "nextOccurrenceDateLabel": "Next Occurrence Date",
-    "calculatedNextOccurrenceLabel": "Calculated Next Occurrence",
+    "NextOccurrenceLabel": "Next Occurrence",
     "selectValidDatePrompt": "Select a valid date",
     "nextScheduledOccurrenceLabel": "Next scheduled occurrence",
     "firstOccurrenceOnLabel": "First occurrence on",

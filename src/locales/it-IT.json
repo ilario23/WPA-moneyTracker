@@ -197,7 +197,7 @@
     "recurringExpenseUpdateError": "Errore durante l'aggiornamento della spesa ricorrente.",
     "activeLabel": "Attiva",
     "nextOccurrenceDateLabel": "Data Prossima Occorrenza",
-    "calculatedNextOccurrenceLabel": "Prossima Occorrenza Calcolata",
+    "NextOccurrenceLabel": "Prossima Occorrenza",
     "selectValidDatePrompt": "Seleziona una data valida",
     "nextScheduledOccurrenceLabel": "Prossima occorrenza programmata",
     "firstOccurrenceOnLabel": "Prima occorrenza il",

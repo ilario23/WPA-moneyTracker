@@ -176,34 +176,41 @@
 
           <van-field
             v-if="calculatedNextOccurrenceDisplay"
-            :label="t('transaction.calculatedNextOccurrenceLabel')"
+            :label="t('transaction.NextOccurrenceLabel')"
             :model-value="calculatedNextOccurrenceDisplay"
             readonly
             class="mt-16 calculated-next-occurrence"
+            style="
+              white-space: pre-line;
+              word-break: break-word;
+              min-height: 80px;
+              padding: 12px 0;
+            "
           />
         </div>
       </van-cell-group>
       <!-- End Recurring Expense Section -->
 
-      <div class="mt-16 action-buttons-container">
+      <div
+        class="mt-16 action-buttons-container"
+        style="display: flex; gap: 16px; justify-content: center"
+      >
         <van-button
           v-if="transactionId || recurringExpenseIdToEdit"
           type="default"
           round
-          class="cancel-button"
+          style="width: 120px"
           @click="router.back()"
         >
           {{ t('common.cancelButton') }}
-          <!-- New i18n key -->
         </van-button>
         <van-button
           :loading="loading"
           type="primary"
           native-type="submit"
           round
-          :class="{
-            'submit-button-full': !transactionId && !recurringExpenseIdToEdit,
-            'submit-button-partial': transactionId || recurringExpenseIdToEdit,
+          :style="{
+            width: transactionId || recurringExpenseIdToEdit ? '120px' : '100%',
           }"
         >
           {{ submitButtonText }}
