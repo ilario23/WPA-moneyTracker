@@ -119,9 +119,7 @@
             :price="transaction.amount"
             :desc="transaction.description || ''"
             currency="€"
-            :style="{
-              backgroundColor: `${getCategoryColor(transaction.categoryId)}30`,
-            }"
+            class="transaction-card"
           >
             <template #title>
               <div class="transaction-title">
@@ -130,6 +128,12 @@
               </div>
             </template>
             <template #thumb>
+              <div
+                class="category-indicator"
+                :style="{
+                  backgroundColor: getCategoryColor(transaction.categoryId),
+                }"
+              ></div>
               <van-icon
                 :name="getCategoryIcon(transaction.categoryId)"
                 class="category-icon"
@@ -585,6 +589,7 @@ const handleDelete = async (transactionId: string) => {
   margin: 8px 0;
   border-radius: 12px;
   overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.221);
 }
 
 .transaction-list {
@@ -592,7 +597,6 @@ const handleDelete = async (transactionId: string) => {
 }
 
 :deep(.van-card) {
-  background-color: transparent;
   margin: 0;
   padding: 16px;
   width: 100%;
@@ -612,7 +616,6 @@ const handleDelete = async (transactionId: string) => {
 }
 
 :deep(.van-card) {
-  background-color: transparent;
   border-radius: 0;
   padding-top: 0;
 }
@@ -627,13 +630,24 @@ const handleDelete = async (transactionId: string) => {
 }
 
 :deep(.van-card__thumb) {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 48px;
 }
 
+.category-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+}
+
 .category-icon {
+  margin-left: 8px;
   font-size: 24px;
 }
 
