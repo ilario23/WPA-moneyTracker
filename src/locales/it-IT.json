@@ -206,6 +206,7 @@
     "NextOccurrenceLabel": "Prossima Occorrenza",
     "selectValidDatePrompt": "Seleziona una data valida",
     "nextScheduledOccurrenceLabel": "Prossima occorrenza programmata",
+    "pastOccurrencesWarning": "Verranno create automaticamente {count} transazioni passate",
     "firstOccurrenceOnLabel": "Prima occorrenza il",
     "thenLabel": "poi il",
     "nextAfterThisLabel": "Successiva a questa",

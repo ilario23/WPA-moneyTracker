@@ -206,6 +206,7 @@
     "NextOccurrenceLabel": "Next Occurrence",
     "selectValidDatePrompt": "Select a valid date",
     "nextScheduledOccurrenceLabel": "Next scheduled occurrence",
+    "pastOccurrencesWarning": "{count} past occurrences will be created automatically",
     "firstOccurrenceOnLabel": "First occurrence on",
     "thenLabel": "then on",
     "nextAfterThisLabel": "Next after this",

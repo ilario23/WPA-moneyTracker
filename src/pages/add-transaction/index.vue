@@ -174,18 +174,19 @@
             <van-radio name="YEARLY">{{ t('transaction.yearly') }}</van-radio>
           </van-radio-group>
 
-          <van-field
+          <van-cell
             v-if="calculatedNextOccurrenceDisplay"
-            :label="t('transaction.NextOccurrenceLabel')"
-            :model-value="calculatedNextOccurrenceDisplay"
-            readonly
-            class="mt-16 calculated-next-occurrence"
-            style="
-              white-space: pre-line;
-              word-break: break-word;
-              min-height: 80px;
-              padding: 12px 0;
-            "
+            :title="t('transaction.NextOccurrenceLabel')"
+            :label="calculatedNextOccurrenceDisplay"
+            :style="{
+              padding: '8px',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              '--van-cell-title-line-height': 'normal',
+              '--van-cell-text-line-height': '1.4',
+              '--van-cell-title-margin-bottom': '8px',
+              '--van-cell-label-margin-top': '0',
+            }"
           />
         </div>
       </van-cell-group>
@@ -427,6 +428,25 @@ const datePickerLabel = computed(() =>
       : t('transaction.selectDate')
 );
 
+const pastOccurrencesCount = computed(() => {
+  if (!isRecurring.value || isEditModeRecurring.value) return 0;
+
+  const selectedDate = new Date(currentDate.value.join('-'));
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  if (selectedDate >= today) return 0;
+
+  let count = 0;
+  let tempDate = new Date(selectedDate);
+  while (tempDate < today) {
+    count++;
+    tempDate = calculateNextOccurrence(tempDate, frequency.value);
+  }
+  return count;
+});
+
 const calculatedNextOccurrenceDisplay = ref('');
 
 function calculateNextOccurrence(startDate: Date, freq: FrequencyType): Date {
@@ -472,7 +492,8 @@ function updateCalculatedNextOccurrenceDisplay() {
           frequency.value
         );
       }
-      calculatedNextOccurrenceDisplay.value = `${t('transaction.nextScheduledOccurrenceLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
+      const pastCount = pastOccurrencesCount.value;
+      calculatedNextOccurrenceDisplay.value = `${t('transaction.pastOccurrencesWarning', {count: pastCount})}.\n${t('transaction.nextScheduledOccurrenceLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
     } else {
       // Data di inizio è oggi o nel futuro: questa è la prima occorrenza
       calculatedNextOccurrenceDisplay.value = `${t('transaction.firstOccurrenceOnLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
