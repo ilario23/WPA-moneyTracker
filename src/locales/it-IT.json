@@ -83,7 +83,10 @@
     "transactionType": "Riepilogo per Tipo",
     "monthlyExpensesTitle": "Spese Mensili",
     "calendarHeatmap": "Vista Calendario",
-    "sankeyFlow": "Sankey Spese"
+    "sankeyFlow": "Sankey Spese",
+    "monthlyAverage": "Media di",
+    "yearlyAverage": "Media annua",
+    "yearlyComparison": "Confronto annuale"
   },
   "layouts": {
     "home": "HOME",

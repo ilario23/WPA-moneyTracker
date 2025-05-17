@@ -145,6 +145,7 @@ import {generateTreemapTotalByCategoryOptions} from './charts/treemapTotalByCate
 import {generateSunburstTotalByCategoryOptions} from './charts/sunburstTotalByCategory';
 import {generateCalendarHeatmapOptions} from './charts/calendarHeatmapTransactions';
 import {generateSankeyFlowOptions} from './charts/sankeyCategoryFlow';
+import {generateHistoricalComparisonOptions} from './charts/lineHistoricalComparison';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
 import {useUserStore} from '@/stores';
@@ -162,6 +163,7 @@ const currentYearIndex = ref(0); // Default to the most recent year in the list
 const currentMonthIndex = ref(new Date().getMonth()); // Default to current month index
 
 const allTransactionsForYear = ref<Transaction[]>([]);
+const historicalTransactions = ref<Transaction[]>([]); // Nuova ref per i dati storici
 const categories = ref<CategoryWithType[]>([]);
 
 // Chart Definitions
@@ -201,6 +203,12 @@ const chartDefinitions = ref([
     name: computed(() => t('charts.sankeyFlow')),
     icon: 'cluster-o',
     generatorFunction: generateSankeyFlowOptions,
+  },
+  {
+    key: 'lineHistoricalComparison',
+    name: computed(() => t('charts.lineHistoricalComparison')),
+    icon: 'bar-chart-o',
+    generatorFunction: generateHistoricalComparisonOptions,
   },
 ]);
 const selectedChartKey = ref(chartDefinitions.value[0].key);
@@ -277,6 +285,28 @@ async function fetchDataForSelectedYear() {
   }
 }
 
+async function fetchHistoricalData() {
+  if (!userId) return;
+  loading.value = true;
+  try {
+    const currentYear = new Date().getFullYear();
+    const promises = [];
+    // Fetch last 4 years of data
+    for (let year = currentYear - 4; year < currentYear; year++) {
+      promises.push(
+        UserTransactions.getUserTransactionsByYear(userId, year.toString())
+      );
+    }
+    const results = await Promise.all(promises);
+    historicalTransactions.value = results.flat();
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+    historicalTransactions.value = [];
+  } finally {
+    loading.value = false;
+  }
+}
+
 // Default Month/Year Logic
 function setDefaultMonthOrAll() {
   const year = selectedYear.value;
@@ -317,14 +347,21 @@ async function handleYearChange(index: number) {
   setDefaultMonthOrAll();
 }
 
-function handleMonthChange(index: number) {
-  currentMonthIndex.value = index;
-}
-
-function handleChartTypeChange(key: string | number) {
+// Modifica Event Handler per gestire il caricamento dei dati storici
+async function handleChartTypeChange(key: string | number) {
   if (typeof key === 'string') {
+    const needsHistoricalData = key === 'lineHistoricalComparison';
+
+    if (needsHistoricalData && historicalTransactions.value.length === 0) {
+      await fetchHistoricalData();
+    }
+
     selectedChartKey.value = key;
   }
+}
+
+function handleMonthChange(index: number) {
+  currentMonthIndex.value = index;
 }
 
 // Filtered Transactions
@@ -340,50 +377,75 @@ const filteredTransactions = computed(() => {
   });
 });
 
-// Chart Options Generator
+// Modifica computed options per gestire il loading dei dati storici
 const currentChartOptions = computed<EChartsOption | null>(() => {
-  if (
-    loading.value ||
-    !filteredTransactions.value.length ||
-    !categories.value.length
-  ) {
-    return null;
-  }
+  if (loading.value || !categories.value.length) return null;
+
   const chartDefinition = chartDefinitions.value.find(
     (def) => def.key === selectedChartKey.value
   );
-  if (chartDefinition) {
-    const {generatorFunction, key} = chartDefinition;
 
-    const commonArgs = [
-      filteredTransactions.value,
-      categories.value,
-      t,
-      locale.value,
-    ] as const;
+  if (!chartDefinition) return null;
 
-    switch (key) {
-      case 'barMonthlyTransactions':
-        return (
-          generatorFunction as typeof generateBarMonthlyTransactionsOptions
-        )(...commonArgs, selectedMonthValue.value);
-      case 'pieTotalByType':
-        return (generatorFunction as typeof generatePieTotalByTypeOptions)(
-          ...commonArgs
-        );
-      case 'treemapTotalByCategory':
-      case 'sunburstTotalByCategory':
-        return generatorFunction(...commonArgs, selectedMonthValue.value);
-      case 'calendarHeatmap':
-        return (generatorFunction as typeof generateCalendarHeatmapOptions)(
-          ...commonArgs,
-          selectedMonthValue.value
-        );
-      case 'sankeyFlow':
-        return (generatorFunction as typeof generateSankeyFlowOptions)(
-          ...commonArgs
-        );
-    }
+  const {generatorFunction, key} = chartDefinition;
+
+  // Se è il grafico storico e non abbiamo ancora i dati, non mostrare nulla
+  if (
+    key === 'lineHistoricalComparison' &&
+    historicalTransactions.value.length === 0
+  ) {
+    return null;
+  }
+
+  // Se non è il grafico storico ma non abbiamo dati dell'anno corrente, non mostrare nulla
+  if (
+    key !== 'lineHistoricalComparison' &&
+    !filteredTransactions.value.length
+  ) {
+    return null;
+  }
+
+  const commonArgs = [
+    filteredTransactions.value,
+    categories.value,
+    t,
+    locale.value,
+  ] as const;
+
+  switch (key) {
+    case 'barMonthlyTransactions':
+      return (
+        generatorFunction as typeof generateBarMonthlyTransactionsOptions
+      )(...commonArgs, selectedMonthValue.value);
+    case 'pieTotalByType':
+      return (generatorFunction as typeof generatePieTotalByTypeOptions)(
+        ...commonArgs
+      );
+    case 'treemapTotalByCategory':
+    case 'sunburstTotalByCategory':
+      return generatorFunction(
+        ...commonArgs,
+        selectedMonthValue.value,
+        selectedYear.value
+      );
+    case 'calendarHeatmap':
+      return (generatorFunction as typeof generateCalendarHeatmapOptions)(
+        ...commonArgs,
+        selectedMonthValue.value
+      );
+    case 'sankeyFlow':
+      return (generatorFunction as typeof generateSankeyFlowOptions)(
+        ...commonArgs
+      );
+    case 'lineHistoricalComparison':
+      return (generatorFunction as typeof generateHistoricalComparisonOptions)(
+        [...historicalTransactions.value, ...filteredTransactions.value],
+        categories.value,
+        t,
+        locale.value,
+        selectedMonthValue.value,
+        selectedYear.value
+      );
   }
   return null;
 });
@@ -441,8 +503,7 @@ onMounted(async () => {
     currentYearIndex.value = availableYears.value.length - 1;
   }
 
-  await fetchCategories();
-  await fetchDataForSelectedYear();
+  await Promise.all([fetchCategories(), fetchDataForSelectedYear()]); // Rimuovi fetchHistoricalData da qui
 
   // Ensure availableMonths is populated based on the fetched year's data
   await nextTick();

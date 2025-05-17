@@ -83,7 +83,10 @@
     "transactionType": "Summary by Type",
     "monthlyExpensesTitle": "Monthly Expenses",
     "calendarHeatmap": "Calendar Heatmap",
-    "sankeyFlow": "Sankey Graph"
+    "sankeyFlow": "Sankey Graph",
+    "monthlyAverage": "Avg of",
+    "yearlyAverage": "Yearly average",
+    "yearlyComparison": "Yearly Comparison"
   },
   "layouts": {
     "home": "HOME",
