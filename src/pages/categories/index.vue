@@ -36,14 +36,19 @@
           v-if="selectedCategory && selectedCategory.text"
           :key="selectedCategory.value"
           :title="selectedCategory.text"
+          style="
+            margin: 8px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.221);
+          "
         >
           <van-cell
             :title="selectedCategory.text"
             :style="{
               border: `1px solid ${selectedCategory.color}`,
-              borderRadius: '8px',
-              marginBottom: '12px',
-              marginTop: '12px',
+              borderRadius: '0',
+              margin: '0',
               backgroundColor: hexToRgba(selectedCategory.color, 0.07),
             }"
           >
@@ -57,7 +62,7 @@
               square
               icon="delete-o"
               type="danger"
-              style="height: 100%"
+              style="height: 100%; width: 64px"
               @click="showDeleteDialog = true"
             />
           </template>
@@ -66,7 +71,7 @@
               square
               icon="edit"
               type="primary"
-              style="height: 100%"
+              style="height: 100%; width: 64px"
               @click="showEditDialog = true"
             />
           </template>
