@@ -83,6 +83,22 @@ export function generateCalendarHeatmapOptions(
     }
   }
 
+  // Create month name map from translations
+  const getMonthNameMap = () => [
+    t('transaction.months.january'),
+    t('transaction.months.february'),
+    t('transaction.months.march'),
+    t('transaction.months.april'),
+    t('transaction.months.may'),
+    t('transaction.months.june'),
+    t('transaction.months.july'),
+    t('transaction.months.august'),
+    t('transaction.months.september'),
+    t('transaction.months.october'),
+    t('transaction.months.november'),
+    t('transaction.months.december'),
+  ];
+
   return {
     title: {
       text: t('charts.calendarHeatmap'),
@@ -120,7 +136,7 @@ export function generateCalendarHeatmapOptions(
       },
       monthLabel: {
         show: true,
-        nameMap: locale.startsWith('it') ? 'it' : 'en',
+        nameMap: getMonthNameMap(),
         position: 'end',
       },
       dayLabel: {

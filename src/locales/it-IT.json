@@ -89,7 +89,8 @@
     "sankeyFlow": "Sankey Spese",
     "monthlyAverage": "Media di",
     "yearlyAverage": "Media annua",
-    "yearlyComparison": "Confronto annuale"
+    "yearlyComparison": "Confronto annuale",
+    "lineHistoricalComparison": "Confronto Annuale"
   },
   "layouts": {
     "home": "HOME",

@@ -89,7 +89,8 @@
     "sankeyFlow": "Sankey Graph",
     "monthlyAverage": "Avg of",
     "yearlyAverage": "Yearly average",
-    "yearlyComparison": "Yearly Comparison"
+    "yearlyComparison": "Yearly Comparison",
+    "lineHistoricalComparison": "Historical Comparison"
   },
   "layouts": {
     "home": "HOME",
@@ -230,7 +231,7 @@
     },
     "showInvestments": "Show Investments",
     "showInvestmentsTooltip": "Include investments in the chart. Investments are shown as a separate bar.",
-    "averageBalance": "Average Balance",
+    "averageBalance": "Avg Balance",
     "notFound": "Error, transaction not found",
     "deleteSuccess": "Successfully deleted",
     "deleteError": "Error, could not delete it",
