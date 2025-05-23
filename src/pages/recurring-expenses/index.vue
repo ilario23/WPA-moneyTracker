@@ -8,67 +8,137 @@
       :description="$t('recurringExpense.noExpenses')"
     />
     <div v-else class="recurring-expense-list">
-      <van-swipe-cell
+      <van-card
         v-for="expense in sortedRecurringExpenses"
         :key="expense.id"
+        :price="expense.amount"
+        :desc="expense.description || ''"
+        currency="€"
+        class="transaction-card shadow-[0_2px_4px_rgba(0,0,0,0.06),_0_8px_16px_rgba(0,0,0,0.08)]"
+        @click="clickedExpense(expense)"
       >
-        <template #left>
-          <van-button
-            square
-            type="primary"
-            :text="$t('recurringExpense.edit')"
-            @click="handleEdit(expense)"
-          />
-        </template>
-        <template #right>
-          <van-button
-            square
-            type="danger"
-            :text="$t('recurringExpense.delete')"
-            @click="handleDelete(expense)"
-          />
-        </template>
-        <van-card
-          :price="expense.amount"
-          :desc="expense.description || ''"
-          currency="€"
-          :style="{
-            backgroundColor: `${getCategoryColor(expense.categoryId)}30`,
-          }"
-        >
-          <template #title>
-            <div class="card-title-custom">
-              <span>{{ getCategoryName(expense.categoryId) }}</span>
-            </div>
-          </template>
-          <template #thumb>
-            <van-icon
-              :name="getCategoryIcon(expense.categoryId)"
-              :style="{color: getCategoryColor(expense.categoryId)}"
-              class="category-icon-custom"
-              size="32px"
-            />
-          </template>
-          <template #tags>
-            <van-tag plain type="primary" class="frequency-tag">{{
+        <template #title>
+          <div
+            class="transaction-title flex items-center justify-between w-[100%]"
+          >
+            <span>{{ getCategoryName(expense.categoryId) }}</span>
+            <van-tag plain type="primary">{{
               formatFrequency(expense.frequency)
             }}</van-tag>
-          </template>
-          <template #footer>
-            <div class="card-footer-custom">
-              <span
-                >{{ $t('recurringExpense.nextOccurrence') }}:
-                {{ formatDate(expense.nextOccurrence) }}</span
-              >
-              <span
-                >{{ $t('recurringExpense.startDate') }}:
-                {{ formatDate(expense.startDate) }}</span
-              >
-            </div>
-          </template>
-        </van-card>
-      </van-swipe-cell>
+          </div>
+        </template>
+        <template #thumb>
+          <div
+            class="category-indicator absolute left-0 top-0 bottom-0 w-4px rounded-[2px]"
+            :style="{
+              backgroundColor: getCategoryColor(expense.categoryId),
+            }"
+          ></div>
+          <van-icon
+            :name="getCategoryIcon(expense.categoryId)"
+            class="category-icon ml-8px"
+            :style="{color: getCategoryColor(expense.categoryId)}"
+            size="36px"
+          />
+        </template>
+        <template #num>
+          <div class="card-footer-custom">
+            <span
+              >{{ $t('recurringExpense.nextOccurrence') }}:
+              {{ formatDate(expense.nextOccurrence) }}</span
+            >
+          </div>
+        </template>
+      </van-card>
     </div>
+
+    <!-- Floating Panel -->
+    <van-popup
+      v-model:show="showFloating"
+      position="bottom"
+      round
+      :style="{height: 'auto'}"
+    >
+      <van-floating-panel v-model:height="heightFloating" :anchors="anchors">
+        <div v-if="selectedExpense" class="p-16px min-h-full flex flex-col">
+          <div class="flex-shrink-0">
+            <div class="flex items-center gap-12px mb-16px">
+              <van-icon
+                :name="getCategoryIcon(selectedExpense.categoryId)"
+                class="text-32px"
+                :style="{
+                  color: getCategoryColor(selectedExpense.categoryId),
+                }"
+              />
+              <span class="text-18px font-600">
+                {{ getCategoryName(selectedExpense.categoryId) }}
+              </span>
+            </div>
+
+            <div class="text-24px font-bold text-center mb-16px">
+              €{{ selectedExpense.amount }}
+            </div>
+
+            <van-divider />
+
+            <div class="flex flex-col gap-12px mb-24px">
+              <div class="flex items-center gap-8px text-[#666]">
+                <van-icon name="clock-o" />
+                <span>{{ formatFrequency(selectedExpense.frequency) }}</span>
+              </div>
+
+              <div class="flex items-center gap-8px text-[#666]">
+                <van-icon name="underway-o" />
+                <span
+                  >{{ $t('recurringExpense.nextOccurrence') }}:
+                  {{ formatDate(selectedExpense.nextOccurrence) }}</span
+                >
+              </div>
+
+              <div
+                v-if="selectedExpense.description"
+                class="flex items-center gap-8px text-[#666]"
+              >
+                <van-icon name="description" />
+                <span>{{ selectedExpense.description }}</span>
+              </div>
+              <div
+                v-if="selectedExpense.startDate"
+                class="flex items-center gap-8px text-[#666]"
+              >
+                <van-icon name="clock-o" />
+                <span>
+                  {{ $t('recurringExpense.startDate') }}:
+                  {{ formatDate(selectedExpense.startDate) }}</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="flex-grow min-h-100px"></div>
+
+          <div
+            v-show="isExpanded"
+            class="flex flex-col gap-12px sticky bottom-16px bg-white pt-16px"
+          >
+            <van-button
+              type="primary"
+              block
+              @click="handleEdit(selectedExpense)"
+            >
+              {{ $t('common.edit') }}
+            </van-button>
+            <van-button
+              type="danger"
+              block
+              @click="handleDelete(selectedExpense)"
+            >
+              {{ $t('common.delete') }}
+            </van-button>
+          </div>
+        </div>
+      </van-floating-panel>
+    </van-popup>
   </div>
 </template>
 
@@ -163,25 +233,45 @@ function formatFrequency(frequency: FrequencyType): string {
   }
 }
 
+// Add these new refs for floating panel
+const showFloating = ref(false);
+const heightFloating = ref(0);
+const selectedExpense = ref<RecurringExpenseDefinition | null>(null);
+const anchors = [
+  Math.round(0.4 * window.innerHeight),
+  Math.round(0.6 * window.innerHeight),
+];
+
+const isExpanded = computed(() => {
+  return heightFloating.value >= anchors[1];
+});
+
+function clickedExpense(expense: RecurringExpenseDefinition) {
+  heightFloating.value = anchors[0];
+  selectedExpense.value = expense;
+  showFloating.value = true;
+}
+
+// Update existing functions to work with floating panel
 function handleEdit(expense: RecurringExpenseDefinition) {
   router.push({
-    name: 'transaction', // Route name for add-transaction page
+    name: 'transaction',
     query: {recurringExpenseId: expense.id},
   });
+  showFloating.value = false;
 }
 
 async function handleDelete(expense: RecurringExpenseDefinition) {
   try {
     await showConfirmDialog({
-      // Corrected function call
       title: t('recurringExpense.deleteConfirmTitle'),
       message: t('recurringExpense.deleteConfirmMessage'),
     });
     await UserRecurringExpenses.deleteRecurringExpense(userId, expense.id);
     showNotify({type: 'success', message: t('recurringExpense.deleteSuccess')});
-    fetchData(); // Refresh list
+    showFloating.value = false;
+    fetchData();
   } catch (error) {
-    // If error is not 'cancel' (from dialog), then show error notification
     if (error !== 'cancel') {
       console.error('Error deleting recurring expense:', error);
       showNotify({type: 'danger', message: t('recurringExpense.deleteError')});
@@ -205,28 +295,25 @@ async function handleDelete(expense: RecurringExpenseDefinition) {
 .recurring-expense-list {
   padding: 8px;
 }
-.van-swipe-cell {
-  margin-bottom: 12px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
 :deep(.van-card) {
-  border-radius: 0; /* Remove card radius if swipe cell has it */
-  background-color: var(--van-background-2); /* Match theme */
+  margin: 8px 0;
+  padding: 16px;
+  width: 100%;
+  border-radius: 8px;
+  padding-top: 0;
 }
-.card-title-custom {
-  font-weight: bold;
-  font-size: 16px;
+:deep(.van-card__header) {
+  padding-top: 8px;
 }
-.category-icon-custom {
+:deep(.van-card__thumb) {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  width: 48px;
 }
-.frequency-tag {
-  margin-top: 4px;
+.transaction-card {
+  cursor: pointer;
 }
 .card-footer-custom {
   font-size: 12px;
@@ -236,18 +323,5 @@ async function handleDelete(expense: RecurringExpenseDefinition) {
 .card-footer-custom span {
   display: block;
   margin-bottom: 2px;
-}
-
-:deep(.van-card__thumb) {
-  width: 48px; /* Adjust as needed */
-  margin-right: 10px;
-}
-
-:deep(.van-card__content) {
-  min-height: auto; /* Override Vant's min-height if it causes layout issues */
-}
-
-:deep(.van-button--square) {
-  height: 100%;
 }
 </style>
