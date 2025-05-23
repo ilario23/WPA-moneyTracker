@@ -77,6 +77,7 @@
         >
           <template #title>
             <van-icon :name="chartDef.icon" style="margin-right: 4px" />
+            <span>{{ chartDef.name }}</span>
           </template>
         </van-tab>
       </van-tabs>
