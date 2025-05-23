@@ -127,6 +127,7 @@ export function generateSankeyFlowOptions(
     series: [
       {
         type: 'sankey',
+        draggable: false,
         emphasis: {
           focus: 'adjacency',
         },
