@@ -1,7 +1,7 @@
 {
   "menus": {
     "home": "Home",
-    "profile": "🔧 Il Mio Centro",
+    "settings": "🔧 Impostazioni",
     "darkMode": "🌗 Modalità Scura",
     "mockGuide": "💿 Guida Mock",
     "language": "📚 Lingua",
@@ -13,14 +13,13 @@
     "keepAlive": "🧡 Demo KeepAlive",
     "transaction": "➕ Aggiungi Transazione",
     "login": "🔒 Accedi",
-    "settings": "Impostazioni",
     "basicSettings": "Impostazioni di base",
     "forgot-password": "Password Dimenticata",
     "categories": "🫙 Elenco Categorie",
     "add-category": "➕🫙 Aggiungi Categoria",
     "listComponents": "Espandi la funzionalità visitando:",
     "user": "🔧 Utente",
-    "monthlyTransactions": "📗 Spese Mensili",
+    "monthlyTransactions": "📗 Elenco Spese",
     "recurringExpenses": "🔁 Spese Ricorrenti",
     "editRecurringExpense": "Modifica Spesa Ricorrente",
     "more": "🕹️ Altro",
@@ -56,7 +55,10 @@
     "sidePanel": "Lista Grafici",
     "cancelButton": "Annulla",
     "settings": "Impostazioni",
-    "income": "Entrate"
+    "income": "Entrate",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "confirm": "Conferma"
   },
   "mock": {
     "fromAsyncData": "Dati da richieste asincrone",
@@ -227,7 +229,11 @@
     },
     "showInvestments": "Mostra investimenti",
     "showInvestmentsTooltip": "Includi gli investimenti nel grafico. Gli investimenti sono mostrati come una barra separata.",
-    "averageBalance": "Media Bilancio"
+    "averageBalance": "Media Bilancio",
+    "notFound": "Errore, transazione non trovata",
+    "deleteSuccess": "Cancellata correttamente",
+    "deleteError": "Errore nelle cancellazione",
+    "deleteConfirmation": "L'elemento sta per essere eliminato. Sei sicuro di voler procedere?"
   },
   "category": {
     "title": "Titolo",

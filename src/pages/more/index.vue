@@ -14,13 +14,21 @@ const {t} = useI18n();
         :title="t('menus.monthlyTransactions')"
         to="/monthly-transactions"
         is-link
-        icon="bill-o"
       />
       <VanCell
         :title="t('menus.recurringExpenses')"
         to="/recurring-expenses"
         is-link
-        icon="replay"
+      />
+    </VanCellGroup>
+
+    <!-- Analytics & Reports Section -->
+    <VanCellGroup inset :title="t('morePage.groupAnalyticsTitle')" class="mb-4">
+      <VanCell
+        :title="t('menus.financialCharts', 'Financial Charts')"
+        to="/financial-charts"
+        is-link
+        icon="bar-chart-o"
       />
     </VanCellGroup>
 
@@ -30,40 +38,12 @@ const {t} = useI18n();
       :title="t('morePage.groupDataManagementTitle')"
       class="mb-4"
     >
-      <VanCell
-        :title="t('menus.categories')"
-        to="/categories"
-        is-link
-        icon="apps-o"
-      />
+      <VanCell :title="t('menus.categories')" to="/categories" is-link />
     </VanCellGroup>
 
     <!-- Group 3: Account -->
     <VanCellGroup inset :title="t('morePage.groupAccountTitle')" class="mb-4">
-      <VanCell
-        :title="t('menus.profile')"
-        to="/profile"
-        is-link
-        icon="user-circle-o"
-      />
-      <!-- You might add a settings link here if it's not on a main tab bar -->
-      <!-- <VanCell :title="t('menus.settings')" to="/settings" is-link icon="setting-o" /> -->
-    </VanCellGroup>
-
-    <!-- Analytics & Reports Section -->
-    <VanCellGroup inset :title="t('morePage.groupAnalyticsTitle')" class="mb-4">
-      <VanCell
-        :title="t('menus.echartsTest')"
-        to="/echarts-test"
-        is-link
-        icon="chart-trending-o"
-      />
-      <VanCell
-        :title="t('menus.financialCharts', 'Financial Charts')"
-        to="/financial-charts"
-        is-link
-        icon="bar-chart-o"
-      />
+      <VanCell :title="t('menus.settings')" to="/profile" is-link />
     </VanCellGroup>
   </div>
 </template>

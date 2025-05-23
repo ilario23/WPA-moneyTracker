@@ -1,166 +1,229 @@
 <template>
-  <div>
-    <div class="tabs-search-container">
-      <!-- Year Selector Tabs -->
-      <van-tabs
-        v-model:active="currentYearIndex"
-        swipeable
-        @change="handleYearChange"
-      >
-        <van-tab v-for="year in years" :key="year.value" :title="year.text" />
-      </van-tabs>
+  <!-- Year Selector Tabs -->
+  <van-tabs
+    v-model:active="currentYearIndex"
+    swipeable
+    @change="handleYearChange"
+  >
+    <van-tab v-for="year in years" :key="year.value" :title="year.text" />
+  </van-tabs>
 
-      <!-- Month Selector Tabs -->
-      <van-tabs
-        v-model:active="currentMonthIndex"
-        swipeable
-        @change="handleMonthChange"
-      >
-        <van-tab
-          v-for="month in months"
-          :key="month.value"
-          :title="month.text"
-        />
-      </van-tabs>
-    </div>
-    <!-- Tabs and Search Icon Container -->
-    <div class="search-container">
-      <van-icon
-        :name="showSearch ? 'close' : 'search'"
-        size="24"
-        class="search-icon"
-        @click="showSearch = !showSearch"
-      />
-
-      <transition name="slide-down">
-        <van-search
-          v-if="showSearch"
-          v-model="searchQuery"
-          :placeholder="$t('transaction.searchPlaceholder')"
-          shape="round"
-          class="search-input"
-        />
-      </transition>
-    </div>
-
-    <!-- Riepilogo -->
-    <van-card class="summary-card">
-      <template #title>
-        <div class="summary-title">{{ $t('transaction.monthlySummary') }}</div>
-      </template>
-      <template #desc>
-        <div class="summary-amount">
-          <div class="income">
-            {{ $t('transaction.income') }}: €{{ totalIncome }}
-          </div>
-          <div class="expense">
-            {{ $t('transaction.expense') }}: €{{ totalExpense }}
-          </div>
-          <div v-if="Number(totalInvestment) > 0" class="investment">
-            {{ $t('transaction.investment') }}: €{{ totalInvestment }}
-          </div>
-          <!-- Show saving rate only if there is income -->
-          <div
-            v-if="Number(totalIncome) > 0"
-            class="saving-rate"
-            :class="{
-              income: Number(savingRate.basic.absolute) > 0,
-              expense: Number(savingRate.basic.absolute) < 0,
-            }"
-          >
-            {{ $t('transaction.savingRate') }}: €{{
-              savingRate.basic.absolute
-            }}
-            ({{ savingRate.basic.percentage }}%)
-          </div>
-          <div
-            v-if="Number(totalIncome) > 0 && Number(totalInvestment) > 0"
-            class="saving-rate with-investments"
-          >
-            {{ $t('transaction.savingRateWithInvestments') }}: €{{
-              savingRate.withInvestments.absolute
-            }}
-            ({{ savingRate.withInvestments.percentage }}%)
-          </div>
-        </div>
-      </template>
-    </van-card>
-
-    <!-- Lista transazioni -->
-    <van-divider>{{ $t('transaction.transactions') }}</van-divider>
-
-    <van-empty
-      v-if="filteredTransactions.length === 0"
-      :description="$t('transaction.noTransactions')"
+  <!-- Month Selector Tabs -->
+  <van-tabs
+    v-model:active="currentMonthIndex"
+    swipeable
+    @change="handleMonthChange"
+  >
+    <van-tab v-for="month in months" :key="month.value" :title="month.text" />
+  </van-tabs>
+  <!-- Tabs and Search Icon Container -->
+  <div class="search-container flex items-center gap-8px px-12px py-12px">
+    <van-icon
+      :name="showSearch ? 'close' : 'search'"
+      size="24"
+      class="search-icon shrink-0"
+      @click="showSearch = !showSearch"
     />
 
-    <div v-else class="transaction-list">
-      <div v-for="(group, date) in groupedTransactions" :key="date">
-        <van-swipe-cell v-for="transaction in group" :key="transaction.id">
-          <template #left>
-            <van-button
-              square
-              type="primary"
-              text="Edit"
-              class="edit-button"
-              @click="handleEdit(transaction.id)"
-            />
-          </template>
-          <template #right>
-            <van-button
-              square
-              type="danger"
-              text="Delete"
-              class="delete-button"
-              @click="handleDelete(transaction.id)"
-            />
-          </template>
-          <van-card
-            :price="transaction.amount"
-            :desc="transaction.description || ''"
-            currency="€"
-            class="transaction-card"
-          >
-            <template #title>
-              <div class="transaction-title">
-                <span>{{ getCategoryName(transaction.categoryId) }}</span>
-                <van-tag plain>{{ formatDate(date) }}</van-tag>
-              </div>
-            </template>
-            <template #thumb>
-              <div
-                class="category-indicator"
-                :style="{
-                  backgroundColor: getCategoryColor(transaction.categoryId),
-                }"
-              ></div>
-              <van-icon
-                :name="getCategoryIcon(transaction.categoryId)"
-                class="category-icon"
-                :style="{
-                  color: getCategoryColor(transaction.categoryId),
-                }"
-                size="36px"
-              />
-            </template>
-          </van-card>
-        </van-swipe-cell>
-      </div>
-    </div>
-
-    <!-- Month Picker -->
-    <van-popup v-model:show="showMonthPicker" position="bottom" round>
-      <van-date-picker
-        v-model="selectedMonth"
-        type="year-month"
-        :title="$t('transaction.selectMonth')"
-        :min-date="minDate"
-        :max-date="maxDate"
-        @confirm="onConfirmMonth"
-        @cancel="showMonthPicker = false"
+    <transition name="slide-down">
+      <van-search
+        v-if="showSearch"
+        v-model="searchQuery"
+        :placeholder="$t('transaction.searchPlaceholder')"
+        shape="round"
+        class="search-input grow-1 m-0"
       />
-    </van-popup>
+    </transition>
   </div>
+  <!-- Riepilogo -->
+  <van-card
+    class="text-center rounded-[8px] shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+  >
+    <template #title>
+      <div class="summary-title font-bold text-16px mb-8px text-center">
+        {{ $t('transaction.monthlySummary') }}
+      </div>
+    </template>
+    <template #desc>
+      <div class="summary-amount flex flex-col gap-4px">
+        <div class="income">
+          {{ $t('transaction.income') }}: €{{ totalIncome }}
+        </div>
+        <div class="expense">
+          {{ $t('transaction.expense') }}: €{{ totalExpense }}
+        </div>
+        <div v-if="Number(totalInvestment) > 0" class="investment">
+          {{ $t('transaction.investment') }}: €{{ totalInvestment }}
+        </div>
+        <!-- Show saving rate only if there is income -->
+        <div
+          v-if="Number(totalIncome) > 0"
+          class="saving-rate"
+          :class="{
+            income: Number(savingRate.basic.absolute) > 0,
+            expense: Number(savingRate.basic.absolute) < 0,
+          }"
+        >
+          {{ $t('transaction.savingRate') }}: €{{
+            savingRate.basic.absolute
+          }}
+          ({{ savingRate.basic.percentage }}%)
+        </div>
+        <div
+          v-if="Number(totalIncome) > 0 && Number(totalInvestment) > 0"
+          class="saving-rate with-investments"
+        >
+          {{ $t('transaction.savingRateWithInvestments') }}: €{{
+            savingRate.withInvestments.absolute
+          }}
+          ({{ savingRate.withInvestments.percentage }}%)
+        </div>
+      </div>
+    </template>
+  </van-card>
+
+  <!-- Lista transazioni -->
+  <van-divider>{{ $t('transaction.transactions') }}</van-divider>
+
+  <van-empty
+    v-if="filteredTransactions.length === 0"
+    :description="$t('transaction.noTransactions')"
+  />
+
+  <div
+    v-else
+    v-for="(group, date) in groupedTransactions"
+    class="transaction-list px-16px py-4px"
+    :key="date"
+  >
+    <van-card
+      v-for="transaction in group"
+      :key="transaction.id"
+      :price="transaction.amount"
+      :desc="transaction.description || ''"
+      currency="€"
+      class="transaction-card shadow-[0_2px_4px_rgba(0,0,0,0.06),_0_8px_16px_rgba(0,0,0,0.08)]"
+      @click="clickedTransaction(transaction)"
+    >
+      <template #title>
+        <div
+          class="transaction-title flex items-center justify-between w-[100%]"
+        >
+          <span>{{ getCategoryName(transaction.categoryId) }}</span>
+          <van-tag plain>{{ formatDate(date) }}</van-tag>
+        </div>
+      </template>
+      <template #thumb>
+        <div
+          class="category-indicator absolute left-0 top-0 bottom-0 w-4px rounded-[2px]"
+          :style="{
+            backgroundColor: getCategoryColor(transaction.categoryId),
+          }"
+        ></div>
+        <van-icon
+          :name="getCategoryIcon(transaction.categoryId)"
+          class="category-icon ml-8px text-24px"
+          :style="{
+            color: getCategoryColor(transaction.categoryId),
+          }"
+          size="36px"
+        />
+      </template>
+    </van-card>
+  </div>
+
+  <!-- Floating Panel -->
+  <van-popup
+    v-model:show="showFloating"
+    position="bottom"
+    round
+    :style="{height: 'auto'}"
+  >
+    <van-floating-panel v-model:height="heightFloating" :anchors="anchors">
+      <div v-if="selectedTransaction" class="p-16px min-h-full flex flex-col">
+        <div class="flex-shrink-0">
+          <div class="flex items-center gap-12px mb-16px">
+            <van-icon
+              :name="getCategoryIcon(selectedTransaction.categoryId)"
+              class="text-32px"
+              :style="{
+                color: getCategoryColor(selectedTransaction.categoryId),
+              }"
+            />
+            <span class="text-18px font-600">
+              {{ getCategoryName(selectedTransaction.categoryId) }}
+            </span>
+          </div>
+
+          <div
+            class="text-24px font-bold text-center mb-16px"
+            :class="{
+              'text-[#07c160]': Number(selectedTransaction.amount) > 0,
+              'text-[#ee0a24]': Number(selectedTransaction.amount) < 0,
+            }"
+          >
+            €{{ selectedTransaction.amount }}
+          </div>
+
+          <van-divider />
+
+          <div class="flex flex-col gap-12px mb-24px">
+            <div class="flex items-center gap-8px text-[#666]">
+              <van-icon name="clock-o" />
+              <span>
+                {{
+                  new Date(selectedTransaction.timestamp).toLocaleDateString()
+                }}
+              </span>
+            </div>
+
+            <div
+              v-if="selectedTransaction.description"
+              class="flex items-center gap-8px text-[#666]"
+            >
+              <van-icon name="description" />
+              <span>{{ selectedTransaction.description }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-grow min-h-100px"></div>
+
+        <div
+          v-show="isExpanded"
+          class="flex flex-col gap-12px sticky bottom-16px bg-white pt-16px"
+        >
+          <van-button
+            type="primary"
+            block
+            @click="handleEdit(selectedTransaction.id)"
+          >
+            {{ $t('common.edit') }}
+          </van-button>
+          <van-button
+            type="danger"
+            block
+            @click="handleDelete(selectedTransaction.id)"
+          >
+            {{ $t('common.delete') }}
+          </van-button>
+        </div>
+      </div>
+    </van-floating-panel>
+  </van-popup>
+
+  <!-- Month Picker -->
+  <van-popup v-model:show="showMonthPicker" position="bottom" round>
+    <van-date-picker
+      v-model="selectedMonth"
+      type="year-month"
+      :title="$t('transaction.selectMonth')"
+      :min-date="minDate"
+      :max-date="maxDate"
+      @confirm="onConfirmMonth"
+      @cancel="showMonthPicker = false"
+    />
+  </van-popup>
 </template>
 
 <script setup lang="ts">
@@ -169,7 +232,7 @@ import {useUserStore} from '@/stores';
 import {UserTransactions} from '@/api/database/modules/subcollections/user.transactions';
 // Removed incorrect Vant imports from previous attempt, will add specific ones later if needed by auto-import
 import {UserCategories} from '@/api/database/modules/subcollections/user.categories';
-import {showNotify} from 'vant';
+import {showNotify, showDialog} from 'vant';
 import {useI18n} from 'vue-i18n';
 import {useRouter} from 'vue-router';
 import {RecurringProcessor} from '@/services/recurringProcessor';
@@ -463,6 +526,20 @@ function handleYearChange(index: number) {
   });
 }
 
+const showFloating = ref(false);
+const heightFloating = ref(0);
+const selectedTransaction = ref<Transaction | null>(null);
+const anchors = [
+  Math.round(0.3 * window.innerHeight),
+  Math.round(0.5 * window.innerHeight),
+];
+
+const clickedTransaction = (transaction: Transaction) => {
+  heightFloating.value = anchors[0];
+  selectedTransaction.value = transaction;
+  showFloating.value = true;
+};
+
 const handleEdit = async (transactionId: string) => {
   const transaction = transactions.value.find((t) => t.id === transactionId);
   if (!transaction) {
@@ -481,22 +558,35 @@ const handleEdit = async (transactionId: string) => {
 
 const handleDelete = async (transactionId: string) => {
   try {
+    // Show confirmation dialog
+    await showDialog({
+      title: t('common.confirm'),
+      message: t('transaction.deleteConfirmation'),
+      showCancelButton: true,
+    });
+
     const selectedYear = years.value[currentYearIndex.value].value.toString();
     await UserTransactions.deleteTransaction(
       userId,
       transactionId,
       selectedYear
     );
-
-    // Refresh data
     await fetchData();
-
     showNotify({type: 'success', message: t('transaction.deleteSuccess')});
+    showFloating.value = false;
   } catch (error) {
+    // Check if error is from dialog cancellation
+    if (error?.toString().includes('cancel')) return;
+
     console.error('Error deleting transaction:', error);
     showNotify({type: 'danger', message: t('transaction.deleteError')});
   }
 };
+
+// Add this computed property in the script section
+const isExpanded = computed(() => {
+  return heightFloating.value >= anchors[1];
+});
 </script>
 
 <route lang="json5">
@@ -510,56 +600,7 @@ const handleDelete = async (transactionId: string) => {
 </route>
 
 <style scoped>
-.month-selector {
-  margin-bottom: 16px;
-}
-
-.summary-card {
-  text-align: center;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.summary-title {
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.summary-amount {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.income {
-  color: #07c160;
-}
-
-.expense {
-  color: #ee0a24;
-}
-
-.investment {
-  color: #1989fa;
-}
-
-.balance {
-  font-weight: bold;
-  margin-top: 4px;
-}
-
-.saving-rate {
-  font-weight: bold;
-  margin-top: 4px;
-}
-
-.saving-rate.with-investments {
-  color: #1989fa;
-}
-
+/* Keep only styles that can't be easily converted to utility classes */
 :deep(.van-card__price) {
   color: inherit;
 }
@@ -577,14 +618,6 @@ const handleDelete = async (transactionId: string) => {
   flex-shrink: 0;
 }
 
-.transaction-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-/* Stili per il contenitore e i bottoni */
 :deep(.van-swipe-cell) {
   margin: 8px 0;
   border-radius: 12px;
@@ -592,41 +625,16 @@ const handleDelete = async (transactionId: string) => {
   border: 1px solid rgba(0, 0, 0, 0.221);
 }
 
-.transaction-list {
-  padding: 0 16px;
-}
-
 :deep(.van-card) {
   margin: 0;
   padding: 16px;
   width: 100%;
-}
-
-:deep(.van-swipe-cell__left),
-:deep(.van-swipe-cell__right) {
-  height: 100%;
-  display: flex;
-  align-items: stretch;
-}
-
-.edit-button,
-.delete-button {
-  height: 100%;
-  width: 64px;
-}
-
-:deep(.van-card) {
   border-radius: 0;
   padding-top: 0;
 }
 
 :deep(.van-card__header) {
   padding-top: 8px;
-}
-
-/* Optional: Add some side padding to the list container */
-.transaction-list {
-  padding: 0 8px;
 }
 
 :deep(.van-card__thumb) {
@@ -637,48 +645,21 @@ const handleDelete = async (transactionId: string) => {
   width: 48px;
 }
 
-.category-indicator {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  border-radius: 2px;
-}
-
-.category-icon {
-  margin-left: 8px;
-  font-size: 24px;
-}
-
-.edit-button {
-  height: 100%;
-  width: 64px;
-}
-
-.delete-button {
-  height: 100%;
-  width: 64px;
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 12px;
-}
-
-.search-icon {
-  flex-shrink: 0;
-}
-
-.search-input {
-  flex-grow: 1;
-  margin: 0;
-}
-
 :deep(.van-search) {
   padding: 0;
   width: 100%;
+}
+
+/* Keep income/expense/investment colors for reuse */
+.income {
+  color: #07c160;
+}
+
+.expense {
+  color: #ee0a24;
+}
+
+.investment {
+  color: #1989fa;
 }
 </style>

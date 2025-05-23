@@ -1,7 +1,7 @@
 {
   "menus": {
     "home": "Home",
-    "profile": "🔧 My Center",
+    "settings": "🔧 Settings",
     "darkMode": "🌗 Dark Mode",
     "mockGuide": "💿 Mock Guide",
     "language": "📚 Language",
@@ -13,14 +13,13 @@
     "keepAlive": "🧡 KeepAlive Demo",
     "transaction": "➕ Add Transaction",
     "login": "🔒 Login",
-    "settings": "Settings",
     "basicSettings": "Basic Settings",
     "listComponents": "Expand the functionality by visiting:",
     "forgot-password": "Forgot Password",
     "categories": "🫙 View Categories",
     "add-category": "➕🫙 Add Category",
     "user": "🔧 User",
-    "monthlyTransactions": "📗 Monthly Transactions",
+    "monthlyTransactions": "📗 Transactions List",
     "recurringExpenses": "🔁 Recurring Expenses",
     "editRecurringExpense": "Edit Recurring Expense",
     "more": "🕹️ More",
@@ -62,7 +61,10 @@
     "sidePanel": "Graphs List",
     "cancelButton": "Cancel",
     "settings": "Settings",
-    "income": "Income"
+    "income": "Income",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm"
   },
   "charts": {
     "January": "Jan",
@@ -227,7 +229,11 @@
     },
     "showInvestments": "Show Investments",
     "showInvestmentsTooltip": "Include investments in the chart. Investments are shown as a separate bar.",
-    "averageBalance": "Average Balance"
+    "averageBalance": "Average Balance",
+    "notFound": "Error, transaction not found",
+    "deleteSuccess": "Successfully deleted",
+    "deleteError": "Error, could not delete it",
+    "deleteConfirmation": "You are going to delete this. Are you sure?"
   },
   "category": {
     "title": "Title",
