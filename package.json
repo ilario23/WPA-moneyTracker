@@ -1,7 +1,7 @@
 {
   "name": "turtlet",
   "type": "module",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "packageManager": "pnpm@10.8.0",
   "description": "Smart savings, one slow step at a time",
   "license": "MIT",
