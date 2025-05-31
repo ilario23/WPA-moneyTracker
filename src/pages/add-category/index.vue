@@ -76,10 +76,10 @@
             class="van-haptics-feedback"
           >
             <template #input>
-              <van-icon
+              <div
                 v-if="newCategory.icon"
-                :name="newCategory.icon"
-                size="32px"
+                :class="newCategory.icon"
+                style="font-size: 32px"
               />
               <span v-else style="color: #b0b0b0">{{
                 t('category.selectIcon')
@@ -103,7 +103,7 @@
                   :key="icon"
                   @click="selectIcon(icon)"
                 >
-                  <van-icon :name="icon" size="32px" />
+                  <div :class="icon" style="font-size: 32px" />
                 </van-grid-item>
               </van-grid>
             </div>
@@ -173,7 +173,7 @@ import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores';
 import {API} from '@/api';
 import {useI18n} from 'vue-i18n';
-import {availableIcons} from '@/utils/icons';
+import {availableIconsType2 as availableIcons} from '@/utils/icons';
 
 const {t} = useI18n();
 const userStore = useUserStore();

@@ -120,13 +120,14 @@
             backgroundColor: getCategoryColor(transaction.categoryId),
           }"
         ></div>
-        <van-icon
-          :name="getCategoryIcon(transaction.categoryId)"
-          class="category-icon ml-8px text-24px"
+
+        <div
+          :class="getCategoryIcon(transaction.categoryId)"
+          class="category-icon ml-8px"
           :style="{
             color: getCategoryColor(transaction.categoryId),
+            fontSize: '36px',
           }"
-          size="36px"
         />
       </template>
     </van-card>

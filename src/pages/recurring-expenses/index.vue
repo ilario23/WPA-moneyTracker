@@ -34,11 +34,13 @@
               backgroundColor: getCategoryColor(expense.categoryId),
             }"
           ></div>
-          <van-icon
-            :name="getCategoryIcon(expense.categoryId)"
+          <div
+            :class="getCategoryIcon(expense.categoryId)"
             class="category-icon ml-8px"
-            :style="{color: getCategoryColor(expense.categoryId)}"
-            size="36px"
+            :style="{
+              color: getCategoryColor(expense.categoryId),
+              fontSize: '36px',
+            }"
           />
         </template>
         <template #num>
@@ -63,8 +65,8 @@
         <div v-if="selectedExpense" class="p-16px min-h-full flex flex-col">
           <div class="flex-shrink-0">
             <div class="flex items-center gap-12px mb-16px">
-              <van-icon
-                :name="getCategoryIcon(selectedExpense.categoryId)"
+              <div
+                :class="getCategoryIcon(selectedExpense.categoryId)"
                 class="text-32px"
                 :style="{
                   color: getCategoryColor(selectedExpense.categoryId),

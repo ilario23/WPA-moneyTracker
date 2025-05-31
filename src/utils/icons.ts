@@ -131,3 +131,17 @@ export const availableIcons = [
   'warning-o',
   'wap-home-o',
 ];
+
+export const availableIconsType2 = [
+  'i-carbon:ShoppingCartPlus',
+  'i-carbon:Diagram',
+  'i-carbon:ChartClusterBar',
+  'i-carbon:ChartTreemap',
+  'i-carbon:ChartSunburst',
+  'i-carbon:CalendarHeatMap',
+  'i-carbon:SankeyDiagram',
+  'i-carbon:Analytics',
+  'i-carbon:Laptop',
+  'i-carbon:3d-cursor',
+  'i-carbon:Model',
+];

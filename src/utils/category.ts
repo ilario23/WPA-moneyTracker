@@ -27,7 +27,7 @@ export const BASE_CATEGORIES: Category[] = [
     id: '533d4482-df54-47e5-b8d8-000000000001',
     title: 'Expenses',
     color: '#f99595',
-    icon: 'cart-o',
+    icon: 'i-carbon:ShoppingCart',
     parentCategoryId: null,
     userId: '', // Initialize with empty string
     active: true,
@@ -36,7 +36,7 @@ export const BASE_CATEGORIES: Category[] = [
     id: '533d4482-df54-47e5-b8d8-000000000002',
     title: 'Incomes',
     color: '#168d3a',
-    icon: 'paid',
+    icon: 'i-carbon:Wallet',
     parentCategoryId: null,
     userId: '', // Initialize with empty string
     active: true,
@@ -45,7 +45,7 @@ export const BASE_CATEGORIES: Category[] = [
     id: '533d4482-df54-47e5-b8d8-000000000003',
     title: 'Investments',
     color: '#0906a7',
-    icon: 'balance-o',
+    icon: 'i-carbon:PiggyBank',
     parentCategoryId: null,
     userId: '', // Initialize with empty string
     active: true,

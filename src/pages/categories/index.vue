@@ -23,9 +23,10 @@
         >
           <template #right-icon>
             <van-icon
-              :name="root.icon"
               style="font-size: 20px; align-self: center; padding-right: 5px"
-            />
+            >
+              <div :class="root.icon" />
+            </van-icon>
           </template>
         </van-cell>
       </div>
@@ -53,7 +54,9 @@
             }"
           >
             <template #icon>
-              <van-icon :name="selectedCategory.icon" style="font-size: 32px" />
+              <van-icon style="font-size: 32px">
+                <div :class="selectedCategory.icon" />
+              </van-icon>
             </template>
           </van-cell>
 
@@ -93,7 +96,7 @@
               @click="selectCategory(child)"
             >
               <template #right-icon>
-                <van-icon :name="child.icon" />
+                <van-icon> <div :class="child.icon" /> </van-icon>
               </template>
             </van-cell>
           </van-cell-group>

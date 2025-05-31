@@ -27,10 +27,9 @@
           >
             <template #thumb>
               <div style="display: flex; align-items: center; height: 100%">
-                <van-icon
-                  :name="previewIcon"
-                  style="font-size: 64px; color: inherit"
-                />
+                <van-icon style="font-size: 64px; color: inherit">
+                  <div :class="previewIcon" />
+                </van-icon>
               </div>
             </template>
 
