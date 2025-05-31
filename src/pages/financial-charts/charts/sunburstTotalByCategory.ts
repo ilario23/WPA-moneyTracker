@@ -27,6 +27,8 @@ export function generateSunburstTotalByCategoryOptions(
         'Sunburst per Categoria'
       ),
       left: 'center',
+      top: '20',
+      padding: [0, 0, 20, 0],
     },
     tooltip: {
       formatter: (params: any) => {

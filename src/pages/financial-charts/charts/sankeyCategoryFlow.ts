@@ -112,6 +112,8 @@ export function generateSankeyFlowOptions(
     title: {
       text: t('charts.sankeyFlow'),
       left: 'center',
+      top: '20',
+      padding: [0, 0, 20, 0],
     },
     tooltip: {
       trigger: 'item',
@@ -127,6 +129,7 @@ export function generateSankeyFlowOptions(
     series: [
       {
         type: 'sankey',
+        top: '10%',
         draggable: false,
         emphasis: {
           focus: 'adjacency',

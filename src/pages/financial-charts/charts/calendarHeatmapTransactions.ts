@@ -103,6 +103,8 @@ export function generateCalendarHeatmapOptions(
     title: {
       text: t('charts.calendarHeatmap'),
       left: 'center',
+      top: '20',
+      padding: [0, 0, 20, 0],
     },
     tooltip: {
       formatter: (params: any) => {

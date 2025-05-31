@@ -189,7 +189,8 @@ export function generateHistoricalComparisonOptions(
             })
           : `${t('charts.yearlyComparison')} ${selectedYear}`,
       left: 'center',
-      top: 10,
+      top: '20',
+      padding: [0, 0, 20, 0],
     },
     tooltip: {
       trigger: 'axis',
