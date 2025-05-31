@@ -143,7 +143,6 @@
                 :rules="rules.active"
                 name="active"
                 :title="t('category.active')"
-                disabled
               />
             </template>
           </van-field>
@@ -250,6 +249,15 @@ const save = async () => {
   try {
     loading.value = true;
 
+    // Add check before saving
+    if (!(await checkForActiveChildren())) {
+      showNotify({
+        type: 'warning',
+        message: t('category.cantSaveInactiveParent'),
+      });
+      return;
+    }
+
     if (userStore.userInfo?.uid) {
       if (route.query.id) {
         // Modifica categoria esistente
@@ -289,6 +297,23 @@ const save = async () => {
 const selectIcon = (icon: string) => {
   newCategory.icon = icon; // Aggiorna l'icona selezionata
   showIconPopup.value = false; // Chiudi il popup
+};
+
+// Add this function after other const declarations
+const checkForActiveChildren = async () => {
+  if (!newCategory.active && userStore.userInfo?.uid && newCategory.id) {
+    const allCategories = await API.Database.Users.Categories.getUserCategories(
+      userStore.userInfo.uid
+    );
+
+    const activeChildren = allCategories.filter(
+      (category) =>
+        category.active && category.parentCategoryId === newCategory.id
+    );
+
+    return activeChildren.length === 0;
+  }
+  return true;
 };
 </script>
 

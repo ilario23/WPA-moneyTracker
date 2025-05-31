@@ -56,16 +56,25 @@ export const UserCategories = {
 
   /**
    * @param userId
+   * @param onlyActive if true, returns only active categories
    * @returns the categories formatted for the cascader component
    */
-  getCascaderCategoryOptions: async (userId: string): Promise<Option[]> => {
+  getCascaderCategoryOptions: async (
+    userId: string,
+    onlyActive: boolean = false
+  ): Promise<Option[]> => {
     const categories = await UserCategories.getUserCategories(userId);
+
+    // Filter active categories if onlyActive is true
+    const filteredCategories = onlyActive
+      ? categories.filter((category) => category.active !== false)
+      : categories;
 
     const categoryMap = new Map<string, Option>();
     const categoryOptions: Option[] = [];
 
     // Creazione dei nodi di base
-    categories.forEach((category) => {
+    filteredCategories.forEach((category) => {
       categoryMap.set(category.id, {
         text: category.title,
         value: category.id,
@@ -76,7 +85,7 @@ export const UserCategories = {
     });
 
     // Costruzione della gerarchia
-    categories.forEach((category) => {
+    filteredCategories.forEach((category) => {
       const node = categoryMap.get(category.id);
       if (!node) return;
 

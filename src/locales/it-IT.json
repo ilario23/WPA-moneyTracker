@@ -279,6 +279,7 @@
     "selectParentCategory": "Selezione la categoria padre",
     "refreshSuccess": "Categorie aggiornate",
     "fetchError": "Errore lettura nuove categorie",
-    "noUser": "Errore lettura utente"
+    "noUser": "Errore lettura utente",
+    "cantSaveInactiveParent": "Non è possibile procedere in quanto questa categoria risulta essere vincolata ad un'altra"
   }
 }

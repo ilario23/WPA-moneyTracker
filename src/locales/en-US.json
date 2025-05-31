@@ -279,6 +279,7 @@
     "selectParentCategory": "Select the parent category",
     "refreshSuccess": "Categories updated",
     "fetchError": "Error fetching new categories",
-    "noUser": "Error reading user name"
+    "noUser": "Error reading user name",
+    "cantSaveInactiveParent": "It is not possible to proceed as this category is linked to another one"
   }
 }

@@ -372,9 +372,11 @@ onBeforeMount(async () => {
 });
 
 onMounted(async () => {
-  // Assegna le categorie al cascader
-  categoryOptions.value =
-    await UserCategories.getCascaderCategoryOptions(userId);
+  // Assegna le categorie al cascader, filtrando solo quelle attive
+  categoryOptions.value = await UserCategories.getCascaderCategoryOptions(
+    userId,
+    true
+  );
   rootCategories.value = categoryOptions.value;
   swipingTabs(0); // Imposta il colore della tab attiva
 });
