@@ -76,8 +76,9 @@
           :name="chartDef.key"
         >
           <template #title>
-            <van-icon :name="chartDef.icon" style="margin-right: 4px" />
-            <span>{{ chartDef.name }}</span>
+            <van-icon style="margin-right: 4px">
+              <div :class="chartDef.icon"></div>
+            </van-icon>
           </template>
         </van-tab>
       </van-tabs>
@@ -171,44 +172,37 @@ const categories = ref<CategoryWithType[]>([]);
 const chartDefinitions = ref([
   {
     key: 'pieTotalByType',
-    name: computed(() => t('charts.pieNameTotalByType')),
-    icon: 'chart-trending-o',
+    icon: 'i-carbon:Diagram',
     generatorFunction: generatePieTotalByTypeOptions,
   },
   {
     key: 'barMonthlyTransactions',
-    name: computed(() => t('charts.barNameMonthlyTransactions')),
-    icon: 'bar-chart-o',
+    icon: 'i-carbon:ChartClusterBar',
     generatorFunction: generateBarMonthlyTransactionsOptions,
   },
   {
     key: 'treemapTotalByCategory',
-    name: computed(() => t('charts.treemapTotalByCategory')),
-    icon: 'apps-o',
+    icon: 'i-carbon:ChartTreemap',
     generatorFunction: generateTreemapTotalByCategoryOptions,
   },
   {
     key: 'sunburstTotalByCategory',
-    name: computed(() => t('charts.sunburstTotalByCategory')),
-    icon: 'cluster-o',
+    icon: 'i-carbon:ChartSunburst',
     generatorFunction: generateSunburstTotalByCategoryOptions,
   },
   {
     key: 'calendarHeatmap',
-    name: computed(() => t('charts.calendarHeatmap')),
-    icon: 'calendar-o',
+    icon: 'i-carbon:CalendarHeatMap',
     generatorFunction: generateCalendarHeatmapOptions,
   },
   {
     key: 'sankeyFlow',
-    name: computed(() => t('charts.sankeyFlow')),
-    icon: 'cluster-o',
+    icon: 'i-carbon:SankeyDiagram',
     generatorFunction: generateSankeyFlowOptions,
   },
   {
     key: 'lineHistoricalComparison',
-    name: computed(() => t('charts.lineHistoricalComparison')),
-    icon: 'bar-chart-o',
+    icon: 'i-carbon:Analytics',
     generatorFunction: generateHistoricalComparisonOptions,
   },
 ]);
