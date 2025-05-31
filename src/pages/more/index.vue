@@ -14,22 +14,32 @@ const {t} = useI18n();
         :title="t('menus.monthlyTransactions')"
         to="/monthly-transactions"
         is-link
-      />
+      >
+        <template #icon>
+          <div class="i-carbon:IbmKnowledgeCatalog mt-4 mr-5"></div>
+        </template>
+      </VanCell>
       <VanCell
         :title="t('menus.recurringExpenses')"
         to="/recurring-expenses"
         is-link
-      />
+      >
+        <template #icon>
+          <div class="i-carbon:Renew mt-4 mr-5"></div>
+        </template>
+      </VanCell>
     </VanCellGroup>
 
-    <!-- Analytics & Reports Section -->
     <VanCellGroup inset :title="t('morePage.groupAnalyticsTitle')" class="mb-4">
       <VanCell
         :title="t('menus.financialCharts', 'Financial Charts')"
         to="/financial-charts"
         is-link
-        icon="bar-chart-o"
-      />
+      >
+        <template #icon>
+          <div class="i-carbon:Analytics mt-4 mr-5"></div>
+        </template>
+      </VanCell>
     </VanCellGroup>
 
     <!-- Group 2: Data Management -->
@@ -38,12 +48,20 @@ const {t} = useI18n();
       :title="t('morePage.groupDataManagementTitle')"
       class="mb-4"
     >
-      <VanCell :title="t('menus.categories')" to="/categories" is-link />
+      <VanCell :title="t('menus.categories')" to="/categories" is-link>
+        <template #icon>
+          <div class="i-carbon:DataClass mt-4 mr-5"></div>
+        </template>
+      </VanCell>
     </VanCellGroup>
 
     <!-- Group 3: Account -->
     <VanCellGroup inset :title="t('morePage.groupAccountTitle')" class="mb-4">
-      <VanCell :title="t('menus.settings')" to="/profile" is-link />
+      <VanCell :title="t('menus.settings')" to="/profile" is-link>
+        <template #icon>
+          <div class="i-carbon:Tools mt-4 mr-5"></div>
+        </template>
+      </VanCell>
     </VanCellGroup>
   </div>
 </template>

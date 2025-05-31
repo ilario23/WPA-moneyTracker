@@ -1,7 +1,7 @@
 {
   "menus": {
     "home": "Home",
-    "settings": "🔧 Impostazioni",
+    "settings": "Impostazioni",
     "darkMode": "🌗 Modalità Scura",
     "mockGuide": "💿 Guida Mock",
     "language": "📚 Lingua",
@@ -11,20 +11,20 @@
     "persistPiniaState": "🍍 Stato Pinia Persistente",
     "unocssExample": "🎨 Esempio Unocss",
     "keepAlive": "🧡 Demo KeepAlive",
-    "transaction": "➕ Aggiungi Transazione",
+    "transaction": "Aggiungi Transazione",
     "login": "🔒 Accedi",
     "basicSettings": "Impostazioni di base",
     "forgot-password": "Password Dimenticata",
-    "categories": "🫙 Elenco Categorie",
+    "categories": "Elenco Categorie",
     "add-category": "➕🫙 Aggiungi Categoria",
     "listComponents": "Espandi la funzionalità visitando:",
     "user": "🔧 Utente",
     "profile": "👤 Profilo Utente",
-    "monthlyTransactions": "📗 Elenco Spese",
-    "recurringExpenses": "🔁 Spese Ricorrenti",
+    "monthlyTransactions": "Elenco Spese",
+    "recurringExpenses": "Spese Ricorrenti",
     "editRecurringExpense": "Modifica Spesa Ricorrente",
-    "more": "🕹️ Altro",
-    "financialCharts": "📊 Grafici Finanziari"
+    "more": "Altro",
+    "financialCharts": "Grafici Finanziari"
   },
   "morePage": {
     "groupTransactionsTitle": "Transazioni e Pianificazione",

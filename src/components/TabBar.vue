@@ -14,13 +14,13 @@ const show = computed(
     <van-tabbar-item replace to="/add-transaction">
       {{ t('menus.transaction') }}
       <template #icon>
-        <div class="i-carbon:add-alt" />
+        <div class="i-carbon:ShoppingCartPlus" />
       </template>
     </van-tabbar-item>
     <van-tabbar-item replace to="/more/">
       {{ t('menus.more') }}
       <template #icon>
-        <div class="i-carbon:menu" />
+        <div class="i-carbon:Information" />
       </template>
     </van-tabbar-item>
   </van-tabbar>

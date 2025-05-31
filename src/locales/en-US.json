@@ -1,7 +1,7 @@
 {
   "menus": {
     "home": "Home",
-    "settings": "🔧 Settings",
+    "settings": "Settings",
     "darkMode": "🌗 Dark Mode",
     "mockGuide": "💿 Mock Guide",
     "language": "📚 Language",
@@ -11,20 +11,20 @@
     "persistPiniaState": "🍍 Persistent Pinia state",
     "unocssExample": "🎨 Unocss example",
     "keepAlive": "🧡 KeepAlive Demo",
-    "transaction": "➕ Add Transaction",
+    "transaction": "Add Transaction",
     "login": "🔒 Login",
     "basicSettings": "Basic Settings",
     "listComponents": "Expand the functionality by visiting:",
     "forgot-password": "Forgot Password",
-    "categories": "🫙 View Categories",
+    "categories": "View Categories",
     "add-category": "➕🫙 Add Category",
     "user": "🔧 User",
     "profile": "👤 User Profile",
-    "monthlyTransactions": "📗 Transactions List",
-    "recurringExpenses": "🔁 Recurring Expenses",
+    "monthlyTransactions": "Transactions List",
+    "recurringExpenses": "Recurring Expenses",
     "editRecurringExpense": "Edit Recurring Expense",
-    "more": "🕹️ More",
-    "financialCharts": "📊 Financial Charts"
+    "more": "More",
+    "financialCharts": "Financial Charts"
   },
   "morePage": {
     "groupTransactionsTitle": "Transactions & Planning",
