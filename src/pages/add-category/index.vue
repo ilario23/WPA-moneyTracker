@@ -173,7 +173,6 @@ import type {Category} from '@/types/category';
 import {useUserStore} from '@/stores';
 import {API} from '@/api';
 import {useI18n} from 'vue-i18n';
-import {availableIconsType2 as availableIcons} from '@/utils/icons';
 
 const {t} = useI18n();
 const userStore = useUserStore();
@@ -315,6 +314,112 @@ const checkForActiveChildren = async () => {
   }
   return true;
 };
+
+const availableIcons = [
+  // 📆 Calendario / Tag / Checklist
+  'i-carbon:calendar',
+  'i-carbon:tag',
+  'i-carbon:checkbox-checked',
+
+  // 💵 Finanze / Denaro / Entrate / Uscite
+  'i-carbon:finance',
+  'i-carbon:money',
+  'i-carbon:increase-level',
+  'i-carbon:receipt',
+  'i-carbon:wallet',
+
+  // 🏠 Casa / Costruzioni / Energia / Ambiente
+  'i-carbon:home',
+  'i-carbon:building',
+  'i-carbon:plug',
+  'i-carbon:lightning',
+  'i-carbon:humidity',
+
+  // 🎁 Regali / Preferiti / Sorrisi
+  'i-carbon:gift',
+  'i-carbon:favorite',
+
+  // 🧾 Documenti / Studio / Licenze
+  'i-carbon:certificate',
+  'i-carbon:notebook',
+  'i-carbon:license-draft',
+  'i-carbon:education',
+  'i-carbon:pen',
+
+  // 🏥 Salute / Farmaci / Cura personale
+  'i-carbon:hospital',
+  'i-carbon:medication',
+  'i-carbon:pills',
+  'i-carbon:stethoscope',
+  'i-carbon:cognitive',
+  'i-carbon:FingerprintRecognition',
+
+  // 🍔 Cibo / Bevande / Ristorazione
+  'i-carbon:restaurant',
+  'i-carbon:cafe',
+  'i-carbon:shopping-cart',
+  'i-carbon:ShoppingCartPlus',
+  'i-carbon:shopping-bag',
+  'i-carbon:fish',
+  'i-carbon:corn',
+  'i-carbon:NoodleBowl',
+  'i-carbon:bar',
+
+  // 🚗 Trasporti / Veicoli / Mobilità
+  'i-carbon:car',
+  'i-carbon:car-front',
+  'i-carbon:scooter',
+  'i-carbon:bicycle',
+  'i-carbon:bus',
+  'i-carbon:train',
+  'i-carbon:van',
+  'i-carbon:charging-station',
+  'i-carbon:gas-station',
+  'i-carbon:road',
+  'i-carbon:plane',
+  'i-carbon:plane-private',
+  'i-carbon:tank',
+
+  // 🌍 Natura / Viaggi / Luoghi
+  'i-carbon:mountain',
+  'i-carbon:tree',
+  'i-carbon:map',
+  'i-carbon:location',
+  'i-carbon:palm-tree',
+  'i-carbon:hotel',
+  'i-carbon:monster', // forse usata per avventure?
+
+  // 🎮 Divertimento / Intrattenimento / Musica / Giochi
+  'i-carbon:music',
+  'i-carbon:game-console',
+  'i-carbon:apps',
+  'i-carbon:tool-kit',
+
+  // 🧠 Tecnologia / Informatica / Utente
+  'i-carbon:laptop',
+  'i-carbon:mobile',
+  'i-carbon:tablet',
+  'i-carbon:WatsonxData',
+  'i-carbon:user',
+  'i-carbon:settings',
+
+  // 🏆 Sport / Attività fisica
+  'i-carbon:basketball',
+  'i-carbon:soccer',
+  'i-carbon:tennis',
+  'i-carbon:swim',
+  'i-carbon:trophy',
+
+  // ⏰ Tempo / Allarmi / Sicurezza
+  'i-carbon:alarm',
+  'i-carbon:password',
+
+  // 📁 Altro / Varie
+  'i-carbon:folder',
+  'i-carbon:bee',
+  'i-carbon:rocket',
+  'i-carbon:Diagram',
+];
 </script>
 
 <route lang="json5">
