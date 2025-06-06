@@ -3,7 +3,7 @@ import type {ECharts} from 'echarts';
 import * as echarts from 'echarts';
 import {debounce} from 'lodash-es';
 import {addListener, removeListener} from 'resize-detector';
-import dark from './dark';
+import dark from './dark_updated.json';
 
 const props = defineProps({
   option: Object,
