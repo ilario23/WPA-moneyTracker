@@ -10,21 +10,51 @@ export function generateCalendarHeatmapOptions(
   selectedMonth: number
 ): EChartsOption {
   // Group transactions by date and calculate daily totals
-  const dailyTotals = transactions.reduce((acc: [string, number][], trans) => {
-    const date = new Date(trans.timestamp);
-    const dateStr = date.toISOString().split('T')[0];
-    const category = categories.find((c) => c.id === trans.categoryId);
+  const getAllDaysInRange = (
+    transactions: Transaction[],
+    selectedMonth: number
+  ): [string, number][] => {
+    if (transactions.length === 0) return [];
 
-    if (category?.type === 1) {
-      const existingIndex = acc.findIndex(([d]) => d === dateStr);
-      if (existingIndex >= 0) {
-        acc[existingIndex][1] += Number(trans.amount);
-      } else {
-        acc.push([dateStr, Number(trans.amount)]);
-      }
+    const year = new Date(transactions[0].timestamp).getFullYear();
+    let startDate: Date, endDate: Date;
+
+    if (selectedMonth === -1) {
+      startDate = new Date(year, 0, 1);
+      endDate = new Date(year, 11, 31);
+    } else {
+      startDate = new Date(year, selectedMonth, 1);
+      endDate = new Date(year, selectedMonth + 1, 0);
     }
-    return acc;
-  }, []);
+
+    const days: [string, number][] = [];
+    const currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      days.push([currentDate.toISOString().split('T')[0], 0]);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return days;
+  };
+
+  // Initialize all days with zero and then update with actual transactions
+  const dailyTotals: [string, number][] = getAllDaysInRange(
+    transactions,
+    selectedMonth
+  ).map(([date]) => {
+    const dayTransactions = transactions.filter((trans) => {
+      const transDate = new Date(trans.timestamp).toISOString().split('T')[0];
+      const category = categories.find((c) => c.id === trans.categoryId);
+      return transDate === date && category?.type === 1;
+    });
+
+    const total = dayTransactions.reduce(
+      (sum, trans) => sum + Number(trans.amount),
+      0
+    );
+    return [date, total];
+  });
 
   // Get max value excluding top 10% expenses
   const getMaxExcludingTopExpenses = (totals: [string, number][]): number => {
