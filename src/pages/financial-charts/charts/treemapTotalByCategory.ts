@@ -80,8 +80,7 @@ export function generateTreemapTotalByCategoryOptions(
         'Treemap per Categoria'
       ),
       left: 'center',
-      top: '20',
-      padding: [0, 0, 20, 0],
+      top: '15',
     },
     tooltip: {
       formatter: (params: any) => {
@@ -103,6 +102,8 @@ export function generateTreemapTotalByCategoryOptions(
         data: seriesData,
         left: '0',
         right: '0',
+        bottom: '25',
+        itemStyle: isDark.value ? {borderColor: '#3349'} : {},
         label: {
           show: true,
           formatter: (params: any) => {
