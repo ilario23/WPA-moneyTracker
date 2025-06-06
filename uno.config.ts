@@ -13,7 +13,8 @@ import presetRemToPx from '@unocss/preset-rem-to-px';
 export default defineConfig({
   safelist: [
     // let's preserv all the classes from icons i-carbon*** using regex
-    '/^i-carbon-/',
+    'i-carbon:shopping-cart',
+    'i-carbon:ShoppingCart',
   ],
   presets: [
     presetUno,
