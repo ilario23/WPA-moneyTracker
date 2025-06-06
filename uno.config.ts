@@ -11,6 +11,10 @@ import presetRemToPx from '@unocss/preset-rem-to-px';
 // For those of you who are new to unocss, you can take advantage of this tool： https://to-unocss.netlify.app
 
 export default defineConfig({
+  safelist: [
+    // let's preserv all the classes from icons i-carbon*** using regex
+    '/^i-carbon-/',
+  ],
   presets: [
     presetUno,
     presetAttributify,
