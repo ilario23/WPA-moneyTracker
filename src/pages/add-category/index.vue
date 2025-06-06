@@ -51,7 +51,7 @@
           </van-popup>
         </div>
 
-        <div class="mt-16 overflow-hidden rounded-3xl">
+        <div class="mt-2">
           <van-field
             v-model="newCategory.color"
             name="color"
@@ -62,7 +62,11 @@
               '--van-field-label-color':
                 newCategory.color === '' ? '#B0B0B0' : 'inherit',
             }"
-          />
+          >
+            <template #input>
+              <input type="color" v-model="newCategory.color" />
+            </template>
+          </van-field>
         </div>
 
         <div class="mt-16 overflow-hidden rounded-3xl">
