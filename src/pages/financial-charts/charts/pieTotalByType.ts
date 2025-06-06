@@ -104,12 +104,6 @@ export function generatePieTotalByTypeOptions(
           minMargin: 5,
           edgeDistance: 10,
           lineHeight: 15,
-          rich: {
-            time: {
-              fontSize: 10,
-              color: '#999',
-            },
-          },
         },
         labelLine: {
           length: 15,
@@ -121,7 +115,6 @@ export function generatePieTotalByTypeOptions(
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
           },
         },
       },
