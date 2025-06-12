@@ -32,7 +32,7 @@ const {t} = useI18n();
 
     <VanCellGroup inset :title="t('morePage.groupAnalyticsTitle')" class="mb-4">
       <VanCell
-        :title="t('menus.financialCharts', 'Financial Charts')"
+        :title="t('menus.financialCharts')"
         to="/financial-charts"
         is-link
       >
@@ -42,15 +42,19 @@ const {t} = useI18n();
       </VanCell>
     </VanCellGroup>
 
-    <!-- Group 2: Data Management -->
     <VanCellGroup
       inset
-      :title="t('morePage.groupDataManagementTitle')"
+      :title="t('morePage.groupCategoryManagementTitle')"
       class="mb-4"
     >
       <VanCell :title="t('menus.categories')" to="/categories" is-link>
         <template #icon>
           <div class="i-carbon:DataClass mt-4 mr-5"></div>
+        </template>
+      </VanCell>
+      <VanCell :title="t('menus.categoryTree')" to="/category-tree" is-link>
+        <template #icon>
+          <div class="i-carbon:TreeView mt-4 mr-5"></div>
         </template>
       </VanCell>
     </VanCellGroup>

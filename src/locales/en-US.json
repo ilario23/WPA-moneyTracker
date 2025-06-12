@@ -17,6 +17,7 @@
     "listComponents": "Expand the functionality by visiting:",
     "forgot-password": "Forgot Password",
     "categories": "View Categories",
+    "categoryTree": "Categories Graph",
     "add-category": "➕🫙 Add Category",
     "user": "🔧 User",
     "profile": "👤 User Profile",
@@ -28,7 +29,7 @@
   },
   "morePage": {
     "groupTransactionsTitle": "Transactions & Planning",
-    "groupDataManagementTitle": "Data Management",
+    "groupCategoryManagementTitle": "Data Management",
     "groupAccountTitle": "Account",
     "groupAnalyticsTitle": "Analytics & Reports"
   },
@@ -280,6 +281,8 @@
     "refreshSuccess": "Categories updated",
     "fetchError": "Error fetching new categories",
     "noUser": "Error reading user name",
-    "cantSaveInactiveParent": "It is not possible to proceed as this category is linked to another one"
+    "cantSaveInactiveParent": "It is not possible to proceed as this category is linked to another one",
+    "showOnlyActive": "Show only active categories",
+    "categoriesTree": "Category's tree"
   }
 }

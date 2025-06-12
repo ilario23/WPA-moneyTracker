@@ -16,6 +16,7 @@
     "basicSettings": "Impostazioni di base",
     "forgot-password": "Password Dimenticata",
     "categories": "Elenco Categorie",
+    "categoryTree": "Grafico Categorie",
     "add-category": "➕🫙 Aggiungi Categoria",
     "listComponents": "Espandi la funzionalità visitando:",
     "user": "🔧 Utente",
@@ -28,7 +29,7 @@
   },
   "morePage": {
     "groupTransactionsTitle": "Transazioni e Pianificazione",
-    "groupDataManagementTitle": "Gestione Dati",
+    "groupCategoryManagementTitle": "Gestione Categorie",
     "groupAccountTitle": "Account",
     "groupAnalyticsTitle": "Analisi e Report"
   },
@@ -280,6 +281,8 @@
     "refreshSuccess": "Categorie aggiornate",
     "fetchError": "Errore lettura nuove categorie",
     "noUser": "Errore lettura utente",
-    "cantSaveInactiveParent": "Non è possibile procedere in quanto questa categoria risulta essere vincolata ad un'altra"
+    "cantSaveInactiveParent": "Non è possibile procedere in quanto questa categoria risulta essere vincolata ad un'altra",
+    "showOnlyActive": "Mostra solo le categorie attive",
+    "categoriesTree": "Albero delle categorie"
   }
 }

@@ -22,6 +22,7 @@ declare module 'vue-router/auto-routes' {
     'add-category': RouteRecordInfo<'add-category', '/add-category', Record<never, never>, Record<never, never>>,
     'transaction': RouteRecordInfo<'transaction', '/add-transaction', Record<never, never>, Record<never, never>>,
     'categories': RouteRecordInfo<'categories', '/categories', Record<never, never>, Record<never, never>>,
+    'category-tree': RouteRecordInfo<'category-tree', '/category-tree', Record<never, never>, Record<never, never>>,
     'counter': RouteRecordInfo<'counter', '/counter', Record<never, never>, Record<never, never>>,
     'financial-charts': RouteRecordInfo<'financial-charts', '/financial-charts', Record<never, never>, Record<never, never>>,
     'KeepAlive': RouteRecordInfo<'KeepAlive', '/keepalive', Record<never, never>, Record<never, never>>,
