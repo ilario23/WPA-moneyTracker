@@ -7,7 +7,6 @@ import type {Transaction} from '@/types/transaction';
 
 const TOKENS_COLLECTION = 'tokens';
 const COLLECTION = 'transactions';
-const CACHE_TIMEOUT_MS = 10000; // 10 seconds timeout
 
 export class SyncService {
   private cache;
@@ -115,54 +114,23 @@ export class SyncService {
       return await this.syncFromFirebase(year);
     }
 
-    try {
-      // 2. Try to check remote token with timeout
-      const tokenPromise = getDoc(
-        doc(DB, 'users', this.userId, TOKENS_COLLECTION, `transactions_${year}`)
-      );
+    // 2. If local token exists, check remote token
+    const tokenDoc = await getDoc(
+      doc(DB, 'users', this.userId, TOKENS_COLLECTION, `transactions_${year}`)
+    );
+    const remoteToken = tokenDoc.data()?.token;
 
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error('timeout'));
-        }, CACHE_TIMEOUT_MS);
-      });
-
-      // Race between Firebase query and timeout
-      const tokenDoc = await Promise.race([tokenPromise, timeoutPromise]).catch(
-        (error) => {
-          if (error.message === 'timeout') {
-            console.log('[sync] Token check timed out, using cache');
-            return null;
-          }
-          throw error;
-        }
-      );
-
-      // If we got a timeout or tokens match, use cache
-      if (
-        !tokenDoc ||
-        (typeof tokenDoc === 'object' &&
-          tokenDoc !== null &&
-          'data' in tokenDoc &&
-          (tokenDoc as {data: () => any}).data()?.token === localToken)
-      ) {
-        console.log('[sync] Using cached transactions for', year);
-        return store.transactions[year] || [];
-      }
-
-      // If tokens differ, sync from Firebase
-      console.log(
-        `[sync] Token mismatch: reading transactions for ${year} from Firebase`
-      );
-      return await this.syncFromFirebase(year);
-    } catch (error) {
-      if (error.message !== 'timeout') {
-        console.error('[sync] Error checking remote token:', error);
-      }
-      // On any error (including network), fallback to cache
-      console.log('[sync] Error occurred, using cached data');
+    // 3. If tokens match, use cache
+    if (remoteToken === localToken) {
+      console.log('[sync] Using cached transactions for', year);
       return store.transactions[year] || [];
     }
+
+    // 4. If tokens differ, sync from Firebase
+    console.log(
+      `[sync] Token mismatch: reading transactions for ${year} from Firebase`
+    );
+    return await this.syncFromFirebase(year);
   }
 
   // Helper method for syncing from Firebase
@@ -338,7 +306,6 @@ export class SyncService {
     transaction: Transaction
   ): Promise<Transaction | null> {
     const year = new Date(transaction.timestamp).getFullYear().toString();
-    const newToken = new Date().toISOString(); // Define token once
 
     try {
       console.log('Saving transaction to Firestore:', transaction);
@@ -355,8 +322,14 @@ export class SyncService {
         transaction,
         {merge: true}
       );
+      console.log('Transaction saved to Firestore:', transaction);
+    } catch (e) {
+      console.error('Error writing to Firestore', e);
+    }
 
+    try {
       // Update token
+      const newToken = new Date().toISOString();
       await setDoc(
         doc(
           DB,
@@ -367,10 +340,9 @@ export class SyncService {
         ),
         {token: newToken}
       );
-      console.log('Transaction and token updated in Firebase');
+      console.log('Transaction saved to Firebase');
     } catch (e) {
       console.error('Error writing to Firestore', e);
-      throw e;
     }
 
     // Get updated transactions and update cache
@@ -378,6 +350,8 @@ export class SyncService {
       this.userId,
       year
     );
+
+    const newToken = new Date().toISOString(); // Define newToken
     await this.cache.updateTransactions(transactions, year, newToken);
 
     return transaction;
