@@ -28,6 +28,15 @@ const {t} = useI18n();
           <div class="i-carbon:Renew mt-4 mr-5"></div>
         </template>
       </VanCell>
+      <VanCell
+        :title="t('menus.reminders')"
+        to="/reminders"
+        is-link
+      >
+        <template #icon>
+          <div class="i-carbon:Notification mt-4 mr-5"></div>
+        </template>
+      </VanCell>
     </VanCellGroup>
 
     <VanCellGroup inset :title="t('morePage.groupAnalyticsTitle')" class="mb-4">

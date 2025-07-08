@@ -57,6 +57,12 @@
       :title="t('settings.clearCategoriesCache')"
       @click="clearCategoriesCache"
     />
+    <VanCell
+      center
+      is-link
+      :title="t('settings.clearRemindersCache')"
+      @click="clearRemindersCache"
+    />
   </VanCellGroup>
 
   <van-popup v-model:show="showLanguagePicker" position="bottom">
@@ -73,13 +79,16 @@
 import type {PickerColumn} from 'vant';
 import {version} from '~root/package.json';
 import useAppStore from '@/stores/modules/app';
+import {useUserStore} from '@/stores/modules/user';
 import {languageColumns, locale} from '@/utils/i18n';
 import {createCacheService} from '@/services/cache';
 import {showNotify, showConfirmDialog} from 'vant';
 import {RecurringSyncService} from '@/services/recurringSync';
+import {ReminderSyncService} from '@/services/reminderSync';
 
 const {t} = useI18n();
 const appStore = useAppStore();
+const userStore = useUserStore();
 const environmentMode = computed(() => import.meta.env.MODE);
 const checked = ref<boolean>(isDark.value);
 const cacheService = createCacheService();
@@ -196,6 +205,28 @@ async function clearCategoriesCache() {
     showNotify({
       type: 'danger',
       message: t('settings.categoriesCacheClearError'),
+    });
+  }
+}
+
+async function clearRemindersCache() {
+  try {
+    await showConfirmDialog({
+      title: t('settings.clearRemindersCache'),
+      message: t('settings.clearRemindersCacheConfirm'),
+    });
+
+    ReminderSyncService.clearCache(userStore.userInfo.uid);
+    showNotify({
+      type: 'success',
+      message: t('settings.remindersCacheClearedSuccess'),
+    });
+  } catch (error) {
+    if (error?.toString().includes('cancel')) return;
+    console.error('Error clearing reminders cache:', error);
+    showNotify({
+      type: 'danger',
+      message: t('settings.remindersCacheClearError'),
     });
   }
 }

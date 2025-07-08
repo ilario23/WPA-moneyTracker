@@ -3,6 +3,8 @@ import {storeToRefs} from 'pinia';
 import useAppStore from '@/stores/modules/app';
 import useRouteCache from '@/stores/modules/routeCache';
 import useAutoThemeSwitcher from '@/hooks/useAutoThemeSwitcher';
+import {useUserStore} from '@/stores/modules/user';
+import {ReminderNotificationService} from '@/services/reminderNotifications';
 
 useHead({
   title: 'Vue3 Vant Mobile',
@@ -26,6 +28,7 @@ useHead({
 });
 
 const appStore = useAppStore();
+const userStore = useUserStore();
 const {mode} = storeToRefs(appStore);
 
 const {initializeThemeSwitcher} = useAutoThemeSwitcher(appStore);
@@ -36,6 +39,16 @@ const keepAliveRouteNames = computed(() => {
 
 onMounted(() => {
   initializeThemeSwitcher();
+  
+  // Start reminder notification service if user is logged in
+  if (userStore.userInfo.uid) {
+    ReminderNotificationService.startNotificationService(userStore.userInfo.uid);
+  }
+});
+
+onUnmounted(() => {
+  // Stop reminder notification service when app is unmounted
+  ReminderNotificationService.stopNotificationService();
 });
 </script>
 

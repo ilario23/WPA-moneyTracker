@@ -25,7 +25,8 @@
     "recurringExpenses": "Recurring Expenses",
     "editRecurringExpense": "Edit Recurring Expense",
     "more": "More",
-    "financialCharts": "Financial Charts"
+    "financialCharts": "Financial Charts",
+    "reminders": "Expense Reminders"
   },
   "morePage": {
     "groupTransactionsTitle": "Transactions & Planning",
@@ -157,6 +158,10 @@
     "clearCategoriesCacheConfirm": "Are you sure you want to clear the categories cache?",
     "categoriesCacheClearedSuccess": "Categories cache cleared successfully",
     "categoriesCacheClearError": "Error while clearing categories cache",
+    "clearRemindersCache": "Clear reminders cache",
+    "clearRemindersCacheConfirm": "Are you sure you want to clear the reminders cache?",
+    "remindersCacheClearedSuccess": "Reminders cache cleared successfully",
+    "remindersCacheClearError": "Error while clearing reminders cache",
     "clearRecurringExpensesCacheConfirm": "Are you sure you want to clear the recurring expenses cache?",
     "recurringExpensesCacheClearedSuccess": "Recurring expenses cache cleared successfully",
     "recurringExpensesCacheClearError": "Error clearing recurring expenses cache",
@@ -284,5 +289,42 @@
     "cantSaveInactiveParent": "It is not possible to proceed as this category is linked to another one",
     "showOnlyActive": "Show only active categories",
     "categoriesTree": "Category's tree"
+  },
+  "reminder": {
+    "title": "Expense Reminders",
+    "add": "Add Reminder",
+    "edit": "Edit Reminder",
+    "delete": "Delete Reminder",
+    "name": "Reminder Name",
+    "dueTime": "Due Time",
+    "reminderSchedule": "Reminder Schedule",
+    "pleaseEnterName": "Please enter the reminder name",
+    "pleaseEnterDueTime": "Please enter the due time",
+    "pleaseSelectSchedule": "Please select at least one reminder schedule",
+    "success": "Reminder added successfully",
+    "error": "Failed to add reminder",
+    "updateSuccess": "Reminder updated successfully",
+    "updateError": "Failed to update reminder",
+    "deleteSuccess": "Reminder deleted successfully",
+    "deleteError": "Failed to delete reminder",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmMessage": "Are you sure you want to delete this reminder?",
+    "noReminders": "No reminders found",
+    "upcomingReminders": "Upcoming Reminders",
+    "remindersForDate": "Reminders for {date}",
+    "noRemindersForDate": "No reminders for this date",
+    "refreshSuccess": "Reminders refreshed successfully",
+    "scheduleOptions": {
+      "1_DAY": "1 day before",
+      "2_DAYS": "2 days before",
+      "1_WEEK": "1 week before",
+      "1_MONTH": "1 month before"
+    },
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading reminders...",
+    "refresh": "Refresh"
   }
 }

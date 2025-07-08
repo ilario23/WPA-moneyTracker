@@ -25,7 +25,8 @@
     "recurringExpenses": "Spese Ricorrenti",
     "editRecurringExpense": "Modifica Spesa Ricorrente",
     "more": "Altro",
-    "financialCharts": "Grafici Finanziari"
+    "financialCharts": "Grafici Finanziari",
+    "reminders": "Promemoria Spese"
   },
   "morePage": {
     "groupTransactionsTitle": "Transazioni e Pianificazione",
@@ -160,6 +161,10 @@
     "clearCategoriesCacheConfirm": "Sei sicuro di voler pulire la cache delle categorie?",
     "categoriesCacheClearedSuccess": "Cache categorie pulita con successo",
     "categoriesCacheClearError": "Errore durante la pulizia della cache delle categorie",
+    "clearRemindersCache": "Pulisci cache promemoria",
+    "clearRemindersCacheConfirm": "Sei sicuro di voler pulire la cache dei promemoria?",
+    "remindersCacheClearedSuccess": "Cache promemoria pulita con successo",
+    "remindersCacheClearError": "Errore durante la pulizia della cache dei promemoria",
     "environmentMode": "Ambiente",
     "autoUpdateMessage": "Aggiornamento automatico: l'app verrà aggiornata alla nuova versione."
   },
@@ -284,5 +289,42 @@
     "cantSaveInactiveParent": "Non è possibile procedere in quanto questa categoria risulta essere vincolata ad un'altra",
     "showOnlyActive": "Mostra solo le categorie attive",
     "categoriesTree": "Albero delle categorie"
+  },
+  "reminder": {
+    "title": "Promemoria Spese",
+    "add": "Aggiungi Promemoria",
+    "edit": "Modifica Promemoria",
+    "delete": "Elimina Promemoria",
+    "name": "Nome Promemoria",
+    "dueTime": "Data Scadenza",
+    "reminderSchedule": "Programmazione Promemoria",
+    "pleaseEnterName": "Per favore inserisci il nome del promemoria",
+    "pleaseEnterDueTime": "Per favore inserisci la data di scadenza",
+    "pleaseSelectSchedule": "Per favore seleziona almeno una programmazione promemoria",
+    "success": "Promemoria aggiunto con successo",
+    "error": "Errore nell'aggiunta del promemoria",
+    "updateSuccess": "Promemoria aggiornato con successo",
+    "updateError": "Errore nell'aggiornamento del promemoria",
+    "deleteSuccess": "Promemoria eliminato con successo",
+    "deleteError": "Errore nell'eliminazione del promemoria",
+    "deleteConfirmTitle": "Conferma Eliminazione",
+    "deleteConfirmMessage": "Sei sicuro di voler eliminare questo promemoria?",
+    "noReminders": "Nessun promemoria trovato",
+    "upcomingReminders": "Promemoria Imminenti",
+    "remindersForDate": "Promemoria per il {date}",
+    "noRemindersForDate": "Nessun promemoria per questa data",
+    "refreshSuccess": "Promemoria aggiornati con successo",
+    "scheduleOptions": {
+      "1_DAY": "1 giorno prima",
+      "2_DAYS": "2 giorni prima",
+      "1_WEEK": "1 settimana prima",
+      "1_MONTH": "1 mese prima"
+    },
+    "selectDate": "Seleziona Data",
+    "selectTime": "Seleziona Ora",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "loading": "Caricamento promemoria...",
+    "refresh": "Aggiorna"
   }
 }
