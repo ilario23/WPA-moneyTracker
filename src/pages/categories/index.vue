@@ -3,8 +3,9 @@
     v-model="loadingPullRefresh"
     @refresh="onPullRefresh"
     :success-text="$t('category.refreshSuccess')"
+    :head-height="200"
   >
-    <div style="align-items: center; min-height: 70vh">
+    <div style="align-items: center; min-height: 70vh; position: relative">
       <van-divider style="margin: auto">{{
         $t('category.rootCategories')
       }}</van-divider>
@@ -85,9 +86,19 @@
       <transition name="fade-delayed" mode="out-in">
         <div
           v-if="selectedCategory.children"
-          style="position: absolute; top: 20vh; left: 0; width: 100%"
+          style="
+            position: absolute;
+            top: 20vh;
+            left: 0;
+            right: 0;
+            bottom: 1px;
+            overflow-y: auto;
+            padding: 8px 12px;
+          "
         >
-          <van-divider dashed>{{ $t('category.children') }}</van-divider>
+          <van-divider dashed style="position: sticky; top: 0; z-index: 1">
+            {{ $t('category.children') }}
+          </van-divider>
           <van-cell-group inset>
             <van-cell
               v-for="child in selectedCategory.children"
@@ -151,6 +162,7 @@ import type {Category} from '@/types/category';
 import {API} from '@/api';
 import {useRouter} from 'vue-router';
 import {BASE_CATEGORIES_ID} from '@/utils/category';
+import {head} from 'lodash-es';
 
 const {t: $t} = useI18n();
 
@@ -396,7 +408,7 @@ const handleEditConfirm = () => {
     });
     return;
   }
-  // Reindirizza alla pagina add-category con i dati della categoria selezionata
+  // Reindirizza alla pagina add-category with i dati della categoria selezionata
   router.push({
     name: 'add-category',
     query: {
@@ -430,9 +442,7 @@ const handleCancel = () => {
 /* Transizione slide-horizontal esistente */
 .slide-horizontal-enter-active,
 .slide-horizontal-leave-active {
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease;
   position: absolute; /* Permette la sovrapposizione */
   width: 100%; /* Assicura che gli elementi occupino lo stesso spazio */
 }
