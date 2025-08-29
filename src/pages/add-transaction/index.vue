@@ -190,7 +190,7 @@
           v-model:show="showCascader"
           round
           position="bottom"
-          :style="{height: '60%'}"
+          :style="{height: '70%'}"
           safe-area-inset-bottom
         >
           <van-cascader
@@ -530,8 +530,8 @@ const datePickerLabel = computed(() =>
   isEditModeRecurring.value
     ? t('transaction.nextOccurrenceDateLabel') // New i18n key
     : isRecurring.value
-      ? t('transaction.startDate')
-      : t('transaction.selectDate')
+    ? t('transaction.startDate')
+    : t('transaction.selectDate')
 );
 
 const pastOccurrencesCount = computed(() => {
@@ -599,16 +599,37 @@ function updateCalculatedNextOccurrenceDisplay() {
         );
       }
       const pastCount = pastOccurrencesCount.value;
-      calculatedNextOccurrenceDisplay.value = `${t('transaction.pastOccurrencesWarning', {count: pastCount})}.\n${t('transaction.nextScheduledOccurrenceLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
+      calculatedNextOccurrenceDisplay.value = `${t(
+        'transaction.pastOccurrencesWarning',
+        {count: pastCount}
+      )}.\n${t(
+        'transaction.nextScheduledOccurrenceLabel'
+      )}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}`;
     } else {
       // Data di inizio è oggi o nel futuro: questa è la prima occorrenza
-      calculatedNextOccurrenceDisplay.value = `${t('transaction.firstOccurrenceOnLabel')}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}`;
+      calculatedNextOccurrenceDisplay.value = `${t(
+        'transaction.firstOccurrenceOnLabel'
+      )}: ${effectiveNextOccurrence.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}`;
       // Mostra opzionalmente quella successiva
       const subsequentOccurrence = calculateNextOccurrence(
         effectiveNextOccurrence,
         frequency.value
       );
-      calculatedNextOccurrenceDisplay.value += ` (${t('transaction.thenLabel')}: ${subsequentOccurrence.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})})`;
+      calculatedNextOccurrenceDisplay.value += ` (${t(
+        'transaction.thenLabel'
+      )}: ${subsequentOccurrence.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })})`;
     }
   } else if (isEditModeRecurring.value) {
     // MODIFICA SPESA RICORRENTE ESISTENTE
@@ -619,7 +640,13 @@ function updateCalculatedNextOccurrenceDisplay() {
         frequency.value
       );
       // Qui il testo si riferisce alla prossima occorrenza *dopo quella selezionata per la modifica*
-      calculatedNextOccurrenceDisplay.value = `(${t('transaction.nextAfterThisLabel')}: ${futureNextDate.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})})`;
+      calculatedNextOccurrenceDisplay.value = `(${t(
+        'transaction.nextAfterThisLabel'
+      )}: ${futureNextDate.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })})`;
     } else {
       calculatedNextOccurrenceDisplay.value = '';
     }
