@@ -162,7 +162,6 @@ import type {Category} from '@/types/category';
 import {API} from '@/api';
 import {useRouter} from 'vue-router';
 import {BASE_CATEGORIES_ID} from '@/utils/category';
-import {head} from 'lodash-es';
 
 const {t: $t} = useI18n();
 
