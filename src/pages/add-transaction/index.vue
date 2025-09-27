@@ -164,17 +164,74 @@
       validate-trigger="onSubmit"
       @submit="addTransaction"
     >
-      <div class="overflow-hidden rounded-3xl">
-        <van-field
-          v-model="amountInput"
-          :rules="rules.amount"
-          left-icon="shopping-cart-o"
-          name="amount"
-          type="text"
-          inputmode="decimal"
-          :placeholder="t('transaction.amount')"
-          @blur="normalizeAmount"
-        />
+      <div class="rounded-3xl calculator-wrapper" ref="amountWrapper">
+        <div class="amount-field">
+          <van-field
+            v-model="amountInput"
+            :rules="rules.amount"
+            class="rounded-3xl"
+            left-icon="shopping-cart-o"
+            name="amount"
+            type="text"
+            inputmode="decimal"
+            :placeholder="t('transaction.amount')"
+            @blur="onAmountBlur"
+            @focus="onAmountFocus"
+            ref="amountField"
+            @input="onAmountInput"
+            :label-align="showCalculator && calcTrace ? 'top' : 'left'"
+          >
+            <template #label v-if="showCalculator && calcTrace">
+              <div class="calc-trace">{{ calcTrace }}</div>
+            </template>
+          </van-field>
+        </div>
+        <div
+          class="calculator-spacer"
+          :style="{height: showCalculator ? '64px' : '0'}"
+        >
+          <transition name="fade">
+            <div
+              v-if="showCalculator"
+              class="calculator-box"
+              @mousedown.prevent
+            >
+              <div class="calculator-keys">
+                <van-button
+                  size="large"
+                  style="flex: 1; font-size: 20px; height: 48px"
+                  @click="onCalcOp('+')"
+                  >+</van-button
+                >
+                <van-button
+                  size="large"
+                  style="flex: 1; font-size: 20px; height: 48px"
+                  @click="onCalcOp('-')"
+                  >-</van-button
+                >
+                <van-button
+                  size="large"
+                  style="flex: 1; font-size: 20px; height: 48px"
+                  @click="onCalcOp('*')"
+                  >*</van-button
+                >
+                <van-button
+                  size="large"
+                  style="flex: 1; font-size: 20px; height: 48px"
+                  @click="onCalcOp('/')"
+                  >/</van-button
+                >
+                <van-button
+                  size="large"
+                  style="flex: 1; font-size: 20px; height: 48px"
+                  type="primary"
+                  @click="onCalcEqual"
+                  >=</van-button
+                >
+              </div>
+            </div>
+          </transition>
+        </div>
       </div>
 
       <div class="mt-16 overflow-hidden rounded-3xl">
@@ -326,7 +383,16 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, onBeforeMount, onMounted, computed, watch} from 'vue'; // Added computed and watch
+import {
+  ref,
+  reactive,
+  onBeforeMount,
+  onMounted,
+  computed,
+  watch,
+  nextTick,
+  onBeforeUnmount,
+} from 'vue'; // Added computed and watch
 import {showNotify} from 'vant';
 import {EMPTY_TRANSACTION} from '@/utils/transaction';
 import {useUserStore} from '@/stores/modules/user';
@@ -341,6 +407,7 @@ import type {
 } from '@/types/recurringExpense'; // Import FrequencyType and RecurringExpenseDefinition
 import {UserRecurringExpenses} from '@/api/database/modules/subcollections/user.recurringExpenses';
 import {RecurringSyncService} from '@/services/recurringSync';
+import type {FieldRule} from 'vant';
 
 interface Option {
   text: string;
@@ -684,8 +751,17 @@ watch(
   }
 );
 
-const rules = reactive({
-  amount: [{required: true, message: t('transaction.pleaseEnterAmount')}],
+const rules = reactive<{[key: string]: FieldRule[]}>({
+  amount: [
+    {required: true, message: t('transaction.pleaseEnterAmount')},
+    {
+      validator: (value: any) => {
+        const amount = parseFloat(value);
+        return amount >= 0;
+      },
+      message: t('transaction.amountCannotBeNegative'),
+    },
+  ],
   categoryId: [
     {required: true, message: t('transaction.pleaseEnterCategoryId')},
   ],
@@ -701,9 +777,9 @@ async function addTransaction() {
   if (isEditModeRecurring.value && recurringExpenseIdToEdit.value) {
     await updateRecurringDefinition();
   } else if (isRecurring.value) {
-    await saveDefinition(); // This is for creating new recurring definitions
+    await saveDefinition();
   } else {
-    await saveTransaction(); // For regular transactions (create/update)
+    await saveTransaction();
   }
 }
 
@@ -982,6 +1058,155 @@ const swipingTabs = (index: number) => {
     (category) => category.value === parentlessCategories.value[index]?.id
   );
 };
+
+// Calculator state
+const showCalculator = ref(false);
+const calcFirstValue = ref<number | null>(null);
+const calcOperator = ref<string | null>(null);
+const calcTrace = ref<string>('');
+const amountField = ref<any>(null);
+const amountWrapper = ref<HTMLElement | null>(null);
+
+function onAmountFocus() {
+  showCalculator.value = true;
+}
+function onAmountBlur() {
+  setTimeout(() => {
+    if (!isCalculatorButtonPressed.value) {
+      showCalculator.value = false;
+      calcTrace.value = '';
+      calcFirstValue.value = null;
+      calcOperator.value = null;
+      // Normalizza l'amount quando chiudiamo la calcolatrice senza usarla
+      normalizeAmount();
+    }
+    isCalculatorButtonPressed.value = false;
+  }, 100);
+}
+
+const isCalculatorButtonPressed = ref(false);
+
+function onCalcOp(op: string) {
+  isCalculatorButtonPressed.value = true;
+
+  // Se abbiamo già un'operazione in corso, aggiorniamo solo l'operatore
+  if (calcFirstValue.value !== null && calcOperator.value) {
+    calcOperator.value = op;
+    updateCalcTrace();
+    nextTick(() => {
+      amountField.value?.focus?.();
+    });
+    return;
+  }
+
+  // Altrimenti, iniziamo una nuova operazione
+  const val = parseFloat(amountInput.value.replace(',', '.'));
+  if (!isNaN(val)) {
+    calcFirstValue.value = val;
+    calcOperator.value = op;
+    amountInput.value = '';
+    updateCalcTrace();
+  }
+  nextTick(() => {
+    amountField.value?.focus?.();
+  });
+}
+
+function onAmountInput() {
+  // Se non stiamo usando la calcolatrice, normalizza l'input direttamente
+  if (!calcOperator.value) {
+    normalizeAmount();
+  }
+  // Altrimenti aggiorna solo il calcTrace per mostrare il calcolo in corso
+  else {
+    updateCalcTrace();
+  }
+}
+
+function updateCalcTrace() {
+  if (calcFirstValue.value !== null && calcOperator.value) {
+    const second = parseFloat(amountInput.value.replace(',', '.')) || 0;
+    let result = 0;
+    switch (calcOperator.value) {
+      case '+':
+        result = calcFirstValue.value + second;
+        break;
+      case '-':
+        result = calcFirstValue.value - second;
+        break;
+      case '*':
+        result = calcFirstValue.value * second;
+        break;
+      case '/':
+        result = second !== 0 ? calcFirstValue.value / second : 0;
+        break;
+    }
+    calcTrace.value =
+      calcFirstValue.value +
+      ' ' +
+      calcOperator.value +
+      ' ' +
+      (amountInput.value || '0') +
+      ' = ' +
+      (Number.isInteger(result) ? result : result.toFixed(2));
+  } else {
+    calcTrace.value = '';
+  }
+}
+
+function onCalcEqual() {
+  isCalculatorButtonPressed.value = true;
+  const first = calcFirstValue.value;
+  const op = calcOperator.value;
+  const second = parseFloat(amountInput.value.replace(',', '.'));
+  if (first !== null && op && !isNaN(second)) {
+    let result = 0;
+    switch (op) {
+      case '+':
+        result = first + second;
+        break;
+      case '-':
+        result = first - second;
+        break;
+      case '*':
+        result = first * second;
+        break;
+      case '/':
+        result = second !== 0 ? first / second : 0;
+        break;
+    }
+    amountInput.value = Number.isInteger(result)
+      ? result.toString()
+      : result.toFixed(2);
+    transactionData.amount = parseFloat(amountInput.value) || 0;
+    calcFirstValue.value = null;
+    calcOperator.value = null;
+    calcTrace.value = '';
+    showCalculator.value = false;
+  }
+  nextTick(() => {
+    amountField.value?.focus?.();
+  });
+}
+
+// Chiudi la calcolatrice cliccando fuori
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    document.addEventListener('mousedown', handleClickOutsideCalc);
+  }
+});
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') {
+    document.removeEventListener('mousedown', handleClickOutsideCalc);
+  }
+});
+function handleClickOutsideCalc(e: MouseEvent) {
+  // Usa il wrapper che contiene sia calcolatrice che campo
+  const wrapper = amountWrapper.value;
+  if (showCalculator.value && wrapper && !wrapper.contains(e.target as Node)) {
+    showCalculator.value = false;
+  }
+}
 </script>
 
 <route lang="json5">
@@ -997,5 +1222,66 @@ const swipingTabs = (index: number) => {
 <style scoped>
 .van-card-style {
   border-radius: 20px;
+}
+.fade-slide-up-enter-active,
+.fade-slide-up-leave-active {
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fade-slide-up-enter-from,
+.fade-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.calculator-wrapper {
+  position: relative;
+}
+
+.calculator-spacer {
+  transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.calculator-box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.calc-trace {
+  font-size: 14px;
+  color: var(--van-text-color-2);
+  text-align: right;
+  font-family: monospace;
+  padding: 4px 0;
+}
+
+.calculator-keys {
+  background-color: var(--van-background-2);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+}
+
+.calculator-keys .van-button {
+  flex: 1;
+  height: 48px;
 }
 </style>

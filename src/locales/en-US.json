@@ -236,7 +236,8 @@
     "notFound": "Error, transaction not found",
     "deleteSuccess": "Successfully deleted",
     "deleteError": "Error, could not delete it",
-    "deleteConfirmation": "You are going to delete this. Are you sure?"
+    "deleteConfirmation": "You are going to delete this. Are you sure?",
+    "amountCannotBeNegative": "The amount can't be negative"
   },
   "category": {
     "title": "Title",

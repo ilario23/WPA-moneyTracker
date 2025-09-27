@@ -236,7 +236,8 @@
     "notFound": "Errore, transazione non trovata",
     "deleteSuccess": "Cancellata correttamente",
     "deleteError": "Errore nelle cancellazione",
-    "deleteConfirmation": "L'elemento sta per essere eliminato. Sei sicuro di voler procedere?"
+    "deleteConfirmation": "L'elemento sta per essere eliminato. Sei sicuro di voler procedere?",
+    "amountCannotBeNegative": "La quantità non può essere negativa"
   },
   "category": {
     "title": "Titolo",
