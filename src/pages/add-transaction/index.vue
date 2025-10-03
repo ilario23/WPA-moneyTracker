@@ -1,109 +1,111 @@
 <template>
-  <div class="i-carbon:Wallet hidden" />
-  <div class="i-carbon:calendar hidden" />
-  <div class="i-carbon:tag hidden" />
-  <div class="i-carbon:checkbox-checked hidden" />
+  <div class="hidden">
+    <div class="i-carbon:Wallet hidden" />
+    <div class="i-carbon:calendar hidden" />
+    <div class="i-carbon:tag hidden" />
+    <div class="i-carbon:checkbox-checked hidden" />
 
-  <!-- 💵 Finanze / Denaro / Entrate / Uscite -->
-  <div class="i-carbon:finance hidden" />
-  <div class="i-carbon:money hidden" />
-  <div class="i-carbon:increase-level hidden" />
-  <div class="i-carbon:receipt hidden" />
-  <div class="i-carbon:wallet hidden" />
+    <!-- 💵 Finanze / Denaro / Entrate / Uscite -->
+    <div class="i-carbon:finance hidden" />
+    <div class="i-carbon:money hidden" />
+    <div class="i-carbon:increase-level hidden" />
+    <div class="i-carbon:receipt hidden" />
+    <div class="i-carbon:wallet hidden" />
 
-  <!-- 🏠 Casa / Costruzioni / Energia / Ambiente -->
-  <div class="i-carbon:home hidden" />
-  <div class="i-carbon:building hidden" />
-  <div class="i-carbon:plug hidden" />
-  <div class="i-carbon:lightning hidden" />
-  <div class="i-carbon:humidity hidden" />
+    <!-- 🏠 Casa / Costruzioni / Energia / Ambiente -->
+    <div class="i-carbon:home hidden" />
+    <div class="i-carbon:building hidden" />
+    <div class="i-carbon:plug hidden" />
+    <div class="i-carbon:lightning hidden" />
+    <div class="i-carbon:humidity hidden" />
 
-  <!-- 🎁 Regali / Preferiti / Sorrisi -->
-  <div class="i-carbon:gift hidden" />
-  <div class="i-carbon:favorite hidden" />
+    <!-- 🎁 Regali / Preferiti / Sorrisi -->
+    <div class="i-carbon:gift hidden" />
+    <div class="i-carbon:favorite hidden" />
 
-  <!-- 🧾 Documenti / Studio / Licenze -->
-  <div class="i-carbon:certificate hidden" />
-  <div class="i-carbon:notebook hidden" />
-  <div class="i-carbon:license-draft hidden" />
-  <div class="i-carbon:education hidden" />
-  <div class="i-carbon:pen hidden" />
+    <!-- 🧾 Documenti / Studio / Licenze -->
+    <div class="i-carbon:certificate hidden" />
+    <div class="i-carbon:notebook hidden" />
+    <div class="i-carbon:license-draft hidden" />
+    <div class="i-carbon:education hidden" />
+    <div class="i-carbon:pen hidden" />
 
-  <!-- 🏥 Salute / Farmaci / Cura personale -->
-  <div class="i-carbon:hospital hidden" />
-  <div class="i-carbon:medication hidden" />
-  <div class="i-carbon:pills hidden" />
-  <div class="i-carbon:stethoscope hidden" />
-  <div class="i-carbon:cognitive hidden" />
-  <div class="i-carbon:FingerprintRecognition hidden" />
+    <!-- 🏥 Salute / Farmaci / Cura personale -->
+    <div class="i-carbon:hospital hidden" />
+    <div class="i-carbon:medication hidden" />
+    <div class="i-carbon:pills hidden" />
+    <div class="i-carbon:stethoscope hidden" />
+    <div class="i-carbon:cognitive hidden" />
+    <div class="i-carbon:FingerprintRecognition hidden" />
 
-  <!-- 🍔 Cibo / Bevande / Ristorazione -->
-  <div class="i-carbon:restaurant hidden" />
-  <div class="i-carbon:cafe hidden" />
-  <div class="i-carbon:shopping-cart hidden" />
-  <div class="i-carbon:ShoppingCart hidden" />
-  <div class="i-carbon:ShoppingCartPlus hidden" />
-  <div class="i-carbon:shopping-bag hidden" />
-  <div class="i-carbon:fish hidden" />
-  <div class="i-carbon:corn hidden" />
-  <div class="i-carbon:NoodleBowl hidden" />
-  <div class="i-carbon:bar hidden" />
-  <div class="i-carbon:PiggyBank hidden" />
+    <!-- 🍔 Cibo / Bevande / Ristorazione -->
+    <div class="i-carbon:restaurant hidden" />
+    <div class="i-carbon:cafe hidden" />
+    <div class="i-carbon:shopping-cart hidden" />
+    <div class="i-carbon:ShoppingCart hidden" />
+    <div class="i-carbon:ShoppingCartPlus hidden" />
+    <div class="i-carbon:shopping-bag hidden" />
+    <div class="i-carbon:fish hidden" />
+    <div class="i-carbon:corn hidden" />
+    <div class="i-carbon:NoodleBowl hidden" />
+    <div class="i-carbon:bar hidden" />
+    <div class="i-carbon:PiggyBank hidden" />
 
-  <!-- 🚗 Trasporti / Veicoli / Mobilità -->
-  <div class="i-carbon:car hidden" />
-  <div class="i-carbon:car-front hidden" />
-  <div class="i-carbon:scooter hidden" />
-  <div class="i-carbon:bicycle hidden" />
-  <div class="i-carbon:bus hidden" />
-  <div class="i-carbon:train hidden" />
-  <div class="i-carbon:van hidden" />
-  <div class="i-carbon:charging-station hidden" />
-  <div class="i-carbon:gas-station hidden" />
-  <div class="i-carbon:road hidden" />
-  <div class="i-carbon:plane hidden" />
-  <div class="i-carbon:plane-private hidden" />
-  <div class="i-carbon:tank hidden" />
+    <!-- 🚗 Trasporti / Veicoli / Mobilità -->
+    <div class="i-carbon:car hidden" />
+    <div class="i-carbon:car-front hidden" />
+    <div class="i-carbon:scooter hidden" />
+    <div class="i-carbon:bicycle hidden" />
+    <div class="i-carbon:bus hidden" />
+    <div class="i-carbon:train hidden" />
+    <div class="i-carbon:van hidden" />
+    <div class="i-carbon:charging-station hidden" />
+    <div class="i-carbon:gas-station hidden" />
+    <div class="i-carbon:road hidden" />
+    <div class="i-carbon:plane hidden" />
+    <div class="i-carbon:plane-private hidden" />
+    <div class="i-carbon:tank hidden" />
 
-  <!-- 🌍 Natura / Viaggi / Luoghi -->
-  <div class="i-carbon:mountain hidden" />
-  <div class="i-carbon:tree hidden" />
-  <div class="i-carbon:map hidden" />
-  <div class="i-carbon:location hidden" />
-  <div class="i-carbon:palm-tree hidden" />
-  <div class="i-carbon:hotel hidden" />
-  <div class="i-carbon:monster hidden" />
+    <!-- 🌍 Natura / Viaggi / Luoghi -->
+    <div class="i-carbon:mountain hidden" />
+    <div class="i-carbon:tree hidden" />
+    <div class="i-carbon:map hidden" />
+    <div class="i-carbon:location hidden" />
+    <div class="i-carbon:palm-tree hidden" />
+    <div class="i-carbon:hotel hidden" />
+    <div class="i-carbon:monster hidden" />
 
-  <!-- 🎮 Divertimento / Intrattenimento / Musica / Giochi -->
-  <div class="i-carbon:music hidden" />
-  <div class="i-carbon:game-console hidden" />
-  <div class="i-carbon:apps hidden" />
-  <div class="i-carbon:tool-kit hidden" />
+    <!-- 🎮 Divertimento / Intrattenimento / Musica / Giochi -->
+    <div class="i-carbon:music hidden" />
+    <div class="i-carbon:game-console hidden" />
+    <div class="i-carbon:apps hidden" />
+    <div class="i-carbon:tool-kit hidden" />
 
-  <!-- 🧠 Tecnologia / Informatica / Utente -->
-  <div class="i-carbon:laptop hidden" />
-  <div class="i-carbon:mobile hidden" />
-  <div class="i-carbon:tablet hidden" />
-  <div class="i-carbon:WatsonxData hidden" />
-  <div class="i-carbon:user hidden" />
-  <div class="i-carbon:settings hidden" />
+    <!-- 🧠 Tecnologia / Informatica / Utente -->
+    <div class="i-carbon:laptop hidden" />
+    <div class="i-carbon:mobile hidden" />
+    <div class="i-carbon:tablet hidden" />
+    <div class="i-carbon:WatsonxData hidden" />
+    <div class="i-carbon:user hidden" />
+    <div class="i-carbon:settings hidden" />
 
-  <!-- 🏆 Sport / Attività fisica -->
-  <div class="i-carbon:basketball hidden" />
-  <div class="i-carbon:soccer hidden" />
-  <div class="i-carbon:tennis hidden" />
-  <div class="i-carbon:swim hidden" />
-  <div class="i-carbon:trophy hidden" />
+    <!-- 🏆 Sport / Attività fisica -->
+    <div class="i-carbon:basketball hidden" />
+    <div class="i-carbon:soccer hidden" />
+    <div class="i-carbon:tennis hidden" />
+    <div class="i-carbon:swim hidden" />
+    <div class="i-carbon:trophy hidden" />
 
-  <!-- ⏰ Tempo / Allarmi / Sicurezza -->
-  <div class="i-carbon:alarm hidden" />
-  <div class="i-carbon:password hidden" />
+    <!-- ⏰ Tempo / Allarmi / Sicurezza -->
+    <div class="i-carbon:alarm hidden" />
+    <div class="i-carbon:password hidden" />
 
-  <!-- 📁 Altro / Varie -->
-  <div class="i-carbon:folder hidden" />
-  <div class="i-carbon:bee hidden" />
-  <div class="i-carbon:rocket hidden" />
-  <div class="i-carbon:Diagram hidden" />
+    <!-- 📁 Altro / Varie -->
+    <div class="i-carbon:folder hidden" />
+    <div class="i-carbon:bee hidden" />
+    <div class="i-carbon:rocket hidden" />
+    <div class="i-carbon:Diagram hidden" />
+  </div>
   <van-tabs
     v-model:active="transactionType"
     animated
