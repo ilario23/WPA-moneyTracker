@@ -192,7 +192,7 @@
 
         <div
           v-show="isExpanded"
-          class="flex flex-col gap-12px sticky bottom-16px bg-white pt-16px"
+          class="flex flex-col gap-12px sticky bottom-16px pt-16px"
         >
           <van-button
             type="primary"
