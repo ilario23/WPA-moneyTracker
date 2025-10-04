@@ -778,8 +778,13 @@ const rules = reactive<{[key: string]: FieldRule[]}>({
     {required: true, message: t('transaction.pleaseEnterAmount')},
     {
       validator: (value: any) => {
-        const amount = parseFloat(value);
-        return amount >= 0;
+        // Permetti input come ',50' o '0,50' o '10,50'
+        if (typeof value === 'string') {
+          const normalized = value.replace(',', '.');
+          const amount = parseFloat(normalized);
+          return !isNaN(amount) && amount >= 0;
+        }
+        return false;
       },
       message: t('transaction.amountCannotBeNegative'),
     },
@@ -1135,19 +1140,19 @@ function onCalcOp(op: string) {
 }
 
 function onAmountInput(value: string) {
-  // Permetti solo numeri e una virgola
-  if (!/^[0-9]*,?[0-9]*$/.test(value)) {
-    const cleaned = value.replace(/[^0-9,]/g, '');
-    amountInput.value = cleaned;
-    if (calcOperator.value) {
-      updateCalcTrace(cleaned);
-    }
-    return;
+  // Permetti solo numeri e una sola virgola, anche come primo carattere
+  let cleaned = value.replace(/[^0-9,]/g, '');
+  // Se ci sono più di una virgola, tieni solo la prima
+  const firstComma = cleaned.indexOf(',');
+  if (firstComma !== -1) {
+    cleaned =
+      cleaned.slice(0, firstComma + 1) +
+      cleaned.slice(firstComma + 1).replace(/,/g, '');
   }
-
+  amountInput.value = cleaned;
   // Se ci sono più di 2 decimali dopo la virgola, tronca
-  if (value.includes(',')) {
-    const [intPart, decPart] = value.split(',');
+  if (cleaned.includes(',')) {
+    const [intPart, decPart] = cleaned.split(',');
     if (decPart && decPart.length > 2) {
       const truncated = intPart + ',' + decPart.slice(0, 2);
       amountInput.value = truncated;
@@ -1158,14 +1163,11 @@ function onAmountInput(value: string) {
     }
   }
 
-  // Se non stiamo usando la calcolatrice, normalizza subito
-  if (!calcOperator.value) {
-    normalizeAmount();
+  // Se stiamo usando la calcolatrice, aggiorna la traccia
+  if (calcOperator.value) {
+    updateCalcTrace(amountInput.value);
   }
-  // Se stiamo usando la calcolatrice, aggiorna il calcolo
-  else {
-    updateCalcTrace(value);
-  }
+  // La normalizzazione completa avviene su blur o al calcolo finale
 }
 
 function updateCalcTrace(currentValue?: string) {
