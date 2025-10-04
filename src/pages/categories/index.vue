@@ -144,12 +144,12 @@
   <van-dialog
     v-model:show="showEditDialog"
     :title="$t('category.edit')"
+    :message="`${$t('category.editConfirm')} ${selectedCategory.text}`"
     show-cancel-button
     show-confirm-button
     @confirm="handleEditConfirm"
     @cancel="handleCancel"
   >
-    <van-field v-model="selectedCategory.text" :label="$t('category.title')" />
   </van-dialog>
 </template>
 

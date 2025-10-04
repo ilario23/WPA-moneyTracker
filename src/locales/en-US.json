@@ -284,6 +284,7 @@
     "noUser": "Error reading user name",
     "cantSaveInactiveParent": "It is not possible to proceed as this category is linked to another one",
     "showOnlyActive": "Show only active categories",
-    "categoriesTree": "Category's tree"
+    "categoriesTree": "Category's tree",
+    "editConfirm": "You are goin to edit this category:"
   }
 }
