@@ -62,30 +62,37 @@
       :border="false"
       :inset="true"
     >
-      <VanCell
-        center
-        is-link
-        :title="t('settings.clearCache')"
-        @click="clearCache"
-      />
-      <VanCell
-        center
-        is-link
-        :title="t('settings.clearRecurringExpensesCache')"
-        @click="clearRecurringExpensesCache"
-      />
-      <VanCell
-        center
-        is-link
-        :title="t('settings.clearTransactionsCache')"
-        @click="clearTransactionsCache"
-      />
-      <VanCell
-        center
-        is-link
-        :title="t('settings.clearCategoriesCache')"
-        @click="clearCategoriesCache"
-      />
+      <van-collapse v-model="activeCollapse" :border="false">
+        <van-collapse-item
+          :title="t('settings.cacheSectionTitle')"
+          :inset="true"
+        >
+          <VanCell
+            center
+            is-link
+            :title="t('settings.clearCache')"
+            @click="clearCache"
+          />
+          <VanCell
+            center
+            is-link
+            :title="t('settings.clearRecurringExpensesCache')"
+            @click="clearRecurringExpensesCache"
+          />
+          <VanCell
+            center
+            is-link
+            :title="t('settings.clearTransactionsCache')"
+            @click="clearTransactionsCache"
+          />
+          <VanCell
+            center
+            is-link
+            :title="t('settings.clearCategoriesCache')"
+            @click="clearCategoriesCache"
+          />
+        </van-collapse-item>
+      </van-collapse>
     </VanCellGroup>
 
     <van-popup v-model:show="showLanguagePicker" position="bottom">
@@ -178,6 +185,7 @@ const appStore = useAppStore();
 const environmentMode = computed(() => import.meta.env.MODE);
 const checked = ref<boolean>(isDark.value);
 const cacheService = createCacheService();
+const activeCollapse = ref<string[]>([]);
 
 // Stato per la dialog
 const showDialog = ref(false);
