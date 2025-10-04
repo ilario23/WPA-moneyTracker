@@ -49,7 +49,7 @@
             :title="selectedCategory.text"
             :style="{
               border: `1px solid ${selectedCategory.color}`,
-              borderRadius: '0',
+              borderRadius: '12px',
               margin: '0',
               backgroundColor: hexToRgba(selectedCategory.color, 0.07),
             }"
