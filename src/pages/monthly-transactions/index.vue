@@ -306,6 +306,7 @@ const years = computed(() => {
 // Verify the current year is selected on mount
 onMounted(async () => {
   await RecurringProcessor.processRecurringExpenses();
+  await fetchData(); // Aggiorna subito le transazioni dopo aver processato le ricorrenti
   // Dopo aver processato le ricorrenti, aggiorna le transazioni
   // Ensure we're on the current year
   const currentYear = new Date().getFullYear();
