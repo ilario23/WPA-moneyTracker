@@ -180,7 +180,7 @@
             @blur="onAmountBlur"
             @focus="onAmountFocus"
             ref="amountField"
-            @input="onAmountInput"
+            @input="(e) => onAmountInput(e.target.value)"
             :label-align="showCalculator && calcTrace ? 'top' : 'left'"
           >
             <template #label v-if="showCalculator && calcTrace">
@@ -575,17 +575,37 @@ const transactionData = reactive({...EMPTY_TRANSACTION});
 const amountInput = ref(transactionData.amount?.toString() || '');
 
 function normalizeAmount() {
+  // Se l'input è vuoto, imposta a 0
+  if (!amountInput.value) {
+    amountInput.value = '0';
+    transactionData.amount = 0;
+    return;
+  }
+
+  // Rimuovi eventuali virgole multiple e tieni solo la prima
+  if ((amountInput.value.match(/,/g) || []).length > 1) {
+    const parts = amountInput.value.split(',');
+    amountInput.value = parts[0] + ',' + parts.slice(1).join('');
+  }
+
+  // Converti la virgola in punto per il parsing
   const normalized = amountInput.value.replace(',', '.');
   const parsed = parseFloat(normalized);
 
-  const validAmount = isNaN(parsed) ? 0 : parsed;
+  // Se non è un numero valido, imposta a 0
+  if (isNaN(parsed)) {
+    amountInput.value = '0';
+    transactionData.amount = 0;
+    return;
+  }
 
-  // Mostra fino a 2 decimali *solo se necessari*
-  amountInput.value = Number.isInteger(validAmount)
-    ? validAmount.toString()
-    : validAmount.toFixed(2);
+  // Formatta il numero: interi senza decimali, decimali con max 2 cifre
+  amountInput.value = Number.isInteger(parsed)
+    ? parsed.toString()
+    : parsed.toFixed(2).replace('.', ',');
 
-  transactionData.amount = parseFloat(amountInput.value) || 0;
+  // Aggiorna il valore della transazione (sempre con punto decimale)
+  transactionData.amount = parsed;
 }
 
 const dateLabel = ref<string>(currentDate.value.join('/'));
@@ -1114,21 +1134,47 @@ function onCalcOp(op: string) {
   });
 }
 
-function onAmountInput() {
-  // Se non stiamo usando la calcolatrice, normalizza l'input direttamente
+function onAmountInput(value: string) {
+  // Permetti solo numeri e una virgola
+  if (!/^[0-9]*,?[0-9]*$/.test(value)) {
+    const cleaned = value.replace(/[^0-9,]/g, '');
+    amountInput.value = cleaned;
+    if (calcOperator.value) {
+      updateCalcTrace(cleaned);
+    }
+    return;
+  }
+
+  // Se ci sono più di 2 decimali dopo la virgola, tronca
+  if (value.includes(',')) {
+    const [intPart, decPart] = value.split(',');
+    if (decPart && decPart.length > 2) {
+      const truncated = intPart + ',' + decPart.slice(0, 2);
+      amountInput.value = truncated;
+      if (calcOperator.value) {
+        updateCalcTrace(truncated);
+      }
+      return;
+    }
+  }
+
+  // Se non stiamo usando la calcolatrice, normalizza subito
   if (!calcOperator.value) {
     normalizeAmount();
   }
-  // Altrimenti aggiorna solo il calcTrace per mostrare il calcolo in corso
+  // Se stiamo usando la calcolatrice, aggiorna il calcolo
   else {
-    updateCalcTrace();
+    updateCalcTrace(value);
   }
 }
 
-function updateCalcTrace() {
+function updateCalcTrace(currentValue?: string) {
   if (calcFirstValue.value !== null && calcOperator.value) {
-    const second = parseFloat(amountInput.value.replace(',', '.')) || 0;
+    // Usa il valore corrente se fornito, altrimenti usa amountInput.value
+    const inputValue = currentValue ?? amountInput.value;
+    const second = parseFloat(inputValue.replace(',', '.')) || 0;
     let result = 0;
+
     switch (calcOperator.value) {
       case '+':
         result = calcFirstValue.value + second;
@@ -1143,14 +1189,21 @@ function updateCalcTrace() {
         result = second !== 0 ? calcFirstValue.value / second : 0;
         break;
     }
-    calcTrace.value =
-      calcFirstValue.value +
-      ' ' +
-      calcOperator.value +
-      ' ' +
-      (amountInput.value || '0') +
-      ' = ' +
-      (Number.isInteger(result) ? result : result.toFixed(2));
+
+    // Formatta i numeri nel trace con la virgola come separatore decimale
+    const formattedFirst = Number.isInteger(calcFirstValue.value)
+      ? calcFirstValue.value.toString()
+      : calcFirstValue.value.toFixed(2).replace('.', ',');
+
+    const formattedSecond = Number.isInteger(second)
+      ? second.toString()
+      : second.toFixed(2).replace('.', ',');
+
+    const formattedResult = Number.isInteger(result)
+      ? result.toString()
+      : result.toFixed(2).replace('.', ',');
+
+    calcTrace.value = `${formattedFirst} ${calcOperator.value} ${formattedSecond} = ${formattedResult}`;
   } else {
     calcTrace.value = '';
   }
@@ -1161,6 +1214,7 @@ function onCalcEqual() {
   const first = calcFirstValue.value;
   const op = calcOperator.value;
   const second = parseFloat(amountInput.value.replace(',', '.'));
+
   if (first !== null && op && !isNaN(second)) {
     let result = 0;
     switch (op) {
@@ -1177,15 +1231,21 @@ function onCalcEqual() {
         result = second !== 0 ? first / second : 0;
         break;
     }
+
+    // Formatta il risultato con la virgola come separatore decimale
     amountInput.value = Number.isInteger(result)
       ? result.toString()
-      : result.toFixed(2);
-    transactionData.amount = parseFloat(amountInput.value) || 0;
+      : result.toFixed(2).replace('.', ',');
+
+    // Salva sempre il valore con il punto decimale
+    transactionData.amount = result;
+
     calcFirstValue.value = null;
     calcOperator.value = null;
     calcTrace.value = '';
     showCalculator.value = false;
   }
+
   nextTick(() => {
     amountField.value?.focus?.();
   });
