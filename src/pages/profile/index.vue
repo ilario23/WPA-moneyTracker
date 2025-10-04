@@ -49,7 +49,11 @@
       </VanCell>
 
       <VanCell center :title="$t('settings.environmentMode')">
-        <div class="text-gray">{{ environmentMode }}</div>
+        <div class="text-gray">
+          {{
+            environmentMode.charAt(0).toUpperCase() + environmentMode.slice(1)
+          }}
+        </div>
       </VanCell>
     </VanCellGroup>
 
