@@ -2,6 +2,7 @@
   <van-pull-refresh
     v-model="loadingPullRefresh"
     @refresh="onPullRefresh"
+    :disabled="disablePull"
     :success-text="$t('category.refreshSuccess')"
     :head-height="200"
   >
@@ -86,15 +87,10 @@
       <transition name="fade-delayed" mode="out-in">
         <div
           v-if="selectedCategory.children"
-          style="
-            position: absolute;
-            top: 20vh;
-            left: 0;
-            right: 0;
-            bottom: 1px;
-            overflow-y: auto;
-            padding: 8px 12px;
-          "
+          @touchstart.passive="onSubTouchStart"
+          @touchend.passive="onSubTouchEnd"
+          @touchcancel.passive="onSubTouchEnd"
+          class="subcategories-container"
         >
           <van-divider dashed style="position: sticky; top: 0; z-index: 1">
             {{ $t('category.children') }}
@@ -177,6 +173,16 @@ const selectedIcon = ref(''); // Variabile per memorizzare l'icona della categor
 
 // loadind pull refresh
 const loadingPullRefresh = ref(false);
+const disablePull = ref(false);
+function onSubTouchStart() {
+  disablePull.value = true;
+}
+function onSubTouchEnd() {
+  // piccolo delay per sicurezza
+  setTimeout(() => {
+    disablePull.value = false;
+  }, 50);
+}
 
 // Function to build category tree
 const buildCategoryTree = (categories: any[]) => {
@@ -484,5 +490,23 @@ const handleCancel = () => {
 .fade-delayed-enter-to,
 .fade-delayed-leave-from {
   opacity: 1; /* Elemento diventa visibile */
+}
+
+:root {
+  --top-offset: 26vh; /* regola se il tuo header/area superiore è diversa */
+}
+
+.subcategories-container {
+  position: absolute;
+  top: 20vh; /* la stessa posizione che avevi già */
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  overflow-y: auto;
+  padding: 0px 12px;
+
+  /* fondamentali per lo scroll fluido su mobile */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 </style>
