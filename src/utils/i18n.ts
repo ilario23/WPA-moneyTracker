@@ -1,6 +1,8 @@
 import {createI18n} from 'vue-i18n';
 import enUS from 'vant/es/locale/lang/en-US';
 import itIT from 'vant/es/locale/lang/it-IT';
+import esES from 'vant/es/locale/lang/es-ES';
+import frFR from 'vant/es/locale/lang/fr-FR';
 import {Locale} from 'vant';
 import type {PickerColumn} from 'vant';
 
@@ -9,11 +11,15 @@ const FALLBACK_LOCALE = 'en-US';
 const vantLocales = {
   'en-US': enUS,
   'it-IT': itIT,
+  'es-ES': esES,
+  'fr-FR': frFR,
 };
 
 export const languageColumns: PickerColumn = [
   {text: 'English', value: 'en-US'},
   {text: 'Italiano', value: 'it-IT'},
+  {text: 'Español', value: 'es-ES'},
+  {text: 'Français', value: 'fr-FR'},
 ];
 
 export const i18n = setupI18n();
