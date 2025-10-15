@@ -142,7 +142,7 @@
     "passwordResetSuccess": "Reset password avvenuto con successo"
   },
   "settings": {
-    "currentVersion": "Versione attuale",
+    "currentVersion": "Versione",
     "cacheSectionTitle": "Gestione Cache",
     "clearCache": "Pulisci tutta la cache",
     "clearCacheConfirm": "Sei sicuro di voler svuotare tutta la cache dell'applicazione?",
@@ -161,7 +161,8 @@
     "categoriesCacheClearedSuccess": "Cache categorie pulita con successo",
     "categoriesCacheClearError": "Errore durante la pulizia della cache delle categorie",
     "environmentMode": "Ambiente",
-    "autoUpdateMessage": "Aggiornamento automatico: l'app verrà aggiornata alla nuova versione."
+    "autoUpdateMessage": "Aggiornamento automatico: l'app verrà aggiornata alla nuova versione.",
+    "buildDate": "Data pubblicazione"
   },
   "transaction": {
     "expense": "Spesa",

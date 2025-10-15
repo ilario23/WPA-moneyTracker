@@ -2,8 +2,8 @@ node_modules
 .vscode
 .DS_Store
 
-
 .env*
 
 /dist
 /pnpm-lock.yaml
+/src/generated/build-info.ts

@@ -45,7 +45,13 @@
         :title="$t('settings.currentVersion')"
         @click="handleBasicSettingsClick"
       >
-        <div class="text-gray">v{{ version }}</div>
+        <div class="text-gray">v{{ APP_VERSION }}</div>
+      </VanCell>
+
+      <VanCell center :title="$t('settings.buildDate')">
+        <div class="text-gray">
+          {{ new Date(BUILD_DATE).toLocaleString().split(',')[0] }}
+        </div>
       </VanCell>
 
       <VanCell center :title="$t('settings.environmentMode')">
@@ -170,10 +176,10 @@ import {showNotify, showConfirmDialog} from 'vant';
 import defaultAvatar from '@/assets/images/default-avatar.svg';
 import {createCacheService} from '@/services/cache';
 import type {PickerColumn} from 'vant';
-import {version} from '~root/package.json';
 import useAppStore from '@/stores/modules/app';
 import {languageColumns, locale} from '@/utils/i18n';
 import {RecurringSyncService} from '@/services/recurringSync';
+import {BUILD_DATE, APP_VERSION} from '@/generated/build-info';
 
 const {t} = useI18n();
 const router = useRouter();

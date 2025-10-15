@@ -141,7 +141,7 @@
     "passwordResetSuccess": "Password reset succeeded"
   },
   "settings": {
-    "currentVersion": "Current version",
+    "currentVersion": "Version",
     "comfirmTitle": "Confirm Exit?",
     "cacheSectionTitle": "Cache Management",
     "clearCache": "Clear all cache",
@@ -161,7 +161,8 @@
     "recurringExpensesCacheClearedSuccess": "Recurring expenses cache cleared successfully",
     "recurringExpensesCacheClearError": "Error clearing recurring expenses cache",
     "environmentMode": "Environment",
-    "autoUpdateMessage": "Automatic update: the app will be updated to the new version."
+    "autoUpdateMessage": "Automatic update: the app will be updated to the new version.",
+    "buildDate": "Build date"
   },
   "transaction": {
     "expense": "Expense",

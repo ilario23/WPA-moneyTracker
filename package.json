@@ -6,9 +6,10 @@
   "description": "Smart savings, one slow step at a time",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env vite --mode development",
-    "build": "vue-tsc --noEmit && vite build --mode production",
-    "build:dev": "vue-tsc --noEmit && vite build --mode=development",
+    "generate:build-info": "node scripts/gen-build-info.js",
+    "dev": "npm run generate:build-info && cross-env vite --mode development",
+    "build": "npm run generate:build-info && vue-tsc --noEmit && vite build --mode production",
+    "build:dev": "npm run generate:build-info && vue-tsc --noEmit && vite build --mode=development",
     "build:vercel": "node scripts/vercel-build.js",
     "preview": "vite preview",
     "lint": "eslint .",
