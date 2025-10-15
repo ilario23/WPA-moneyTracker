@@ -1,17 +1,13 @@
 <template>
   <div>
     <VanCellGroup :inset="true">
-      <van-cell center @click="clickProfile">
+      <van-cell center @click="clickProfile" :value="userInfo.email">
         <template #title>
           <van-image
             :src="userInfo.avatar || defaultAvatar"
             round
             class="h-56 w-56"
           />
-        </template>
-
-        <template #value>
-          <span>{{ userInfo.email }}</span>
         </template>
       </van-cell>
     </VanCellGroup>
@@ -45,13 +41,15 @@
         :title="$t('settings.currentVersion')"
         @click="handleBasicSettingsClick"
       >
-        <div class="text-gray">v{{ APP_VERSION }}</div>
-      </VanCell>
-
-      <VanCell center :title="$t('settings.buildDate')">
-        <div class="text-gray">
-          {{ new Date(BUILD_DATE).toLocaleString().split(',')[0] }}
-        </div>
+        <template #value>
+          <div>
+            <span>v{{ APP_VERSION }}</span>
+            <span>•</span>
+            <span>
+              {{ new Date(BUILD_DATE).toLocaleDateString() }}
+            </span>
+          </div>
+        </template>
       </VanCell>
 
       <VanCell center :title="$t('settings.environmentMode')">
@@ -64,7 +62,7 @@
     </VanCellGroup>
 
     <VanCellGroup
-      :title="t('settings.cacheSectionTitle')"
+      :title="t('settings.cacheSection')"
       :border="false"
       :inset="true"
     >
@@ -73,30 +71,38 @@
           :title="t('settings.cacheSectionTitle')"
           :inset="true"
         >
+          <VanCell center :title="t('settings.clearCache')" @click="clearCache">
+            <template #right-icon>
+              <van-icon name="close" />
+            </template>
+          </VanCell>
           <VanCell
             center
-            is-link
-            :title="t('settings.clearCache')"
-            @click="clearCache"
-          />
-          <VanCell
-            center
-            is-link
             :title="t('settings.clearRecurringExpensesCache')"
             @click="clearRecurringExpensesCache"
-          />
+          >
+            <template #right-icon>
+              <van-icon name="close" />
+            </template>
+          </VanCell>
           <VanCell
             center
-            is-link
             :title="t('settings.clearTransactionsCache')"
             @click="clearTransactionsCache"
-          />
+          >
+            <template #right-icon>
+              <van-icon name="close" />
+            </template>
+          </VanCell>
           <VanCell
             center
-            is-link
             :title="t('settings.clearCategoriesCache')"
             @click="clearCategoriesCache"
-          />
+          >
+            <template #right-icon>
+              <van-icon name="close" />
+            </template>
+          </VanCell>
         </van-collapse-item>
       </van-collapse>
     </VanCellGroup>

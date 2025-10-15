@@ -142,8 +142,9 @@
     "passwordResetSuccess": "Reset password avvenuto con successo"
   },
   "settings": {
-    "currentVersion": "Versione",
-    "cacheSectionTitle": "Gestione Cache",
+    "currentVersion": "#️⃣ Versione",
+    "cacheSectionTitle": "🍘 Gestione Cache",
+    "cacheSection": "🍘 Gestione Cache",
     "clearCache": "Pulisci tutta la cache",
     "clearCacheConfirm": "Sei sicuro di voler svuotare tutta la cache dell'applicazione?",
     "cacheClearedSuccess": "Cache svuotata con successo",
@@ -160,7 +161,7 @@
     "clearCategoriesCacheConfirm": "Sei sicuro di voler pulire la cache delle categorie?",
     "categoriesCacheClearedSuccess": "Cache categorie pulita con successo",
     "categoriesCacheClearError": "Errore durante la pulizia della cache delle categorie",
-    "environmentMode": "Ambiente",
+    "environmentMode": "🚀 Ambiente",
     "autoUpdateMessage": "Aggiornamento automatico: l'app verrà aggiornata alla nuova versione.",
     "buildDate": "Data pubblicazione"
   },
