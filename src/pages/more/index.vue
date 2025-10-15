@@ -61,7 +61,7 @@ const {t} = useI18n();
 
     <!-- Group 3: Account -->
     <VanCellGroup inset :title="t('morePage.groupAccountTitle')" class="mb-4">
-      <VanCell :title="t('menus.settings')" to="/profile" is-link>
+      <VanCell :title="t('menus.settings')" to="/settings" is-link>
         <template #icon>
           <div class="i-carbon:Tools mt-4 mr-5"></div>
         </template>
