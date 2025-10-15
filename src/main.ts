@@ -7,7 +7,6 @@ import 'virtual:uno.css';
 import '@/styles/app.less';
 import '@/styles/var.less';
 import {i18n} from '@/utils/i18n';
-import {showNotify} from 'vant';
 import {registerSW} from 'virtual:pwa-register';
 
 // Vant Desktop Adaptation
@@ -26,27 +25,8 @@ import 'vant/es/image-preview/style';
 
 const updateSW = registerSW({
   onNeedRefresh() {
-    console.log('🆕 Nuova versione disponibile, mostro notifica...');
-
-    // Mostra notifica per 3 secondi
-    showNotify({
-      type: 'primary',
-      message: i18n.global.t('settings.autoUpdateMessage'),
-      duration: 3000,
-    });
-    // Dopo 3 secondi applica l'aggiornamento
-    setTimeout(() => {
-      try {
-        if (typeof updateSW === 'function') {
-          updateSW(true); // forza l'update + reload
-        } else {
-          location.reload();
-        }
-      } catch (err) {
-        console.error("❌ Errore durante l'aggiornamento:", err);
-        location.reload();
-      }
-    }, 3000);
+    console.log('🆕 Nuova versione disponibile, aggiorno...');
+    updateSW(true); // forza l'aggiornamento
   },
   onOfflineReady() {
     console.log('📦 App pronta per funzionare offline!');
